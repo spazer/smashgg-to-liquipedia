@@ -224,8 +224,22 @@ namespace smashgg_api
                         }
                         else
                         {
-                            FillLPParameter(ref output, bracketSide + outputRound + LP_MATCH + set.match + LP_P1 + LP_SCORE, set.entrant1wins.ToString());
-                            FillLPParameter(ref output, bracketSide + outputRound + LP_MATCH + set.match + LP_P2 + LP_SCORE, set.entrant2wins.ToString());
+                            if (set.entrant1wins != -99 && set.entrant2wins != -99)
+                            {
+                                FillLPParameter(ref output, bracketSide + outputRound + LP_MATCH + set.match + LP_P1 + LP_SCORE, set.entrant1wins.ToString());
+                                FillLPParameter(ref output, bracketSide + outputRound + LP_MATCH + set.match + LP_P2 + LP_SCORE, set.entrant2wins.ToString());
+                            }
+                            else
+                            {
+                                if (set.winner == set.entrantID1)
+                                {
+                                    FillLPParameter(ref output, bracketSide + outputRound + LP_MATCH + set.match + LP_P1 + LP_SCORE, "{{win}}");
+                                }
+                                else if (set.winner == set.entrantID2)
+                                {
+                                    FillLPParameter(ref output, bracketSide + outputRound + LP_MATCH + set.match + LP_P2 + LP_SCORE, "{{win}}");
+                                }
+                            }
                         }
 
                         // Set the winner
@@ -254,17 +268,23 @@ namespace smashgg_api
             entrantList.Clear();
             setList.Clear();
 
-            string webText;
+            string webText = string.Empty;
             int endPos = 0;
 
             // Retrieve webpage via api
-            WebRequest r = WebRequest.Create(GG_URL_PHASE + textBoxURL.Text + GG_URL_GROUPS);
-            WebResponse resp = r.GetResponse();
-            using (StreamReader sr = new StreamReader(resp.GetResponseStream()))
+            try
             {
-                webText = sr.ReadToEnd();
+                WebRequest r = WebRequest.Create(GG_URL_PHASE + textBoxURL.Text + GG_URL_GROUPS);
+                WebResponse resp = r.GetResponse();
+                using (StreamReader sr = new StreamReader(resp.GetResponseStream()))
+                {
+                    webText = sr.ReadToEnd();
+                }
             }
-
+            catch (Exception ex)
+            {
+                richTextBoxLog.Text += ex + "\r\n";
+            }
             // Get a list of groups
             List<string> rawGroupList = new List<string>();
             string temp;
@@ -298,11 +318,18 @@ namespace smashgg_api
             string lastWave = string.Empty;
             for (int j = 0; j < groupList.Count; j++) 
             {
-                r = WebRequest.Create(GG_URL_PHASEGROUP + groupList[j].id + GG_URL_BRACKET);
-                resp = r.GetResponse();
-                using (StreamReader sr = new StreamReader(resp.GetResponseStream()))
+                try
                 {
-                    webText = sr.ReadToEnd();
+                    WebRequest r = WebRequest.Create(GG_URL_PHASEGROUP + groupList[j].id + GG_URL_BRACKET);
+                    WebResponse resp = r.GetResponse();
+                    using (StreamReader sr = new StreamReader(resp.GetResponseStream()))
+                    {
+                        webText = sr.ReadToEnd();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    richTextBoxLog.Text += ex + "\r\n";
                 }
 
                 // Clear data
@@ -399,6 +426,12 @@ namespace smashgg_api
                 int advance = (int)numericUpDownAdvance.Value;
                 for (int i = 0; i < poolData.Count; i++)
                 {
+                    // Skip bye
+                    if (poolData.ElementAt(i).Key == PLAYER_BYE)
+                    {
+                        continue;
+                    }
+
                     Player currentPlayer = entrantList[poolData.ElementAt(i).Key];
                     richTextBoxLiquipedia.Text += LP_SLOT_START + currentPlayer.name +
                                                   LP_SLOT_FLAG + currentPlayer.country +
@@ -418,7 +451,7 @@ namespace smashgg_api
                             lastLoss = poolData[poolData.ElementAt(i).Key].matchesLoss;
                         }
                     }
-                    else if (poolData[poolData.ElementAt(i).Key].rank == -99)
+                    else if (poolData[poolData.ElementAt(i).Key].rank != -99)
                     {
                         richTextBoxLiquipedia.Text += LP_SLOT_PLACE + poolData[poolData.ElementAt(i).Key].rank;
                     }
