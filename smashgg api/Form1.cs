@@ -312,7 +312,14 @@ namespace smashgg_api
             rawGroupList.Clear();
 
             // Sort the list by wave and number
-            groupList = groupList.OrderBy(c => c.Wave).ThenBy(c => c.Number).ToList();
+            if (groupList[0].waveNumberDetected)
+            {
+                groupList = groupList.OrderBy(c => c.Wave).ThenBy(c => c.Number).ToList();
+            }
+            else
+            {
+                groupList = groupList.OrderBy(c => c.DisplayIdentifier).ToList();
+            }
 
             // Retrieve pages for each group and process them
             string lastWave = string.Empty;
@@ -353,18 +360,21 @@ namespace smashgg_api
 
                 foreach (Set set in setList)
                 {
+                    poolData[set.entrantID1].isinGroup = true;
+                    poolData[set.entrantID2].isinGroup = true;
+
                     // Record match data for each player's record
                     if (set.winner == set.entrantID1)
                     {
                         poolData[set.entrantID1].matchesWin++;
                         poolData[set.entrantID2].matchesLoss++;
 
-                        if (set.entrant2wins != -1)
+                        if (set.entrant2wins != -1) // Ignore W-L for DQs for now
                         {
-                            poolData[set.entrantID1].gamesWin += set.entrant1wins;
-                            poolData[set.entrantID2].gamesWin += set.entrant2wins;
-                            poolData[set.entrantID1].gamesLoss += set.entrant2wins;
-                            poolData[set.entrantID2].gamesLoss += set.entrant1wins;
+                            poolData[set.entrantID1].AddWins(set.entrant1wins);
+                            poolData[set.entrantID2].AddWins(set.entrant2wins);
+                            poolData[set.entrantID1].AddLosses(set.entrant2wins);
+                            poolData[set.entrantID2].AddLosses(set.entrant1wins);
                         }
 
                         if (poolData[set.entrantID1].rank == 0 || set.wPlacement < poolData[set.entrantID1].rank)
@@ -384,10 +394,10 @@ namespace smashgg_api
 
                         if (set.entrant1wins != -1)
                         {
-                            poolData[set.entrantID1].gamesWin += set.entrant1wins;
-                            poolData[set.entrantID2].gamesWin += set.entrant2wins;
-                            poolData[set.entrantID1].gamesLoss += set.entrant2wins;
-                            poolData[set.entrantID2].gamesLoss += set.entrant1wins;
+                            poolData[set.entrantID1].AddWins(set.entrant1wins);
+                            poolData[set.entrantID2].AddWins(set.entrant2wins);
+                            poolData[set.entrantID1].AddLosses(set.entrant2wins);
+                            poolData[set.entrantID2].AddLosses(set.entrant1wins);
                         }
 
                         if (poolData[set.entrantID1].rank == 0 || set.lPlacement < poolData[set.entrantID1].rank)
@@ -402,22 +412,47 @@ namespace smashgg_api
                     }
                 }
 
+                // Remove entrants without listed sets (smash.gg seems to list extraneous entrants sometimes)
+                for(int i=0; i<poolData.Count;i++)
+                {
+                    if(poolData.ElementAt(i).Value.isinGroup == false)
+                    {
+                        poolData.Remove(poolData.ElementAt(i).Key);
+                        i--;
+                    }
+                }
+
                 // Sort the entrants by their rank and W-L records
-                poolData = poolData.OrderBy(x => x.Value.rank).ThenBy(x => x.Value.matchesLoss).ThenByDescending(x => x.Value.matchesWin).ToDictionary(x => x.Key, x => x.Value);
+                poolData = poolData.OrderBy(x => x.Value.rank).ThenBy(x => x.Value.matchesLoss).ThenByDescending(x => x.Value.matchesWin).ThenByDescending(x => x.Value.GameWinrate).ToDictionary(x => x.Key, x => x.Value);
 
                 // Output to textbox
                 // Wave headers
-                if (lastWave != groupList[j].Wave)
+                if (groupList[0].waveNumberDetected)
                 {
-                    richTextBoxLiquipedia.Text += "==Wave " + groupList[j].Wave + "==\r\n";
+                    if (lastWave != groupList[j].Wave)
+                    {
+                        richTextBoxLiquipedia.Text += "==Wave " + groupList[j].Wave + "==\r\n";
+                        richTextBoxLiquipedia.Text += LP_BOX_START + "\r\n";
+
+                        lastWave = groupList[j].Wave;
+                    }
+                }
+                else if (j == 0)    // First element of groupList
+                {
                     richTextBoxLiquipedia.Text += LP_BOX_START + "\r\n";
-                    
-                    lastWave = groupList[j].Wave;
                 }
 
                 // Pool headers
-                richTextBoxLiquipedia.Text += LP_SORT_START + "===" + groupList[j].Wave + groupList[j].Number.ToString() + "===" + LP_SORT_END + "\r\n";
-                richTextBoxLiquipedia.Text += LP_GROUP_START + "Bracket " + groupList[j].Wave + groupList[j].Number.ToString() + LP_GROUP_STARTWIDTH + "\r\n";
+                if (groupList[0].waveNumberDetected)
+                {
+                    richTextBoxLiquipedia.Text += LP_SORT_START + "===" + groupList[j].Wave + groupList[j].Number.ToString() + "===" + LP_SORT_END + "\r\n";
+                    richTextBoxLiquipedia.Text += LP_GROUP_START + "Bracket " + groupList[j].Wave + groupList[j].Number.ToString() + LP_GROUP_STARTWIDTH + "\r\n";
+                }
+                else
+                {
+                    richTextBoxLiquipedia.Text += LP_SORT_START + "===" + groupList[j].Wave + groupList[j].DisplayIdentifier.ToString() + "===" + LP_SORT_END + "\r\n";
+                    richTextBoxLiquipedia.Text += LP_GROUP_START + "Bracket " + groupList[j].DisplayIdentifier.ToString() + LP_GROUP_STARTWIDTH + "\r\n";
+                }
 
                 // Pool slots
                 int lastRank = 0;
@@ -474,17 +509,31 @@ namespace smashgg_api
 
                 // Pool footers
                 richTextBoxLiquipedia.Text += LP_GROUP_END + "\r\n";
-                if (j + 1 >= groupList.Count)
+                if (groupList[0].waveNumberDetected)
                 {
-                    richTextBoxLiquipedia.Text += LP_BOX_END + "\r\n\r\n";
-                }
-                else if (groupList[j + 1].Wave != lastWave)
-                {
-                    richTextBoxLiquipedia.Text += LP_BOX_END + "\r\n\r\n";
+                    if (j + 1 >= groupList.Count)
+                    {
+                        richTextBoxLiquipedia.Text += LP_BOX_END + "\r\n\r\n";
+                    }
+                    else if (groupList[j + 1].Wave != lastWave)
+                    {
+                        richTextBoxLiquipedia.Text += LP_BOX_END + "\r\n\r\n";
+                    }
+                    else
+                    {
+                        richTextBoxLiquipedia.Text += LP_BOX_BREAK + "\r\n\r\n";
+                    }
                 }
                 else
                 {
-                    richTextBoxLiquipedia.Text += LP_BOX_BREAK + "\r\n\r\n";
+                    if (j == groupList.Count - 1)
+                    {
+                        richTextBoxLiquipedia.Text += LP_BOX_END + "\r\n\r\n";
+                    }
+                    else
+                    {
+                        richTextBoxLiquipedia.Text += LP_BOX_BREAK + "\r\n\r\n";
+                    }
                 }
             }
         }
@@ -939,9 +988,11 @@ namespace smashgg_api
         {
             public int matchesWin;
             public int matchesLoss;
-            public int gamesWin;
-            public int gamesLoss;
+            private int gamesWin;
+            private int gamesLoss;
             public int rank;
+            private double gameWinrate;
+            public bool isinGroup;
 
             public PoolRecord()
             {
@@ -950,6 +1001,43 @@ namespace smashgg_api
                 gamesWin = 0;
                 gamesLoss = 0;
                 rank = 0;
+                gameWinrate = 0;
+                isinGroup = false;
+            }
+
+            public void AddWins(int count)
+            {
+                if (count != -99)
+                {
+                    gamesWin += count;
+                    CalculateRatio();
+                }
+            }
+
+            public void AddLosses(int count)
+            {
+                if (count != -99)
+                {
+                    gamesLoss += count;
+                    CalculateRatio();
+                }
+            }
+
+            private void CalculateRatio()
+            {
+                if (gamesLoss != 0 || gamesWin != 0)
+                {
+                    gameWinrate = (double)gamesWin / (double)(gamesWin + gamesLoss) * 100;
+                }
+                else
+                {
+                    gameWinrate = 0;
+                }
+            }
+
+            public double GameWinrate
+            {
+                get{ return gameWinrate; }
             }
         }
 
@@ -959,11 +1047,13 @@ namespace smashgg_api
             private string wave;
             private int number;
             public int id;
+            public bool waveNumberDetected;
 
             public Group()
             {
                 wave = string.Empty;
                 number = 0;
+                waveNumberDetected = false;
             }
 
             // When this is set, try to split the value into a letter (wave) and number (bracket number in wave)
@@ -984,17 +1074,17 @@ namespace smashgg_api
                         if (char.IsLetter(displayIdentifier,0))
                         {
                             // Ensure the rest of the identifier is a number
-                            bool validNumber = true;
+                            waveNumberDetected = true;
                             for (int i = 1; i < displayIdentifier.Length; i++)
                             {
                                 if (!char.IsDigit(displayIdentifier, i))
                                 {
-                                    validNumber = false;
+                                    waveNumberDetected = false;
                                 }
                             }
 
                             // If all conditions are met, fill in the wave and number variables
-                            if (validNumber)
+                            if (waveNumberDetected)
                             {
                                 wave = displayIdentifier.Substring(0, 1);
                                 number = int.Parse(displayIdentifier.Substring(1, displayIdentifier.Length - 1));
