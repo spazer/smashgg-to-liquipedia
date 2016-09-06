@@ -59,6 +59,7 @@
             // 
             // richTextBoxEntrants
             // 
+            this.richTextBoxEntrants.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.richTextBoxEntrants.Location = new System.Drawing.Point(12, 15);
             this.richTextBoxEntrants.Name = "richTextBoxEntrants";
             this.richTextBoxEntrants.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
@@ -68,6 +69,7 @@
             // 
             // richTextBoxWinners
             // 
+            this.richTextBoxWinners.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.richTextBoxWinners.Location = new System.Drawing.Point(12, 191);
             this.richTextBoxWinners.Name = "richTextBoxWinners";
             this.richTextBoxWinners.Size = new System.Drawing.Size(342, 170);
@@ -76,6 +78,7 @@
             // 
             // richTextBoxLiquipedia
             // 
+            this.richTextBoxLiquipedia.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.richTextBoxLiquipedia.Location = new System.Drawing.Point(12, 367);
             this.richTextBoxLiquipedia.Name = "richTextBoxLiquipedia";
             this.richTextBoxLiquipedia.Size = new System.Drawing.Size(691, 170);
@@ -111,6 +114,7 @@
             // 
             // richTextBoxLosers
             // 
+            this.richTextBoxLosers.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.richTextBoxLosers.Location = new System.Drawing.Point(361, 191);
             this.richTextBoxLosers.Name = "richTextBoxLosers";
             this.richTextBoxLosers.Size = new System.Drawing.Size(342, 170);

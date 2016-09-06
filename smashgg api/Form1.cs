@@ -766,7 +766,7 @@ namespace smashgg_api
             {
                 if (entrant.Key == -1) continue;
 
-                richTextBoxEntrants.Text += entrant.Key + "\t" + entrant.Value.name.PadRight(padding + 2) + "\t" + entrant.Value.country + "\r\n";
+                richTextBoxEntrants.Text += entrant.Key.ToString().PadRight(8) + entrant.Value.name.PadRight(padding + 2) + "  " + entrant.Value.country + "\r\n";
             }
         }
 
@@ -913,15 +913,64 @@ namespace smashgg_api
 
                 if (set.round > 0)
                 {
-                    richTextBoxWinners.Text += set.round + "\t" + entrantList[set.entrantID1].name.PadRight(wpadding) + "\t" + 
-                                               set.entrant1wins.ToString() + " - " + set.entrant2wins.ToString() + "\t" +
-                                               entrantList[set.entrantID2].name + "\r\n";
+                    richTextBoxWinners.Text += set.round.ToString().PadRight(4) + entrantList[set.entrantID1].name.PadRight(wpadding) + "  ";
+                    if (set.entrant1wins == -1)
+                    {
+                        richTextBoxWinners.Text += "DQ";
+                    }
+                    else if (set.entrant1wins != -99)
+                    {
+                        richTextBoxWinners.Text += set.entrant1wins.ToString().PadLeft(2);
+                    }
+                    else
+                    {
+                        richTextBoxWinners.Text += "? ";
+                    }
+                    richTextBoxWinners.Text += " - ";
+                    if (set.entrant2wins == -1)
+                    {
+                        richTextBoxWinners.Text += "DQ";
+                    }
+                    else if (set.entrant2wins != -99)
+                    {
+                        richTextBoxWinners.Text += set.entrant2wins.ToString().PadRight(2);
+                    }
+                    else
+                    {
+                        richTextBoxWinners.Text += "? ";
+                    }
+                    richTextBoxWinners.Text += "  " + entrantList[set.entrantID2].name + "\r\n";
                 }
                 else
                 {
-                    richTextBoxLosers.Text += set.round + "\t" + entrantList[set.entrantID1].name.PadRight(wpadding) + "\t" +
-                                              set.entrant1wins.ToString() + " - " + set.entrant2wins.ToString() + "\t" +
-                                              entrantList[set.entrantID2].name + "\r\n";
+                    richTextBoxLosers.Text += set.round.ToString().PadRight(4) + entrantList[set.entrantID1].name.PadRight(wpadding) + "  ";
+                    if (set.entrant1wins == -1)
+                    {
+                        richTextBoxWinners.Text += "DQ";
+                    }
+                    else if (set.entrant1wins != -99)
+                    {
+                        richTextBoxLosers.Text += set.entrant1wins.ToString().PadLeft(2);
+                    }
+                    else
+                    {
+                        richTextBoxLosers.Text += "? ";
+                    }
+                    richTextBoxLosers.Text += " - ";
+                    
+                    if (set.entrant2wins == -1)
+                    {
+                        richTextBoxWinners.Text += "DQ";
+                    }
+                    else if (set.entrant2wins != -99)
+                    {
+                        richTextBoxLosers.Text += set.entrant2wins.ToString().PadRight(2);
+                    }
+                    else
+                    {
+                        richTextBoxLosers.Text += "? ";
+                    }
+                    richTextBoxLosers.Text += "  " + entrantList[set.entrantID2].name + "\r\n";
                 }
             }
         }
