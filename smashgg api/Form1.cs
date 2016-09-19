@@ -20,35 +20,16 @@ namespace smashgg_api
         static string GG_URL_BRACKET = "?expand[]=sets&expand[]=entrants";
         static string GG_URL_GROUPS = "?expand[]=groups";
 
+        // General parameters
+        static string GG_ID = "\"id\":";
+
         // Expands
         static string GG_ENTRANTS = "\"entrants\":";
         static string GG_SETS = "\"sets\":";
         static string GG_GROUPS = "\"groups\":";
 
-        // General parameters
-        static string GG_ID = "\"id\":";
-
         // Group parameters
         static string GG_DISPLAYIDENT = "\"displayIdentifier\":";
-
-        // Player parameters
-        static string GG_GAMERTAG = "\"gamerTag\":";
-        static string GG_COUNTRY = "\"country\":";
-        static string GG_PLAYERS = "\"players\":";
-
-        // Set parameters
-        static string GG_ENTRANT1 = "\"entrant1Id\":";
-        static string GG_ENTRANT2 = "\"entrant2Id\":";
-        static string GG_WPLACEMENT = "\"wPlacement\":";
-        static string GG_LPLACEMENT = "\"lPlacement\":";
-        static string GG_ROUND = "\"round\":";
-        static string GG_ORIGINALROUND = "\"originalRound\":";
-        static string GG_ENTRANT1SCORE = "\"entrant1Score\":";
-        static string GG_ENTRANT2SCORE = "\"entrant2Score\":";
-        static string GG_WINNERID = "\"winnerId\":";
-        static string GG_ENTRANT1TYPE = "\"entrant1PrereqType\":";
-        static string GG_ENTRANT2TYPE = "\"entrant2PrereqType\":";
-        static string GG_STATE = "\"state\":";
 
         // Liquipedia parameters
         static string LP_P1 = "p1";
@@ -85,27 +66,11 @@ namespace smashgg_api
 
         Dictionary<int, Player> entrantList = new Dictionary<int, Player>();
         Dictionary<int, Team> teamList = new Dictionary<int, Team>();
-        Dictionary<string, string> flagList = new Dictionary<string, string>();
         List<Set> setList = new List<Set>();
 
         public Form1()
         {
             InitializeComponent();
-
-            // Populate flag abbreviation list
-            using (StreamReader file = new StreamReader("Flag List.csv"))
-            {
-                while(!file.EndOfStream)
-                {
-                    string line = file.ReadLine();
-                    string[] text = line.Split(',');
-
-                    if (text.Length >= 2)
-                    {
-                        flagList.Add(text[0].ToLower(), text[1].ToLower());
-                    }
-                }
-            }
         }
 
         private void buttonBracket_Click(object sender, EventArgs e)
@@ -117,6 +82,11 @@ namespace smashgg_api
             richTextBoxLosers.Clear();
             entrantList.Clear();
             setList.Clear();
+            numericUpDownStartSingles.Value = 0;
+            numericUpDownEndSingles.Value = 0;
+            numericUpDownOffsetSingles.Value = 0;
+            checkBoxWinnersSingles.Checked = false;
+            checkBoxLosersSingles.Checked = false;
 
             string webText = string.Empty;
             int endPos = 0;
@@ -124,7 +94,7 @@ namespace smashgg_api
             // Retrieve webpage via api
             try
             {
-                WebRequest r = WebRequest.Create(GG_URL_PHASEGROUP + textBoxURL.Text + GG_URL_BRACKET);
+                WebRequest r = WebRequest.Create(GG_URL_PHASEGROUP + textBoxURLSingles.Text + GG_URL_BRACKET);
                 WebResponse resp = r.GetResponse();
                 using (StreamReader sr = new StreamReader(resp.GetResponseStream()))
                 {
@@ -136,15 +106,62 @@ namespace smashgg_api
                 richTextBoxLog.Text += ex + "\r\n";
             }
 
-            string rawEntrants = ExpandOnly(webText, GG_ENTRANTS, 0, out endPos);
-            GetEntrants(rawEntrants);
+            smashgg parser = new smashgg();
 
-            string rawSets = ExpandOnly(webText, GG_SETS, 0, out endPos);
-            GetSets(rawSets);
+            string rawEntrants = parser.ExpandOnly(webText, GG_ENTRANTS, 0, out endPos);
+            parser.GetEntrants(rawEntrants, ref entrantList);
+
+            string rawSets = parser.ExpandOnly(webText, GG_SETS, 0, out endPos);
+            parser.GetSets(rawSets, ref setList);
+
+            // Set values in form controls
+            foreach (Set set in setList)
+            {
+                int round = Math.Abs(set.round);
+
+                if (set.round > 0)
+                {
+                    checkBoxWinnersSingles.Checked = true;
+                }
+                else if (set.round < 0)
+                {
+                    checkBoxLosersSingles.Checked = true;
+                }
+
+                // Remember lowest round number
+                if (numericUpDownStartSingles.Value == 0)
+                {
+                    numericUpDownStartSingles.Value = round;
+                }
+                else if (round < numericUpDownStartSingles.Value)
+                {
+                    numericUpDownStartSingles.Value = round;
+                }
+
+                // Remember highest round number
+                if (numericUpDownEndSingles.Value == 0)
+                {
+                    numericUpDownEndSingles.Value = round;
+                }
+                else if (round > numericUpDownEndSingles.Value)
+                {
+                    numericUpDownEndSingles.Value = round;
+                }
+            }
 
             // Set padding for textbox output
+            int p1padding = 0;
             int wpadding = 0;
             int lpadding = 0;
+
+            foreach (Player player in entrantList.Values)
+            {
+                if (player.name.Length > p1padding)
+                {
+                    p1padding = player.name.Length;
+                }
+            }
+
             foreach (Set set in setList)
             {
                 if (set.round > 0)
@@ -163,10 +180,18 @@ namespace smashgg_api
                 }
             }
 
-            // Output to textbox
+            // Output entrants to textbox
+            foreach (KeyValuePair<int, Player> entrant in entrantList)
+            {
+                if (entrant.Key == -1) continue;
+
+                richTextBoxEntrants.Text += entrant.Key.ToString().PadRight(8) + entrant.Value.name.PadRight(p1padding + 2) + "  " + entrant.Value.country + "\r\n";
+            }
+
+            // Output sets to textbox
             foreach (Set set in setList)
             {
-                if (checkBoxFillUnfinished.Checked == false && set.state == 1)
+                if (checkBoxFillUnfinishedSingles.Checked == false && set.state == 1)
                 {
                     continue;
                 }
@@ -182,7 +207,7 @@ namespace smashgg_api
             }
         }
 
-        private void buttonFill_Click(object sender, EventArgs e)
+        private void buttonFillSingles_Click(object sender, EventArgs e)
         {
             string output = richTextBoxLiquipedia.Text;
             string bracketSide = string.Empty;
@@ -190,11 +215,11 @@ namespace smashgg_api
             foreach (Set set in setList)
             {
                 // Detect what side of the bracket this set is in. If the corresponding checkbox is not checked, skip that side of the bracket
-                if (set.round > 0 && checkBoxWinners.Checked == true)
+                if (set.round > 0 && checkBoxWinnersSingles.Checked == true)
                 {
                     bracketSide = LP_WROUND;
                 }
-                else if (set.round < 0 && checkBoxLosers.Checked == true)
+                else if (set.round < 0 && checkBoxLosersSingles.Checked == true)
                 {
                     bracketSide = LP_LROUND;
                 }
@@ -204,16 +229,16 @@ namespace smashgg_api
                 }
 
                 // Skip unfinished sets unless otherwise specified
-                if(checkBoxFillUnfinished.Checked == false && set.state == 1)
+                if(checkBoxFillUnfinishedSingles.Checked == false && set.state == 1)
                 {
                     continue;
                 }
 
                 // The set's round number must be within the bounds of the numericUpDown controls
-                if (Math.Abs(set.round) >= numericUpDownStart.Value && Math.Abs(set.round) <= numericUpDownEnd.Value)
+                if (Math.Abs(set.round) >= numericUpDownStartSingles.Value && Math.Abs(set.round) <= numericUpDownEndSingles.Value)
                 {
                     // Offset the output round by the number specified in the numericUpDown control
-                    int outputRound = Math.Abs(set.round) + (int)numericUpDownOffset.Value;
+                    int outputRound = Math.Abs(set.round) + (int)numericUpDownOffsetSingles.Value;
 
                     // Check for player byes
                     if (set.entrantID1 == PLAYER_BYE && set.entrantID2 == PLAYER_BYE)
@@ -316,7 +341,7 @@ namespace smashgg_api
             // Retrieve webpage via api
             try
             {
-                WebRequest r = WebRequest.Create(GG_URL_PHASE + textBoxURL.Text + GG_URL_GROUPS);
+                WebRequest r = WebRequest.Create(GG_URL_PHASE + textBoxURLSingles.Text + GG_URL_GROUPS);
                 WebResponse resp = r.GetResponse();
                 using (StreamReader sr = new StreamReader(resp.GetResponseStream()))
                 {
@@ -327,14 +352,17 @@ namespace smashgg_api
             {
                 richTextBoxLog.Text += ex + "\r\n";
             }
+
+            smashgg parser = new smashgg();
+
             // Get a list of groups
             List<string> rawGroupList = new List<string>();
             string temp;
-            string rawGroups = ExpandOnly(webText, GG_GROUPS, 0, out endPos);
+            string rawGroups = parser.ExpandOnly(webText, GG_GROUPS, 0, out endPos);
             endPos = 0;
             do
             {
-                temp = SplitExpand(rawGroups, endPos, out endPos);
+                temp = parser.SplitExpand(rawGroups, endPos, out endPos);
                 if (temp != string.Empty)
                 {
                     rawGroupList.Add(temp);
@@ -345,8 +373,8 @@ namespace smashgg_api
             foreach (string groupString in rawGroupList)
             {
                 Group newGroup = new Group();
-                newGroup.DisplayIdentifier = GetStringParameter(groupString, GG_DISPLAYIDENT);
-                newGroup.id = GetIntParameter(groupString, GG_ID);
+                newGroup.DisplayIdentifier = parser.GetStringParameter(groupString, GG_DISPLAYIDENT);
+                newGroup.id = parser.GetIntParameter(groupString, GG_ID);
 
                 groupList.Add(newGroup);
             }
@@ -388,11 +416,11 @@ namespace smashgg_api
                 richTextBoxWinners.Clear();
                 richTextBoxLosers.Clear();
 
-                string rawEntrants = ExpandOnly(webText, GG_ENTRANTS, 0, out endPos);
-                GetEntrants(rawEntrants);
-
-                string rawSets = ExpandOnly(webText, GG_SETS, 0, out endPos);
-                GetSets(rawSets);
+                string rawEntrants = parser.ExpandOnly(webText, GG_ENTRANTS, 0, out endPos);
+                parser.GetEntrants(rawEntrants, ref entrantList);
+                
+                string rawSets = parser.ExpandOnly(webText, GG_SETS, 0, out endPos);
+                parser.GetSets(rawSets, ref setList);
 
                 Dictionary<int, PoolRecord> poolData = new Dictionary<int, PoolRecord>();
                 foreach (KeyValuePair<int,Player> entrant in entrantList)
@@ -614,7 +642,7 @@ namespace smashgg_api
             // Retrieve webpage via api
             try
             {
-                WebRequest r = WebRequest.Create(GG_URL_PHASEGROUP + textBoxURL.Text + GG_URL_BRACKET);
+                WebRequest r = WebRequest.Create(GG_URL_PHASEGROUP + textBoxURLDoubles.Text + GG_URL_BRACKET);
                 WebResponse resp = r.GetResponse();
                 using (StreamReader sr = new StreamReader(resp.GetResponseStream()))
                 {
@@ -626,15 +654,62 @@ namespace smashgg_api
                 richTextBoxLog.Text += ex + "\r\n";
             }
 
-            string rawEntrants = ExpandOnly(webText, GG_ENTRANTS, 0, out endPos);
-            GetDoublesEntrants(rawEntrants);
+            smashgg parser = new smashgg_api.smashgg();
 
-            string rawSets = ExpandOnly(webText, GG_SETS, 0, out endPos);
-            GetSets(rawSets);
+            string rawEntrants = parser.ExpandOnly(webText, GG_ENTRANTS, 0, out endPos);
+            parser.GetDoublesEntrants(rawEntrants, ref teamList);
+
+            string rawSets = parser.ExpandOnly(webText, GG_SETS, 0, out endPos);
+            parser.GetSets(rawSets, ref setList);
+
+            // Set values in form controls
+            foreach (Set set in setList)
+            {
+                int round = Math.Abs(set.round);
+
+                if (set.round > 0)
+                {
+                    checkBoxWinnersDoubles.Checked = true;
+                }
+                else if (set.round < 0)
+                {
+                    checkBoxLosersDoubles.Checked = true;
+                }
+
+                // Remember lowest round number
+                if (numericUpDownStartDoubles.Value == 0)
+                {
+                    numericUpDownStartDoubles.Value = round;
+                }
+                else if (round < numericUpDownStartDoubles.Value)
+                {
+                    numericUpDownStartDoubles.Value = round;
+                }
+
+                // Remember highest round number
+                if (numericUpDownEndDoubles.Value == 0)
+                {
+                    numericUpDownEndDoubles.Value = round;
+                }
+                else if (round > numericUpDownEndDoubles.Value)
+                {
+                    numericUpDownEndDoubles.Value = round;
+                }
+            }
 
             // Set padding for textbox output
+            int t1padding = 0;
             int wpadding = 0;
             int lpadding = 0;
+
+            foreach(Team team in teamList.Values)
+            {
+                if (team.player1.name.Length + team.player2.name.Length > t1padding)
+                {
+                    t1padding = team.player1.name.Length + team.player2.name.Length;
+                }
+            }
+
             foreach (Set set in setList)
             {
                 if (set.round > 0)
@@ -653,10 +728,20 @@ namespace smashgg_api
                 }
             }
 
-            // Output to textbox
+            // Output entrants to textbox
+            foreach (KeyValuePair<int, Team> entrant in teamList)
+            {
+                if (entrant.Key == -1) continue;
+
+                richTextBoxEntrants.Text += entrant.Key.ToString().PadRight(8) + entrant.Value.player1.name + " / " +
+                                            entrant.Value.player2.name.PadRight(t1padding + 2) + "  " +
+                                            entrant.Value.player1.country + " / " + entrant.Value.player1.country + "\r\n";
+            }
+
+            // Output sets to textbox
             foreach (Set set in setList)
             {
-                if (checkBoxFillUnfinished.Checked == false && set.state == 1)
+                if (checkBoxFillUnfinishedSingles.Checked == false && set.state == 1)
                 {
                     continue;
                 }
@@ -680,11 +765,11 @@ namespace smashgg_api
             foreach (Set set in setList)
             {
                 // Detect what side of the bracket this set is in. If the corresponding checkbox is not checked, skip that side of the bracket
-                if (set.round > 0 && checkBoxWinners.Checked == true)
+                if (set.round > 0 && checkBoxWinnersDoubles.Checked == true)
                 {
                     bracketSide = LP_WROUND;
                 }
-                else if (set.round < 0 && checkBoxLosers.Checked == true)
+                else if (set.round < 0 && checkBoxLosersDoubles.Checked == true)
                 {
                     bracketSide = LP_LROUND;
                 }
@@ -694,16 +779,16 @@ namespace smashgg_api
                 }
 
                 // Skip unfinished sets unless otherwise specified
-                if (checkBoxFillUnfinished.Checked == false && set.state == 1)
+                if (checkBoxFillUnfinishedDoubles.Checked == false && set.state == 1)
                 {
                     continue;
                 }
 
                 // The set's round number must be within the bounds of the numericUpDown controls
-                if (Math.Abs(set.round) >= numericUpDownStart.Value && Math.Abs(set.round) <= numericUpDownEnd.Value)
+                if (Math.Abs(set.round) >= numericUpDownStartDoubles.Value && Math.Abs(set.round) <= numericUpDownEndDoubles.Value)
                 {
                     // Offset the output round by the number specified in the numericUpDown control
-                    int outputRound = Math.Abs(set.round) + (int)numericUpDownOffset.Value;
+                    int outputRound = Math.Abs(set.round) + (int)numericUpDownOffsetDoubles.Value;
 
                     // Check for player byes
                     if (set.entrantID1 == PLAYER_BYE && set.entrantID2 == PLAYER_BYE)
@@ -809,414 +894,6 @@ namespace smashgg_api
                 start += param.Length + 2;
                 input = input.Insert(start, value);
             }
-        }
-
-        private string ExpandOnly(string input, string title, int startPos, out int endPos)
-        {
-            endPos = 0;
-            int bracketLevel = 0;
-            char openBracket;
-            char closeBracket;
-
-            // Find the beginning of the desired expand
-            if (input.IndexOf(title + "[", startPos) != -1)
-            {
-                openBracket = '[';
-                closeBracket = ']';
-
-                startPos = input.IndexOf(title + "[", startPos) + title.Length + 1;
-            }
-            else if (input.IndexOf(title + "{", startPos) != -1)
-            {
-                openBracket = '{';
-                closeBracket = '}';
-
-                startPos = input.IndexOf(title + "{", startPos) + title.Length + 1;
-            }
-            else
-            {
-                endPos = input.Length;
-                return string.Empty;
-            }
-
-            endPos = startPos;
-            bracketLevel = 1;
-
-            // Iterate through the text until the whole expand is acquired
-            do
-            {
-                int nextOpen = input.IndexOf(openBracket, endPos);
-                int nextClose = input.IndexOf(closeBracket, endPos);
-
-                // Bracket level cannot be zero if there are no more close brackets
-                if (nextClose == -1)
-                {
-                    endPos = input.Length;
-                    return string.Empty;
-                }
-
-                // Increase the bracket level for each additional open bracket. Subtract a level per close bracket.
-                if (nextOpen < nextClose && nextOpen != -1)
-                {
-                    bracketLevel++;
-                    endPos = nextOpen + 1;
-                }
-                else
-                {
-                    bracketLevel--;
-                    endPos = nextClose + 1;
-                }
-            } while (bracketLevel > 0);
-
-            // Get whatever's in the brackets
-            string output = input.Substring(startPos, endPos - startPos - 1);
-
-            // If all we get are empty brackets, go deeper via recursion. If the end of input is reached, string.empty will be returned.
-            if (output == string.Empty)
-            {
-                output = ExpandOnly(input, title, endPos, out endPos);
-            }
-
-            return output;
-        }
-
-        private string SplitExpand(string input, int startPos, out int endPos)
-        {
-            int bracketLevel = 0;
-            endPos = startPos;
-
-            do
-            {
-                int nextOpen = input.IndexOf('{', endPos);
-                int nextClose = input.IndexOf('}', endPos);
-
-                // Bracket level cannot be zero if there are no more brackets
-                if (nextClose == -1)
-                {
-                    endPos = input.Length;
-                    return string.Empty;
-                }
-
-                // Increase the bracket level for each additional open bracket. Subtract a level per close bracket.
-                if (nextOpen < nextClose && nextOpen != -1)
-                {
-                    bracketLevel++;
-                    endPos = nextOpen + 1;
-                }
-                else
-                {
-                    bracketLevel--;
-                    endPos = nextClose + 1;
-                }
-            } while (bracketLevel > 0);
-
-            // Return whatever's in the brackets
-            return input.Substring(startPos, endPos - startPos);
-        }
-
-        private int GetIntParameter(string input, string param)
-        {
-            if (input.IndexOf(param) != -1)
-            {
-                int start = input.IndexOf(param) + param.Length;
-                int length = 0;     // Current length of int
-                int temp;
-                int output = -99;
-
-                do 
-                {
-                    if (int.TryParse(input.Substring(start, length + 1), out temp))
-                    {
-                        output = temp;
-                        length++;
-                    }
-                    else
-                    {
-                        // Keep going if a dash is detected since it may be a negative number.
-                        if (input.Substring(start, length+1) == "-")
-                        {
-                            length++;
-                        }
-                        else if (length == 0)
-                        {
-                            return -99;
-                        }
-                        else
-                        {
-                            return output;
-                        }
-                    }
-                } while (length < 15);  // Arbitrary limit
-
-                return -99;
-            }
-            else
-            {
-                return -99;
-            }
-        }
-
-        private string GetStringParameter(string input, string param)
-        {
-            if (input.IndexOf(param) != -1)
-            {
-                int start = input.IndexOf(param) + param.Length;
-
-                // Error check for things that are not strings
-                if(input.Substring(start,1) != "\"")
-                {
-                    return string.Empty;
-                }
-
-                // Find the closing quotation mark
-                start = start + 1;
-                int end = input.IndexOf("\"", start);
-
-                return input.Substring(start, end - start);
-            }
-            else
-            {
-                return string.Empty;
-            }
-        }
-
-        private void GetEntrants(string input)
-        {
-            List<string> rawEntrantData = new List<string>();
-            int endPos = 0;
-            string temp;
-
-            // Add bye info
-            entrantList.Add(-1, new Player("Bye", string.Empty));
-
-            // Divide input into manageable chunks
-            do
-            {
-                temp = SplitExpand(input, endPos, out endPos);
-                if (temp != string.Empty)
-                {
-                    rawEntrantData.Add(temp);
-                }
-            } while (temp != string.Empty);
-
-            int padding = 0;
-            foreach (string entrant in rawEntrantData)
-            {
-                Player newPlayer = new Player();
-
-                // Get player ID
-                int id = GetIntParameter(entrant, GG_ID);
-                if (id == -99) continue;
-
-
-                // Get player tag
-                newPlayer.name = GetStringParameter(entrant, GG_GAMERTAG);
-                newPlayer.name = System.Text.RegularExpressions.Regex.Unescape(newPlayer.name);
-                if (newPlayer.name.Length > padding)
-                {
-                    padding = newPlayer.name.Length;
-                }
-
-                // Get player country
-                temp = ExpandOnly(entrant, GG_PLAYERS, 0, out endPos);
-                string country = GetStringParameter(temp, GG_COUNTRY);
-                newPlayer.country = CountryAbbreviation(country);
-
-                entrantList.Add(id, newPlayer);
-            }
-
-            // Output to textbox
-            foreach (KeyValuePair<int,Player> entrant in entrantList)
-            {
-                if (entrant.Key == -1) continue;
-
-                richTextBoxEntrants.Text += entrant.Key.ToString().PadRight(8) + entrant.Value.name.PadRight(padding + 2) + "  " + entrant.Value.country + "\r\n";
-            }
-        }
-
-        private void GetDoublesEntrants(string input)
-        {
-            List<string> rawEntrantData = new List<string>();
-            int endPos = 0;
-            string temp;
-
-            // Add bye info
-            teamList.Add(-1, new Team(new Player("Bye", string.Empty), new Player("Bye", string.Empty)));
-
-            // Divide input into manageable chunks
-            do
-            {
-                temp = SplitExpand(input, endPos, out endPos);
-                if (temp != string.Empty)
-                {
-                    rawEntrantData.Add(temp);
-                }
-            } while (temp != string.Empty);
-
-            int padding = 0;
-            foreach (string entrant in rawEntrantData)
-            {
-                Team newTeam = new Team();
-
-                // Get team ID
-                int id = GetIntParameter(entrant, GG_ID);
-                if (id == -99) continue;
-
-
-                // Get team players
-                Player player1 = new Player();
-                Player player2 = new Player();
-
-                // Seperate player data
-                string[] rawPlayerData = new string[2];
-                temp = ExpandOnly(entrant, GG_PLAYERS, 0, out endPos);
-                rawPlayerData[0] = SplitExpand(temp, 0, out endPos);
-                rawPlayerData[1] = SplitExpand(temp, endPos, out endPos);
-                
-                // Get player tags
-                player1.name = GetStringParameter(rawPlayerData[0], GG_GAMERTAG);
-                player1.name = System.Text.RegularExpressions.Regex.Unescape(player1.name);
-                player2.name = GetStringParameter(rawPlayerData[1], GG_GAMERTAG);
-                player2.name = System.Text.RegularExpressions.Regex.Unescape(player2.name);
-                if (player1.name.Length + player2.name.Length > padding)
-                {
-                    padding = player1.name.Length + player2.name.Length;
-                }
-
-                // Get player countries
-                player1.country = GetStringParameter(rawPlayerData[0], GG_COUNTRY);
-                player1.country = CountryAbbreviation(player1.country);
-                player2.country = GetStringParameter(rawPlayerData[1], GG_COUNTRY);
-                player2.country = CountryAbbreviation(player2.country);
-
-                // Add team
-                teamList.Add(id, new Team(player1, player2));
-            }
-
-            // Output to textbox
-            foreach (KeyValuePair<int, Team> entrant in teamList)
-            {
-                if (entrant.Key == -1) continue;
-
-                richTextBoxEntrants.Text += entrant.Key.ToString().PadRight(8) + entrant.Value.player1.name + " / " + 
-                                            entrant.Value.player2.name.PadRight(padding + 2) + "  " + 
-                                            entrant.Value.player1.country + " / " + entrant.Value.player1.country + "\r\n";
-            }
-        }
-
-        private void GetSets(string input)
-        {
-            List<string> rawSetData = new List<string>();
-            int endPos = 0;
-            string temp;
-
-            // Reset values
-            checkBoxWinners.Checked = false;
-            checkBoxLosers.Checked = false;
-            numericUpDownStart.Value = 0;
-            numericUpDownEnd.Value = 0;
-            numericUpDownOffset.Value = 0;
-
-            // Divide input into manageable chunks
-            do
-            {
-                temp = SplitExpand(input, endPos, out endPos);
-                if (temp != string.Empty)
-                {
-                    rawSetData.Add(temp);
-                }
-            } while (temp != string.Empty);
-
-            // Get set data
-            List<int> matchCountWinners = new List<int>();
-            List<int> matchCountLosers = new List<int>();
-            foreach (string set in rawSetData)
-            {
-                Set newSet = new Set();
-
-                // Get the entrant IDs. Set the entrant as a bye if it is null.
-                newSet.entrantID1 = GetIntParameter(set, GG_ENTRANT1);
-                if (newSet.entrantID1 == -99)
-                {
-                    //if (GetStringParameter(set, GG_ENTRANT1TYPE) == "bye")
-                    //{
-                        newSet.entrantID1 = PLAYER_BYE;
-                    //}
-                }
-                newSet.entrantID2 = GetIntParameter(set, GG_ENTRANT2);
-                if (newSet.entrantID2 == -99)
-                {
-                    //if (GetStringParameter(set, GG_ENTRANT2TYPE) == "bye")
-                    //{
-                        newSet.entrantID2 = PLAYER_BYE;
-                    //}
-                }
-
-                // Get match data
-                newSet.entrant1wins = GetIntParameter(set, GG_ENTRANT1SCORE);
-                newSet.entrant2wins = GetIntParameter(set, GG_ENTRANT2SCORE);
-                newSet.winner = GetIntParameter(set, GG_WINNERID);
-                newSet.state = GetIntParameter(set, GG_STATE);
-
-                // Bracket rank
-                newSet.wPlacement = GetIntParameter(set, GG_WPLACEMENT);
-                newSet.lPlacement = GetIntParameter(set, GG_LPLACEMENT);
-
-                // Round and match identifiers
-                newSet.round = GetIntParameter(set, GG_ORIGINALROUND);
-                int round = Math.Abs(newSet.round);
-
-                if (newSet.round == -99)
-                {
-                    continue;
-                }
-                else if(newSet.round > 0)
-                {
-                    while (round > matchCountWinners.Count)
-                    {
-                        matchCountWinners.Add(0);
-                    }
-
-                    matchCountWinners[round - 1]++;
-                    newSet.match = matchCountWinners[round - 1];
-                    checkBoxWinners.Checked = true;
-                }
-                else if (newSet.round < 0)
-                {
-                    while (round > matchCountLosers.Count)
-                    {
-                        matchCountLosers.Add(0);
-                    }
-
-                    matchCountLosers[round - 1]++;
-                    newSet.match = matchCountLosers[round - 1];
-                    checkBoxLosers.Checked = true;
-                }
-
-                // Remember lowest round number
-                if (numericUpDownStart.Value == 0)
-                {
-                    numericUpDownStart.Value = round;
-                }
-                else if (round < numericUpDownStart.Value)
-                {
-                    numericUpDownStart.Value = round;
-                }
-
-                // Remember highest round number
-                if (numericUpDownEnd.Value == 0)
-                {
-                    numericUpDownEnd.Value = round;
-                }
-                else if (round > numericUpDownEnd.Value)
-                {
-                    numericUpDownEnd.Value = round;
-                }
-
-                setList.Add(newSet);
-            }
-
-            
         }
 
         private void OutputSetToTextBox(ref RichTextBox textbox, Set set, int p1padding)
@@ -1344,208 +1021,5 @@ namespace smashgg_api
             // Output player 2
             textbox.AppendText("  " + teamList[set.entrantID2].player1.name + "\r\n");
         }
-
-        private string CountryAbbreviation(string country)
-        {
-            string lcCountry = country.ToLower();
-            
-            // Assume a two-letter country is already an abbreviation
-            if (lcCountry.Length == 2)
-            {
-                return lcCountry;
-            }
-
-            // Look in the dictionary for the country
-            if (flagList.ContainsKey(lcCountry))
-            {
-                return flagList[lcCountry];
-            }
-            else
-            {
-                richTextBoxLog.Text += "Did not find country: " + country + "\r\n";
-                return string.Empty;
-            }
-        }
-
-        class Player
-        {
-            public string name;
-            public string country;
-            
-            // Blank constructor
-            public Player() { }
-
-            // Overloaded constructor
-            public Player(string inputName, string inputCountry)
-            {
-                name = inputName;
-                country = inputCountry;
-            }
-        }
-
-        class Team
-        {
-            public Player player1;
-            public Player player2;
-
-            // Blank constructor
-            public Team() { }
-
-            // Overloaded constructor
-            public Team(Player p1, Player p2)
-            {
-                player1 = p1;
-                player2 = p2;
-            }
-        }
-
-        class Set
-        {
-            public int entrantID1;
-            public int entrantID2;
-            public int entrant1wins;
-            public int entrant2wins;
-            public int winner;
-            public int round;
-            public int match;
-            public int state;
-
-            public int wPlacement;
-            public int lPlacement;
-        }
-
-        class PoolRecord
-        {
-            public int matchesWin;
-            public int matchesLoss;
-            private int gamesWin;
-            private int gamesLoss;
-            public int rank;
-            private double gameWinrate;
-            public bool isinGroup;
-
-            public PoolRecord()
-            {
-                matchesWin = 0;
-                matchesLoss = 0;
-                gamesWin = 0;
-                gamesLoss = 0;
-                rank = 0;
-                gameWinrate = 0;
-                isinGroup = false;
-            }
-
-            public void AddWins(int count)
-            {
-                if (count != -99)
-                {
-                    gamesWin += count;
-                    CalculateRatio();
-                }
-            }
-
-            public void AddLosses(int count)
-            {
-                if (count != -99)
-                {
-                    gamesLoss += count;
-                    CalculateRatio();
-                }
-            }
-
-            private void CalculateRatio()
-            {
-                if (gamesLoss != 0 || gamesWin != 0)
-                {
-                    gameWinrate = (double)gamesWin / (double)(gamesWin + gamesLoss) * 100;
-                }
-                else
-                {
-                    gameWinrate = 0;
-                }
-            }
-
-            public double GameWinrate
-            {
-                get{ return gameWinrate; }
-            }
-        }
-
-        class Group
-        {
-            private string displayIdentifier;
-            private string wave;
-            private int number;
-            public int id;
-            public bool waveNumberDetected;
-
-            public Group()
-            {
-                wave = string.Empty;
-                number = 0;
-                waveNumberDetected = false;
-            }
-
-            // When this is set, try to split the value into a letter (wave) and number (bracket number in wave)
-            public string DisplayIdentifier
-            {
-                get
-                {
-                    return displayIdentifier;
-                }
-                set
-                {
-                    displayIdentifier = value;
-                    
-                    // Attempt to split the identifier into waves
-                    if (displayIdentifier.Length > 1)
-                    {
-                        // The wave should be a bunch of letters
-                        int waveLength = 0;
-                        while (waveLength < displayIdentifier.Length)
-                        {
-                            // If the next character in the identifier is a letter, add it to the wave name
-                            if (char.IsLetter(displayIdentifier, waveLength))
-                            {
-                                waveLength++;
-                            }
-                            else
-                            {
-                                break;
-                            }
-                        }
-
-                        // Ensure the rest of the identifier is a number
-                        waveNumberDetected = true;
-                        for (int i = waveLength; i < displayIdentifier.Length; i++)
-                        {
-                            if (!char.IsDigit(displayIdentifier, i))
-                            {
-                                waveNumberDetected = false;
-                            }
-                        }
-
-                        // If all conditions are met, fill in the wave and number variables
-                        if (waveNumberDetected)
-                        {
-                            wave = displayIdentifier.Substring(0, waveLength);
-                            number = int.Parse(displayIdentifier.Substring(waveLength, displayIdentifier.Length - waveLength));
-                        }
-                    }
-                }
-            }
-
-            public string Wave
-            {
-                get { return wave; }
-            }
-
-            public int Number
-            {
-                get { return number; }
-            }
-        }
-
-        
     }
 }
