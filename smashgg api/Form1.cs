@@ -59,6 +59,8 @@ namespace smashgg_api
         static string LP_FLAG = "flag";
         static string LP_SCORE = "score";
         static string LP_WIN = "win";
+        static string LP_T1 = "t1";
+        static string LP_T2 = "t2";
 
         // Liquipedia pool tables
         static string LP_BOX_START = "{{Box|start|padding=4em}}";
@@ -82,6 +84,7 @@ namespace smashgg_api
         static int PLAYER_BYE = -1;
 
         Dictionary<int, Player> entrantList = new Dictionary<int, Player>();
+        Dictionary<int, Team> teamList = new Dictionary<int, Team>();
         Dictionary<string, string> flagList = new Dictionary<string, string>();
         List<Set> setList = new List<Set>();
 
@@ -138,6 +141,45 @@ namespace smashgg_api
 
             string rawSets = ExpandOnly(webText, GG_SETS, 0, out endPos);
             GetSets(rawSets);
+
+            // Set padding for textbox output
+            int wpadding = 0;
+            int lpadding = 0;
+            foreach (Set set in setList)
+            {
+                if (set.round > 0)
+                {
+                    if (entrantList[set.entrantID1].name.Length > wpadding)
+                    {
+                        wpadding = entrantList[set.entrantID1].name.Length;
+                    }
+                }
+                else
+                {
+                    if (entrantList[set.entrantID1].name.Length > lpadding)
+                    {
+                        lpadding = entrantList[set.entrantID1].name.Length;
+                    }
+                }
+            }
+
+            // Output to textbox
+            foreach (Set set in setList)
+            {
+                if (checkBoxFillUnfinished.Checked == false && set.state == 1)
+                {
+                    continue;
+                }
+
+                if (set.round > 0)
+                {
+                    OutputSetToTextBox(ref richTextBoxWinners, set, wpadding);
+                }
+                else
+                {
+                    OutputSetToTextBox(ref richTextBoxLosers, set, lpadding);
+                }
+            }
         }
 
         private void buttonFill_Click(object sender, EventArgs e)
@@ -366,6 +408,8 @@ namespace smashgg_api
                     // Record match data for each player's record
                     if (set.winner == set.entrantID1)
                     {
+                        if (set.entrantID2 == PLAYER_BYE) continue;
+
                         poolData[set.entrantID1].matchesWin++;
                         poolData[set.entrantID2].matchesLoss++;
 
@@ -379,16 +423,24 @@ namespace smashgg_api
 
                         if (poolData[set.entrantID1].rank == 0 || set.wPlacement < poolData[set.entrantID1].rank)
                         {
-                            poolData[set.entrantID1].rank = set.wPlacement;
+                            if (set.wPlacement != -99)
+                            {
+                                poolData[set.entrantID1].rank = set.wPlacement;
+                            }
                         }
 
                         if (poolData[set.entrantID2].rank == 0 || set.lPlacement < poolData[set.entrantID2].rank)
                         {
-                            poolData[set.entrantID2].rank = set.lPlacement;
+                            if (set.lPlacement != -99)
+                            {
+                                poolData[set.entrantID2].rank = set.lPlacement;
+                            }
                         }
                     }
                     else if (set.winner == set.entrantID2)
                     {
+                        if (set.entrantID1 == PLAYER_BYE) continue;
+
                         poolData[set.entrantID2].matchesWin++;
                         poolData[set.entrantID1].matchesLoss++;
 
@@ -402,12 +454,18 @@ namespace smashgg_api
 
                         if (poolData[set.entrantID1].rank == 0 || set.lPlacement < poolData[set.entrantID1].rank)
                         {
-                            poolData[set.entrantID1].rank = set.lPlacement;
+                            if (set.lPlacement != -99)
+                            {
+                                poolData[set.entrantID1].rank = set.lPlacement;
+                            }
                         }
 
                         if (poolData[set.entrantID2].rank == 0 || set.wPlacement < poolData[set.entrantID2].rank)
                         {
-                            poolData[set.entrantID2].rank = set.wPlacement;
+                            if (set.wPlacement != -99)
+                            {
+                                poolData[set.entrantID2].rank = set.wPlacement;
+                            }
                         }
                     }
                 }
@@ -495,9 +553,10 @@ namespace smashgg_api
                         richTextBoxLiquipedia.Text += LP_SLOT_PLACE;
                     }
 
-                    if (i < advance)
+                    if (advance > 0)
                     {
                         richTextBoxLiquipedia.Text += LP_SLOT_BG + "up";
+                        advance--;
                     }
                     else
                     {
@@ -536,6 +595,209 @@ namespace smashgg_api
                     }
                 }
             }
+        }
+
+        private void buttonDoubles_Click(object sender, EventArgs e)
+        {
+            // Clear data
+            richTextBoxLog.Clear();
+            richTextBoxEntrants.Clear();
+            richTextBoxWinners.Clear();
+            richTextBoxLosers.Clear();
+            entrantList.Clear();
+            teamList.Clear();
+            setList.Clear();
+
+            string webText = string.Empty;
+            int endPos = 0;
+
+            // Retrieve webpage via api
+            try
+            {
+                WebRequest r = WebRequest.Create(GG_URL_PHASEGROUP + textBoxURL.Text + GG_URL_BRACKET);
+                WebResponse resp = r.GetResponse();
+                using (StreamReader sr = new StreamReader(resp.GetResponseStream()))
+                {
+                    webText = sr.ReadToEnd();
+                }
+            }
+            catch (Exception ex)
+            {
+                richTextBoxLog.Text += ex + "\r\n";
+            }
+
+            string rawEntrants = ExpandOnly(webText, GG_ENTRANTS, 0, out endPos);
+            GetDoublesEntrants(rawEntrants);
+
+            string rawSets = ExpandOnly(webText, GG_SETS, 0, out endPos);
+            GetSets(rawSets);
+
+            // Set padding for textbox output
+            int wpadding = 0;
+            int lpadding = 0;
+            foreach (Set set in setList)
+            {
+                if (set.round > 0)
+                {
+                    if (teamList[set.entrantID1].player1.name.Length > wpadding)
+                    {
+                        wpadding = teamList[set.entrantID1].player1.name.Length;
+                    }
+                }
+                else
+                {
+                    if (teamList[set.entrantID1].player1.name.Length > lpadding)
+                    {
+                        lpadding = teamList[set.entrantID1].player1.name.Length;
+                    }
+                }
+            }
+
+            // Output to textbox
+            foreach (Set set in setList)
+            {
+                if (checkBoxFillUnfinished.Checked == false && set.state == 1)
+                {
+                    continue;
+                }
+
+                if (set.round > 0)
+                {
+                    OutputDoublesSetToTextBox(ref richTextBoxWinners, set, wpadding);
+                }
+                else
+                {
+                    OutputDoublesSetToTextBox(ref richTextBoxLosers, set, lpadding);
+                }
+            }
+        }
+
+        private void buttonFillDoubles_Click(object sender, EventArgs e)
+        {
+            string output = richTextBoxLiquipedia.Text;
+            string bracketSide = string.Empty;
+
+            foreach (Set set in setList)
+            {
+                // Detect what side of the bracket this set is in. If the corresponding checkbox is not checked, skip that side of the bracket
+                if (set.round > 0 && checkBoxWinners.Checked == true)
+                {
+                    bracketSide = LP_WROUND;
+                }
+                else if (set.round < 0 && checkBoxLosers.Checked == true)
+                {
+                    bracketSide = LP_LROUND;
+                }
+                else
+                {
+                    continue;
+                }
+
+                // Skip unfinished sets unless otherwise specified
+                if (checkBoxFillUnfinished.Checked == false && set.state == 1)
+                {
+                    continue;
+                }
+
+                // The set's round number must be within the bounds of the numericUpDown controls
+                if (Math.Abs(set.round) >= numericUpDownStart.Value && Math.Abs(set.round) <= numericUpDownEnd.Value)
+                {
+                    // Offset the output round by the number specified in the numericUpDown control
+                    int outputRound = Math.Abs(set.round) + (int)numericUpDownOffset.Value;
+
+                    // Check for player byes
+                    if (set.entrantID1 == PLAYER_BYE && set.entrantID2 == PLAYER_BYE)
+                    {
+                        // If both players are byes, skip this entry
+                        continue;
+                    }
+                    else if (set.entrantID1 == PLAYER_BYE)
+                    {
+                        // Fill in team 1 as a bye
+                        FillLPParameter(ref output, bracketSide + outputRound + LP_MATCH + set.match + LP_T1 + LP_P1, "Bye");
+                        FillLPParameter(ref output, bracketSide + outputRound + LP_MATCH + set.match + LP_T1 + LP_P2, "Bye");
+
+                        // Give team 2 a checkmark
+                        FillLPParameter(ref output, bracketSide + outputRound + LP_MATCH + set.match + LP_T2 + LP_P1, teamList[set.entrantID2].player1.name);
+                        FillLPParameter(ref output, bracketSide + outputRound + LP_MATCH + set.match + LP_T2 + LP_P1 + LP_FLAG, teamList[set.entrantID2].player1.country);
+                        FillLPParameter(ref output, bracketSide + outputRound + LP_MATCH + set.match + LP_T2 + LP_P2, teamList[set.entrantID2].player2.name);
+                        FillLPParameter(ref output, bracketSide + outputRound + LP_MATCH + set.match + LP_T2 + LP_P2 + LP_FLAG, teamList[set.entrantID2].player2.country);
+                        FillLPParameter(ref output, bracketSide + outputRound + LP_MATCH + set.match + LP_T2 + LP_SCORE, LP_CHECKMARK);
+
+                        FillLPParameter(ref output, bracketSide + outputRound + LP_MATCH + set.match + LP_WIN, "2");
+                    }
+                    else if (set.entrantID2 == PLAYER_BYE)
+                    {
+                        // Fill in team 2 as a bye
+                        FillLPParameter(ref output, bracketSide + outputRound + LP_MATCH + set.match + LP_T2 + LP_P1, "Bye");
+                        FillLPParameter(ref output, bracketSide + outputRound + LP_MATCH + set.match + LP_T2 + LP_P2, "Bye");
+
+                        // Give team 1 a checkmark
+                        FillLPParameter(ref output, bracketSide + outputRound + LP_MATCH + set.match + LP_T1 + LP_P1, teamList[set.entrantID1].player1.name);
+                        FillLPParameter(ref output, bracketSide + outputRound + LP_MATCH + set.match + LP_T1 + LP_P1 + LP_FLAG, teamList[set.entrantID1].player1.country);
+                        FillLPParameter(ref output, bracketSide + outputRound + LP_MATCH + set.match + LP_T1 + LP_P2, teamList[set.entrantID1].player2.name);
+                        FillLPParameter(ref output, bracketSide + outputRound + LP_MATCH + set.match + LP_T1 + LP_P2 + LP_FLAG, teamList[set.entrantID1].player2.country);
+                        FillLPParameter(ref output, bracketSide + outputRound + LP_MATCH + set.match + LP_T1 + LP_SCORE, LP_CHECKMARK);
+
+                        FillLPParameter(ref output, bracketSide + outputRound + LP_MATCH + set.match + LP_WIN, "1");
+                    }
+                    else
+                    {
+                        // Fill in the set normally
+                        FillLPParameter(ref output, bracketSide + outputRound + LP_MATCH + set.match + LP_T1 + LP_P1, teamList[set.entrantID1].player1.name);
+                        FillLPParameter(ref output, bracketSide + outputRound + LP_MATCH + set.match + LP_T1 + LP_P1 + LP_FLAG, teamList[set.entrantID1].player1.country);
+                        FillLPParameter(ref output, bracketSide + outputRound + LP_MATCH + set.match + LP_T1 + LP_P2, teamList[set.entrantID1].player2.name);
+                        FillLPParameter(ref output, bracketSide + outputRound + LP_MATCH + set.match + LP_T1 + LP_P2 + LP_FLAG, teamList[set.entrantID1].player2.country);
+                        FillLPParameter(ref output, bracketSide + outputRound + LP_MATCH + set.match + LP_T2 + LP_P1, teamList[set.entrantID2].player1.name);
+                        FillLPParameter(ref output, bracketSide + outputRound + LP_MATCH + set.match + LP_T2 + LP_P1 + LP_FLAG, teamList[set.entrantID2].player1.country);
+                        FillLPParameter(ref output, bracketSide + outputRound + LP_MATCH + set.match + LP_T2 + LP_P2, teamList[set.entrantID2].player2.name);
+                        FillLPParameter(ref output, bracketSide + outputRound + LP_MATCH + set.match + LP_T2 + LP_P2 + LP_FLAG, teamList[set.entrantID2].player2.country);
+
+                        // Check for DQs
+                        if (set.entrant1wins == -1)
+                        {
+                            FillLPParameter(ref output, bracketSide + outputRound + LP_MATCH + set.match + LP_T1 + LP_SCORE, "DQ");
+                            FillLPParameter(ref output, bracketSide + outputRound + LP_MATCH + set.match + LP_T2 + LP_SCORE, LP_CHECKMARK);
+                        }
+                        else if (set.entrant2wins == -1)
+                        {
+                            FillLPParameter(ref output, bracketSide + outputRound + LP_MATCH + set.match + LP_T2 + LP_SCORE, "DQ");
+                            FillLPParameter(ref output, bracketSide + outputRound + LP_MATCH + set.match + LP_T1 + LP_SCORE, LP_CHECKMARK);
+                        }
+                        else
+                        {
+                            if (set.entrant1wins != -99 && set.entrant2wins != -99)
+                            {
+                                FillLPParameter(ref output, bracketSide + outputRound + LP_MATCH + set.match + LP_T1 + LP_SCORE, set.entrant1wins.ToString());
+                                FillLPParameter(ref output, bracketSide + outputRound + LP_MATCH + set.match + LP_T2 + LP_SCORE, set.entrant2wins.ToString());
+                            }
+                            else
+                            {
+                                if (set.winner == set.entrantID1)
+                                {
+                                    FillLPParameter(ref output, bracketSide + outputRound + LP_MATCH + set.match + LP_T1 + LP_SCORE, "{{win}}");
+                                }
+                                else if (set.winner == set.entrantID2)
+                                {
+                                    FillLPParameter(ref output, bracketSide + outputRound + LP_MATCH + set.match + LP_T2 + LP_SCORE, "{{win}}");
+                                }
+                            }
+                        }
+
+                        // Set the winner
+                        if (set.winner == set.entrantID1)
+                        {
+                            FillLPParameter(ref output, bracketSide + outputRound + LP_MATCH + set.match + LP_WIN, "1");
+                        }
+                        else if (set.winner == set.entrantID2)
+                        {
+                            FillLPParameter(ref output, bracketSide + outputRound + LP_MATCH + set.match + LP_WIN, "2");
+                        }
+                    }
+                }
+            }
+
+            richTextBoxLiquipedia.Text = output;
         }
 
         private void FillLPParameter(ref string input, string param, string value)
@@ -744,6 +1006,8 @@ namespace smashgg_api
 
                 // Get player ID
                 int id = GetIntParameter(entrant, GG_ID);
+                if (id == -99) continue;
+
 
                 // Get player tag
                 newPlayer.name = GetStringParameter(entrant, GG_GAMERTAG);
@@ -767,6 +1031,76 @@ namespace smashgg_api
                 if (entrant.Key == -1) continue;
 
                 richTextBoxEntrants.Text += entrant.Key.ToString().PadRight(8) + entrant.Value.name.PadRight(padding + 2) + "  " + entrant.Value.country + "\r\n";
+            }
+        }
+
+        private void GetDoublesEntrants(string input)
+        {
+            List<string> rawEntrantData = new List<string>();
+            int endPos = 0;
+            string temp;
+
+            // Add bye info
+            teamList.Add(-1, new Team(new Player("Bye", string.Empty), new Player("Bye", string.Empty)));
+
+            // Divide input into manageable chunks
+            do
+            {
+                temp = SplitExpand(input, endPos, out endPos);
+                if (temp != string.Empty)
+                {
+                    rawEntrantData.Add(temp);
+                }
+            } while (temp != string.Empty);
+
+            int padding = 0;
+            foreach (string entrant in rawEntrantData)
+            {
+                Team newTeam = new Team();
+
+                // Get team ID
+                int id = GetIntParameter(entrant, GG_ID);
+                if (id == -99) continue;
+
+
+                // Get team players
+                Player player1 = new Player();
+                Player player2 = new Player();
+
+                // Seperate player data
+                string[] rawPlayerData = new string[2];
+                temp = ExpandOnly(entrant, GG_PLAYERS, 0, out endPos);
+                rawPlayerData[0] = SplitExpand(temp, 0, out endPos);
+                rawPlayerData[1] = SplitExpand(temp, endPos, out endPos);
+                
+                // Get player tags
+                player1.name = GetStringParameter(rawPlayerData[0], GG_GAMERTAG);
+                player1.name = System.Text.RegularExpressions.Regex.Unescape(player1.name);
+                player2.name = GetStringParameter(rawPlayerData[1], GG_GAMERTAG);
+                player2.name = System.Text.RegularExpressions.Regex.Unescape(player2.name);
+                if (player1.name.Length + player2.name.Length > padding)
+                {
+                    padding = player1.name.Length + player2.name.Length;
+                }
+
+                // Get player countries
+                player1.country = GetStringParameter(rawPlayerData[0], GG_COUNTRY);
+                player1.country = CountryAbbreviation(player1.country);
+                player2.country = GetStringParameter(rawPlayerData[1], GG_COUNTRY);
+                player2.country = CountryAbbreviation(player2.country);
+
+                // Add team
+                teamList.Add(id, new Team(player1, player2));
+            }
+
+            // Output to textbox
+            foreach (KeyValuePair<int, Team> entrant in teamList)
+            {
+                if (entrant.Key == -1) continue;
+
+                richTextBoxEntrants.Text += entrant.Key.ToString().PadRight(8) + entrant.Value.player1.name + " / " + 
+                                            entrant.Value.player2.name.PadRight(padding + 2) + "  " + 
+                                            entrant.Value.player1.country + " / " + entrant.Value.player1.country + "\r\n";
             }
         }
 
@@ -882,97 +1216,133 @@ namespace smashgg_api
                 setList.Add(newSet);
             }
 
-            // Set padding for textbox output
-            int wpadding = 0;
-            int lpadding = 0;
-            foreach (Set set in setList)
+            
+        }
+
+        private void OutputSetToTextBox(ref RichTextBox textbox, Set set, int p1padding)
+        {
+            // Output the round
+            textbox.SelectionFont = new Font(textbox.Font, FontStyle.Regular);
+            textbox.AppendText(set.round.ToString().PadRight(4));
+
+            // Highlight font if player 1 is the winner
+            if (set.winner == set.entrantID1)
             {
-                if (set.round > 0)
-                {
-                    if (entrantList[set.entrantID1].name.Length > wpadding)
-                    {
-                        wpadding = entrantList[set.entrantID1].name.Length;
-                    }
-                }
-                else
-                {
-                    if (entrantList[set.entrantID1].name.Length > lpadding)
-                    {
-                        lpadding = entrantList[set.entrantID1].name.Length;
-                    }
-                }
+                textbox.SelectionFont = new Font(textbox.Font, FontStyle.Italic);
+            }
+            else
+            {
+                textbox.SelectionFont = new Font(textbox.Font, FontStyle.Regular);
             }
 
-            // Output to textbox
-            foreach (Set set in setList)
-            {
-                if (checkBoxFillUnfinished.Checked == false && set.state == 1)
-                {
-                    continue;
-                }
+            // Output player 1
+            textbox.AppendText(entrantList[set.entrantID1].name.PadRight(p1padding) + "  ");
 
-                if (set.round > 0)
-                {
-                    richTextBoxWinners.Text += set.round.ToString().PadRight(4) + entrantList[set.entrantID1].name.PadRight(wpadding) + "  ";
-                    if (set.entrant1wins == -1)
-                    {
-                        richTextBoxWinners.Text += "DQ";
-                    }
-                    else if (set.entrant1wins != -99)
-                    {
-                        richTextBoxWinners.Text += set.entrant1wins.ToString().PadLeft(2);
-                    }
-                    else
-                    {
-                        richTextBoxWinners.Text += "? ";
-                    }
-                    richTextBoxWinners.Text += " - ";
-                    if (set.entrant2wins == -1)
-                    {
-                        richTextBoxWinners.Text += "DQ";
-                    }
-                    else if (set.entrant2wins != -99)
-                    {
-                        richTextBoxWinners.Text += set.entrant2wins.ToString().PadRight(2);
-                    }
-                    else
-                    {
-                        richTextBoxWinners.Text += "? ";
-                    }
-                    richTextBoxWinners.Text += "  " + entrantList[set.entrantID2].name + "\r\n";
-                }
-                else
-                {
-                    richTextBoxLosers.Text += set.round.ToString().PadRight(4) + entrantList[set.entrantID1].name.PadRight(wpadding) + "  ";
-                    if (set.entrant1wins == -1)
-                    {
-                        richTextBoxWinners.Text += "DQ";
-                    }
-                    else if (set.entrant1wins != -99)
-                    {
-                        richTextBoxLosers.Text += set.entrant1wins.ToString().PadLeft(2);
-                    }
-                    else
-                    {
-                        richTextBoxLosers.Text += "? ";
-                    }
-                    richTextBoxLosers.Text += " - ";
-                    
-                    if (set.entrant2wins == -1)
-                    {
-                        richTextBoxWinners.Text += "DQ";
-                    }
-                    else if (set.entrant2wins != -99)
-                    {
-                        richTextBoxLosers.Text += set.entrant2wins.ToString().PadRight(2);
-                    }
-                    else
-                    {
-                        richTextBoxLosers.Text += "? ";
-                    }
-                    richTextBoxLosers.Text += "  " + entrantList[set.entrantID2].name + "\r\n";
-                }
+            // Output player 1's score
+            textbox.SelectionFont = new Font(textbox.Font, FontStyle.Regular);
+            if (set.entrant1wins == -1)
+            {
+                textbox.AppendText("DQ");
             }
+            else if (set.entrant1wins != -99)
+            {
+                textbox.AppendText(set.entrant1wins.ToString().PadLeft(2));
+            }
+            else
+            {
+                textbox.AppendText(" ?");
+            }
+
+            textbox.AppendText(" - ");
+
+            // Output player 2's score
+            if (set.entrant2wins == -1)
+            {
+                textbox.AppendText("DQ");
+            }
+            else if (set.entrant2wins != -99)
+            {
+                textbox.AppendText(set.entrant2wins.ToString().PadRight(2));
+            }
+            else
+            {
+                textbox.AppendText("? ");
+            }
+
+            // Highlight font if player 2 is the winner
+            if (set.winner == set.entrantID2)
+            {
+                textbox.SelectionFont = new Font(textbox.Font, FontStyle.Italic);
+            }
+            else
+            {
+                textbox.SelectionFont = new Font(textbox.Font, FontStyle.Regular);
+            }
+            // Output player 2
+            textbox.AppendText("  " + entrantList[set.entrantID2].name + "\r\n");
+        }
+
+        private void OutputDoublesSetToTextBox(ref RichTextBox textbox, Set set, int p1padding)
+        {
+            // Output the round
+            textbox.SelectionFont = new Font(textbox.Font, FontStyle.Regular);
+            textbox.AppendText(set.round.ToString().PadRight(4));
+
+            // Highlight font if player 1 is the winner
+            if (set.winner == set.entrantID1)
+            {
+                textbox.SelectionFont = new Font(textbox.Font, FontStyle.Italic);
+            }
+            else
+            {
+                textbox.SelectionFont = new Font(textbox.Font, FontStyle.Regular);
+            }
+
+            // Output player 1
+            textbox.AppendText(teamList[set.entrantID1].player1.name.PadRight(p1padding) + "  ");
+
+            // Output player 1's score
+            textbox.SelectionFont = new Font(textbox.Font, FontStyle.Regular);
+            if (set.entrant1wins == -1)
+            {
+                textbox.AppendText("DQ");
+            }
+            else if (set.entrant1wins != -99)
+            {
+                textbox.AppendText(set.entrant1wins.ToString().PadLeft(2));
+            }
+            else
+            {
+                textbox.AppendText(" ?");
+            }
+
+            textbox.AppendText(" - ");
+
+            // Output player 2's score
+            if (set.entrant2wins == -1)
+            {
+                textbox.AppendText("DQ");
+            }
+            else if (set.entrant2wins != -99)
+            {
+                textbox.AppendText(set.entrant2wins.ToString().PadRight(2));
+            }
+            else
+            {
+                textbox.AppendText("? ");
+            }
+
+            // Highlight font if player 2 is the winner
+            if (set.winner == set.entrantID2)
+            {
+                textbox.SelectionFont = new Font(textbox.Font, FontStyle.Italic);
+            }
+            else
+            {
+                textbox.SelectionFont = new Font(textbox.Font, FontStyle.Regular);
+            }
+            // Output player 2
+            textbox.AppendText("  " + teamList[set.entrantID2].player1.name + "\r\n");
         }
 
         private string CountryAbbreviation(string country)
@@ -992,7 +1362,7 @@ namespace smashgg_api
             }
             else
             {
-                richTextBoxLog.Text += "Did not find: " + country + "\r\n";
+                richTextBoxLog.Text += "Did not find country: " + country + "\r\n";
                 return string.Empty;
             }
         }
@@ -1015,7 +1385,18 @@ namespace smashgg_api
 
         class Team
         {
+            public Player player1;
+            public Player player2;
 
+            // Blank constructor
+            public Team() { }
+
+            // Overloaded constructor
+            public Team(Player p1, Player p2)
+            {
+                player1 = p1;
+                player2 = p2;
+            }
         }
 
         class Set
@@ -1119,25 +1500,36 @@ namespace smashgg_api
                     // Attempt to split the identifier into waves
                     if (displayIdentifier.Length > 1)
                     {
-                        // The wave should be a letter
-                        if (char.IsLetter(displayIdentifier,0))
+                        // The wave should be a bunch of letters
+                        int waveLength = 0;
+                        while (waveLength < displayIdentifier.Length)
                         {
-                            // Ensure the rest of the identifier is a number
-                            waveNumberDetected = true;
-                            for (int i = 1; i < displayIdentifier.Length; i++)
+                            // If the next character in the identifier is a letter, add it to the wave name
+                            if (char.IsLetter(displayIdentifier, waveLength))
                             {
-                                if (!char.IsDigit(displayIdentifier, i))
-                                {
-                                    waveNumberDetected = false;
-                                }
+                                waveLength++;
                             }
+                            else
+                            {
+                                break;
+                            }
+                        }
 
-                            // If all conditions are met, fill in the wave and number variables
-                            if (waveNumberDetected)
+                        // Ensure the rest of the identifier is a number
+                        waveNumberDetected = true;
+                        for (int i = waveLength; i < displayIdentifier.Length; i++)
+                        {
+                            if (!char.IsDigit(displayIdentifier, i))
                             {
-                                wave = displayIdentifier.Substring(0, 1);
-                                number = int.Parse(displayIdentifier.Substring(1, displayIdentifier.Length - 1));
+                                waveNumberDetected = false;
                             }
+                        }
+
+                        // If all conditions are met, fill in the wave and number variables
+                        if (waveNumberDetected)
+                        {
+                            wave = displayIdentifier.Substring(0, waveLength);
+                            number = int.Parse(displayIdentifier.Substring(waveLength, displayIdentifier.Length - waveLength));
                         }
                     }
                 }
@@ -1153,5 +1545,7 @@ namespace smashgg_api
                 get { return number; }
             }
         }
+
+        
     }
 }

@@ -51,6 +51,8 @@
             this.label5 = new System.Windows.Forms.Label();
             this.numericUpDownAdvance = new System.Windows.Forms.NumericUpDown();
             this.checkBoxFillUnfinished = new System.Windows.Forms.CheckBox();
+            this.buttonDoubles = new System.Windows.Forms.Button();
+            this.buttonFillDoubles = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownStart)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownEnd)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownOffset)).BeginInit();
@@ -279,6 +281,26 @@
             this.checkBoxFillUnfinished.Text = "Fill unfinished sets";
             this.checkBoxFillUnfinished.UseVisualStyleBackColor = true;
             // 
+            // buttonDoubles
+            // 
+            this.buttonDoubles.Location = new System.Drawing.Point(709, 73);
+            this.buttonDoubles.Name = "buttonDoubles";
+            this.buttonDoubles.Size = new System.Drawing.Size(75, 23);
+            this.buttonDoubles.TabIndex = 2;
+            this.buttonDoubles.Text = "Get Doubles";
+            this.buttonDoubles.UseVisualStyleBackColor = true;
+            this.buttonDoubles.Click += new System.EventHandler(this.buttonDoubles_Click);
+            // 
+            // buttonFillDoubles
+            // 
+            this.buttonFillDoubles.Location = new System.Drawing.Point(790, 303);
+            this.buttonFillDoubles.Name = "buttonFillDoubles";
+            this.buttonFillDoubles.Size = new System.Drawing.Size(75, 23);
+            this.buttonFillDoubles.TabIndex = 2;
+            this.buttonFillDoubles.Text = "Fill Doubles";
+            this.buttonFillDoubles.UseVisualStyleBackColor = true;
+            this.buttonFillDoubles.Click += new System.EventHandler(this.buttonFillDoubles_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -300,7 +322,9 @@
             this.Controls.Add(this.numericUpDownEnd);
             this.Controls.Add(this.numericUpDownStart);
             this.Controls.Add(this.buttonPhase);
+            this.Controls.Add(this.buttonFillDoubles);
             this.Controls.Add(this.buttonFill);
+            this.Controls.Add(this.buttonDoubles);
             this.Controls.Add(this.buttonBracket);
             this.Controls.Add(this.textBoxURL);
             this.Controls.Add(this.richTextBoxLiquipedia);
@@ -343,6 +367,8 @@
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.NumericUpDown numericUpDownAdvance;
         private System.Windows.Forms.CheckBox checkBoxFillUnfinished;
+        private System.Windows.Forms.Button buttonDoubles;
+        private System.Windows.Forms.Button buttonFillDoubles;
     }
 }
 
