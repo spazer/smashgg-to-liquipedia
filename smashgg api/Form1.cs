@@ -64,6 +64,8 @@ namespace smashgg_api
         // Misc
         static int PLAYER_BYE = -1;
 
+        enum PhaseType { Bracket, Pool }
+
         Dictionary<int, Player> entrantList = new Dictionary<int, Player>();
         Dictionary<int, Team> teamList = new Dictionary<int, Team>();
         List<Set> setList = new List<Set>();
@@ -71,6 +73,120 @@ namespace smashgg_api
         public Form1()
         {
             InitializeComponent();
+        }
+
+        // The number for the api is already known
+        private bool parseURL(PhaseType type, int number, out string output)
+        {
+            output = string.Empty;
+            string urlPrefix = string.Empty;
+            string urlSuffix = string.Empty;
+
+            // The offset for URL parsing depends on whether this is a pool or a bracket
+            switch (type)
+            {
+                case PhaseType.Bracket:
+                    urlPrefix = GG_URL_PHASEGROUP;
+                    urlSuffix = GG_URL_BRACKET;
+                    break;
+                case PhaseType.Pool:
+                    urlPrefix = GG_URL_PHASE;
+                    urlSuffix = GG_URL_GROUPS;
+                    break;
+                default:
+                    return false;
+            }
+
+            try
+            {
+                WebRequest r = WebRequest.Create(urlPrefix + number.ToString() + urlSuffix);
+                WebResponse resp = r.GetResponse();
+                using (StreamReader sr = new StreamReader(resp.GetResponseStream()))
+                {
+                    output = sr.ReadToEnd();
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                richTextBoxLog.Text += ex + "\r\n";
+                return false;
+            }
+        }
+
+        // Retrieve webpage via api
+        private bool parseURL(PhaseType type, string url, out string output)
+        {
+            int phaseNumber = 0;
+            output = string.Empty;
+            string urlPrefix = string.Empty;
+            string urlSuffix = string.Empty;
+
+            // The offset for URL parsing depends on whether this is a pool or a bracket
+            switch (type)
+            {
+                case PhaseType.Bracket:
+                    phaseNumber = 3;
+                    urlPrefix = GG_URL_PHASEGROUP;
+                    urlSuffix = GG_URL_BRACKET;
+                    break;
+                case PhaseType.Pool:
+                    phaseNumber = 2;
+                    urlPrefix = GG_URL_PHASE;
+                    urlSuffix = GG_URL_GROUPS;
+                    break;
+                default:
+                    return false;
+            }
+            
+            // Example of a valid URL: https://smash.gg/tournament/well-played-september/brackets/17175/72177/229921
+            bool validURL = false;
+            try
+            {
+                string[] splitURL = url.Split(new string[1] { "/" }, StringSplitOptions.RemoveEmptyEntries);
+                for (int i = 0; i < splitURL.Length; i++)
+                {
+                    // A valid url will have smash.gg followed by tournament
+                    if (splitURL[i].ToLower() == "smash.gg")
+                    {
+                        if (splitURL[i + 1].ToLower() == "tournament")
+                        {
+                            validURL = true;
+                        }
+                    }
+
+                    // find the "brackets" section then look forwards by a certain offset to find the relevant number
+                    else if (splitURL[i].ToLower() == "brackets" && validURL == true)
+                    {
+                        if (i + phaseNumber >= splitURL.Length)
+                        {
+                            richTextBoxLog.Text += "This URL is not valid.\r\n";
+                            return false;
+                        }
+                        else
+                        {
+                            int integer;
+                            if (int.TryParse(splitURL[i + phaseNumber], out integer))
+                            {
+                                WebRequest r = WebRequest.Create(urlPrefix + splitURL[i + phaseNumber] + urlSuffix);
+                                WebResponse resp = r.GetResponse();
+                                using (StreamReader sr = new StreamReader(resp.GetResponseStream()))
+                                {
+                                    output = sr.ReadToEnd();
+                                }
+                            }
+                        }
+                    }
+                }
+
+                return validURL;
+            }
+            catch (Exception ex)
+            {
+                richTextBoxLog.Text += ex + "\r\n";
+                return false;
+            }
         }
 
         private void buttonBracket_Click(object sender, EventArgs e)
@@ -91,19 +207,11 @@ namespace smashgg_api
             string webText = string.Empty;
             int endPos = 0;
 
-            // Retrieve webpage via api
-            try
+            // Get the data from smash.gg
+            if (!parseURL(PhaseType.Bracket, textBoxURLSingles.Text, out webText))
             {
-                WebRequest r = WebRequest.Create(GG_URL_PHASEGROUP + textBoxURLSingles.Text + GG_URL_BRACKET);
-                WebResponse resp = r.GetResponse();
-                using (StreamReader sr = new StreamReader(resp.GetResponseStream()))
-                {
-                    webText = sr.ReadToEnd();
-                }
-            }
-            catch (Exception ex)
-            {
-                richTextBoxLog.Text += ex + "\r\n";
+                richTextBoxLog.Text += "Could not retrieve webpage.\r\n";
+                return;
             }
 
             smashgg parser = new smashgg();
@@ -338,19 +446,11 @@ namespace smashgg_api
             string webText = string.Empty;
             int endPos = 0;
 
-            // Retrieve webpage via api
-            try
+            // Get the data from smash.gg
+            if (!parseURL(PhaseType.Pool, textBoxURLSingles.Text, out webText))
             {
-                WebRequest r = WebRequest.Create(GG_URL_PHASE + textBoxURLSingles.Text + GG_URL_GROUPS);
-                WebResponse resp = r.GetResponse();
-                using (StreamReader sr = new StreamReader(resp.GetResponseStream()))
-                {
-                    webText = sr.ReadToEnd();
-                }
-            }
-            catch (Exception ex)
-            {
-                richTextBoxLog.Text += ex + "\r\n";
+                richTextBoxLog.Text += "Could not retrieve webpage.\r\n";
+                return;
             }
 
             smashgg parser = new smashgg();
@@ -395,19 +495,8 @@ namespace smashgg_api
             string lastWave = string.Empty;
             for (int j = 0; j < groupList.Count; j++) 
             {
-                try
-                {
-                    WebRequest r = WebRequest.Create(GG_URL_PHASEGROUP + groupList[j].id + GG_URL_BRACKET);
-                    WebResponse resp = r.GetResponse();
-                    using (StreamReader sr = new StreamReader(resp.GetResponseStream()))
-                    {
-                        webText = sr.ReadToEnd();
-                    }
-                }
-                catch (Exception ex)
-                {
-                    richTextBoxLog.Text += ex + "\r\n";
-                }
+                // Retrieve webpage
+                parseURL(PhaseType.Bracket, groupList[j].id, out webText);
 
                 // Clear data
                 entrantList.Clear();
@@ -639,19 +728,11 @@ namespace smashgg_api
             string webText = string.Empty;
             int endPos = 0;
 
-            // Retrieve webpage via api
-            try
+            // Get the data from smash.gg
+            if (!parseURL(PhaseType.Bracket, textBoxURLDoubles.Text, out webText))
             {
-                WebRequest r = WebRequest.Create(GG_URL_PHASEGROUP + textBoxURLDoubles.Text + GG_URL_BRACKET);
-                WebResponse resp = r.GetResponse();
-                using (StreamReader sr = new StreamReader(resp.GetResponseStream()))
-                {
-                    webText = sr.ReadToEnd();
-                }
-            }
-            catch (Exception ex)
-            {
-                richTextBoxLog.Text += ex + "\r\n";
+                richTextBoxLog.Text += "Could not retrieve webpage.\r\n";
+                return;
             }
 
             smashgg parser = new smashgg_api.smashgg();
@@ -733,8 +814,8 @@ namespace smashgg_api
             {
                 if (entrant.Key == -1) continue;
 
-                richTextBoxEntrants.Text += entrant.Key.ToString().PadRight(8) + entrant.Value.player1.name + " / " +
-                                            entrant.Value.player2.name.PadRight(t1padding + 2) + "  " +
+                richTextBoxEntrants.Text += entrant.Key.ToString().PadRight(8) + 
+                                            (entrant.Value.player1.name + " / " + entrant.Value.player2.name).PadRight(t1padding + 3) + "  " +
                                             entrant.Value.player1.country + " / " + entrant.Value.player1.country + "\r\n";
             }
 
