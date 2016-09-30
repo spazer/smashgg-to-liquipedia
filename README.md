@@ -7,13 +7,13 @@ Queries the smash.gg api for data to put in Liquipedia pages
   * **Singles bracket example:** https://smash.gg/tournament/shine-2016-1/brackets/12013/62944/203287
   * **Singles pools example:** https://smash.gg/tournament/shine-2016-1/brackets/12013/19006
   * **Doubles bracket example:** https://smash.gg/tournament/shine-2016-1/brackets/12014/62936/203272
-3. If you're doing pools, click on *Bracket Pools* or *Round Robin* depending on the pool type. *Advance* denotes the number of players that advance to the next phase of the tournament. 
-4. Press *Get Bracket* for singles, *Get Doubles* for doubles, or *Get Phase* for pools.
+3. If you're doing pools, click on **Bracket Pools** or **Round Robin** depending on the pool type. **Advance** denotes the number of players that advance to the next phase of the tournament. 
+4. Press **Get Bracket** for singles, **Get Doubles** for doubles, or **Get Phase** for pools.
 
 ## Pools
 Liquipedia code is automatically generated. You can ignore the rest of the buttons.
 
-*Note:* Check the ranking numbers. Because of how smash.gg rankings work, it is VERY likely that there are errors.
+***Note:** Check the ranking numbers. Because of how smash.gg rankings work, it is VERY likely that there are errors.
 
 ## Filling in a Singles or Doubles Bracket
 1. Copy a blank template for the desired bracket to be filled out. Winners and losers brackets should be done *seperately*.
