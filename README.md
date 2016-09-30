@@ -13,7 +13,7 @@ Queries the smash.gg api for data to put in Liquipedia pages
 ## Pools
 Liquipedia code is automatically generated. You can ignore the rest of the buttons.
 
-***Note:** Check the ranking numbers. Because of how smash.gg rankings work, it is VERY likely that there are errors.
+**Note:** Check the ranking numbers. Because of how smash.gg rankings work, it is VERY likely that there are errors.
 
 ## Filling in a Singles or Doubles Bracket
 1. Copy a blank template for the desired bracket to be filled out. Winners and losers brackets should be done *seperately*.
