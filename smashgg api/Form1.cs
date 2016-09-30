@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Net;
 using System.IO;
+using System.Runtime.InteropServices;
 
 namespace smashgg_api
 {
@@ -63,6 +64,7 @@ namespace smashgg_api
 
         // Misc
         static int PLAYER_BYE = -1;
+        static string DEFAULT_TEXTBOX_URL_TEXT = "URL";
 
         enum PhaseType { Bracket, Pool }
 
@@ -73,6 +75,9 @@ namespace smashgg_api
         public Form1()
         {
             InitializeComponent();
+
+            SetCueText(textBoxURLSingles, DEFAULT_TEXTBOX_URL_TEXT);
+            SetCueText(textBoxURLDoubles, DEFAULT_TEXTBOX_URL_TEXT);
         }
 
         // The number for the api is already known
@@ -1102,5 +1107,19 @@ namespace smashgg_api
             // Output player 2
             textbox.AppendText("  " + teamList[set.entrantID2].player1.name + "\r\n");
         }
+
+        #region Cue Banner
+        // https://jasonkemp.ca/blog/the-missing-net-1-cue-banners-in-windows-forms-em_setcuebanner-text-prompt/
+        private const int EM_SETCUEBANNER = 0x1501;
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        private static extern Int32 SendMessage(IntPtr hWnd, int msg,
+        int wParam, [MarshalAs(UnmanagedType.LPWStr)] string lParam);
+
+        public static void SetCueText(Control control, string text)
+        {
+            SendMessage(control.Handle, EM_SETCUEBANNER, 0, text);
+        }
+        #endregion
     }
 }

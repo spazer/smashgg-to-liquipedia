@@ -308,7 +308,7 @@
             // 
             // numericUpDownEndSingles
             // 
-            this.numericUpDownEndSingles.Location = new System.Drawing.Point(47, 180);
+            this.numericUpDownEndSingles.Location = new System.Drawing.Point(47, 181);
             this.numericUpDownEndSingles.Name = "numericUpDownEndSingles";
             this.numericUpDownEndSingles.Size = new System.Drawing.Size(38, 20);
             this.numericUpDownEndSingles.TabIndex = 3;
@@ -324,7 +324,7 @@
             // 
             // numericUpDownOffsetSingles
             // 
-            this.numericUpDownOffsetSingles.Location = new System.Drawing.Point(91, 180);
+            this.numericUpDownOffsetSingles.Location = new System.Drawing.Point(91, 181);
             this.numericUpDownOffsetSingles.Maximum = new decimal(new int[] {
             20,
             0,
@@ -418,7 +418,7 @@
             // 
             // numericUpDownEndDoubles
             // 
-            this.numericUpDownEndDoubles.Location = new System.Drawing.Point(47, 180);
+            this.numericUpDownEndDoubles.Location = new System.Drawing.Point(47, 181);
             this.numericUpDownEndDoubles.Name = "numericUpDownEndDoubles";
             this.numericUpDownEndDoubles.Size = new System.Drawing.Size(38, 20);
             this.numericUpDownEndDoubles.TabIndex = 9;
@@ -434,7 +434,7 @@
             // 
             // numericUpDownOffsetDoubles
             // 
-            this.numericUpDownOffsetDoubles.Location = new System.Drawing.Point(91, 180);
+            this.numericUpDownOffsetDoubles.Location = new System.Drawing.Point(91, 181);
             this.numericUpDownOffsetDoubles.Maximum = new decimal(new int[] {
             20,
             0,
