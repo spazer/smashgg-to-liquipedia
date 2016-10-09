@@ -17,55 +17,6 @@ namespace smashgg_api
 {
     public partial class Form1 : Form
     {
-        // URLs
-        static string GG_URL_PHASEGROUP = "https://api.smash.gg/phase_group/";
-        static string GG_URL_PHASE = "https://api.smash.gg/phase/";
-        static string GG_URL_TOURNAMENT = "https://api.smash.gg/tournament/";
-        static string GG_URL_BRACKET = "?expand[]=sets&expand[]=entrants";
-        static string GG_URL_GROUPS = "?expand[]=groups";
-
-        // General parameters
-        static string GG_ID = "\"id\":";
-
-        // Expands
-        static string GG_ENTRANTS = "\"entrants\":";
-        static string GG_SETS = "\"sets\":";
-        static string GG_GROUPS = "\"groups\":";
-
-        // Group parameters
-        static string GG_DISPLAYIDENT = "\"displayIdentifier\":";
-
-        // Liquipedia parameters
-        static string LP_P1 = "p1";
-        static string LP_P2 = "p2";
-        static string LP_WROUND = "r";
-        static string LP_LROUND = "l";
-        static string LP_MATCH = "m";
-        static string LP_FLAG = "flag";
-        static string LP_SCORE = "score";
-        static string LP_WIN = "win";
-        static string LP_T1 = "t1";
-        static string LP_T2 = "t2";
-
-        // Liquipedia pool tables
-        static string LP_BOX_START = "{{Box|start|padding=4em}}";
-        static string LP_BOX_BREAK = "{{Box|break|padding=4em}}";
-        static string LP_BOX_END = "{{Box|end}}";
-        static string LP_SORT_START = "{{HiddenSort|";
-        static string LP_SORT_END = "}}";
-        static string LP_GROUP_START = "{{GroupTableStart | ";
-        static string LP_GROUP_STARTWIDTH = " |width=300px}}";
-        static string LP_GROUP_END = "{{GroupTableEnd}}";
-        static string LP_SLOT_START = "{{GroupTableSlot|";
-        static string LP_SLOT_FLAG = " |flag=";
-        static string LP_SLOT_PLACE = " |place=";
-        static string LP_SLOT_MWIN = " |win_m=";
-        static string LP_SLOT_MLOSS = " |lose_m=";
-        static string LP_SLOT_BG = " |bg=";
-        static string LP_SLOT_END = "}}";
-        static string LP_CHECKMARK = "{{win}}";
-
-        // Misc
         static int PLAYER_BYE = -1;
         static string DEFAULT_TEXTBOX_URL_TEXT = "URL";
 
@@ -87,6 +38,20 @@ namespace smashgg_api
             SetCueText(textBoxURLDoubles, DEFAULT_TEXTBOX_URL_TEXT);
         }
 
+        private int parseURL(string url)
+        {
+            string[] splitURL = url.Split(new string[1] { "/" }, StringSplitOptions.RemoveEmptyEntries);
+
+            // Take the last number in the url
+            int num;
+            if (int.TryParse(splitURL[splitURL.Length - 1], out num))
+            {
+                return num;
+            }
+
+            return -1;
+        }
+
         // Retrieve webpage via api
         private bool parseURL(PhaseType type, string url, out string json)
         {
@@ -98,12 +63,12 @@ namespace smashgg_api
             switch (type)
             {
                 case PhaseType.Bracket:
-                    urlPrefix = GG_URL_PHASEGROUP;
-                    urlSuffix = GG_URL_BRACKET;
+                    urlPrefix = SmashggStrings.UrlPrefixPhaseGroup;
+                    urlSuffix = SmashggStrings.UrlSuffixPhaseGroup;
                     break;
                 case PhaseType.Pool:
-                    urlPrefix = GG_URL_PHASE;
-                    urlSuffix = GG_URL_GROUPS;
+                    urlPrefix = SmashggStrings.UrlPrefixPhase;
+                    urlSuffix = SmashggStrings.UrlSuffixPhase;
                     break;
                 default:
                     return false;
@@ -123,19 +88,35 @@ namespace smashgg_api
                     {
                         if (phase.phaseId == num && phase.PhaseType == Type.Bracket)
                         {
-                            // fix this hack later
-                            WebRequest r = WebRequest.Create(urlPrefix + phase.id[0] + urlSuffix);
-                            WebResponse resp = r.GetResponse();
-                            using (StreamReader sr = new StreamReader(resp.GetResponseStream()))
-                            {
-                                json = sr.ReadToEnd();
-                            }
+                            // fix this hack later ********************************
+                            retrievePhaseGroup(num, out json);
                         }
                     }
                 }
                 else
                 {
                     return false;
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                richTextBoxLog.Text += ex + "\r\n";
+                return false;
+            }
+        }
+
+        private bool retrievePhaseGroup(int phaseGroup, out string json)
+        {
+            json = string.Empty;
+            try
+            {
+                WebRequest r = WebRequest.Create(SmashggStrings.UrlPrefixPhaseGroup + phaseGroup + SmashggStrings.UrlSuffixPhaseGroup);
+                WebResponse resp = r.GetResponse();
+                using (StreamReader sr = new StreamReader(resp.GetResponseStream()))
+                {
+                    json = sr.ReadToEnd();
                 }
 
                 return true;
@@ -163,7 +144,6 @@ namespace smashgg_api
             checkBoxLosersSingles.Checked = false;
 
             string json = string.Empty;
-            int endPos = 0;
 
             UpdateTournamentStructure();
             if (!parseURL(PhaseType.Bracket, textBoxURLSingles.Text, out json))
@@ -281,11 +261,11 @@ namespace smashgg_api
                 // Detect what side of the bracket this set is in. If the corresponding checkbox is not checked, skip that side of the bracket
                 if (set.round > 0 && checkBoxWinnersSingles.Checked == true)
                 {
-                    bracketSide = LP_WROUND;
+                    bracketSide = LpStrings.WRound;
                 }
                 else if (set.round < 0 && checkBoxLosersSingles.Checked == true)
                 {
-                    bracketSide = LP_LROUND;
+                    bracketSide = LpStrings.LRound;
                 }
                 else
                 {
@@ -313,62 +293,62 @@ namespace smashgg_api
                     else if (set.entrantID1 == PLAYER_BYE)
                     {
                         // Fill in player 1 as a bye
-                        FillLPParameter(ref output, bracketSide + outputRound + LP_MATCH + set.match + LP_P1, "Bye");
+                        FillLPParameter(ref output, bracketSide + outputRound + LpStrings.Match + set.match + LpStrings.P1, "Bye");
 
                         // Give player 2 a checkmark
-                        FillLPParameter(ref output, bracketSide + outputRound + LP_MATCH + set.match + LP_P2, entrantList[set.entrantID2].name);
-                        FillLPParameter(ref output, bracketSide + outputRound + LP_MATCH + set.match + LP_P2 + LP_FLAG, entrantList[set.entrantID2].country);
-                        FillLPParameter(ref output, bracketSide + outputRound + LP_MATCH + set.match + LP_P2 + LP_SCORE, LP_CHECKMARK);
+                        FillLPParameter(ref output, bracketSide + outputRound + LpStrings.Match + set.match + LpStrings.P2, entrantList[set.entrantID2].name);
+                        FillLPParameter(ref output, bracketSide + outputRound + LpStrings.Match + set.match + LpStrings.P2 + LpStrings.Flag, entrantList[set.entrantID2].country);
+                        FillLPParameter(ref output, bracketSide + outputRound + LpStrings.Match + set.match + LpStrings.P2 + LpStrings.Score, LpStrings.Checkmark);
 
-                        FillLPParameter(ref output, bracketSide + outputRound + LP_MATCH + set.match + LP_WIN, "2");
+                        FillLPParameter(ref output, bracketSide + outputRound + LpStrings.Match + set.match + LpStrings.Win, "2");
                     }
                     else if (set.entrantID2 == PLAYER_BYE)
                     {
                         // Fill in player 2 as a bye
-                        FillLPParameter(ref output, bracketSide + outputRound + LP_MATCH + set.match + LP_P2, "Bye");
+                        FillLPParameter(ref output, bracketSide + outputRound + LpStrings.Match + set.match + LpStrings.P2, "Bye");
 
                         // Give player 1 a checkmark
-                        FillLPParameter(ref output, bracketSide + outputRound + LP_MATCH + set.match + LP_P1, entrantList[set.entrantID1].name);
-                        FillLPParameter(ref output, bracketSide + outputRound + LP_MATCH + set.match + LP_P1 + LP_FLAG, entrantList[set.entrantID1].country);
-                        FillLPParameter(ref output, bracketSide + outputRound + LP_MATCH + set.match + LP_P1 + LP_SCORE, LP_CHECKMARK);
+                        FillLPParameter(ref output, bracketSide + outputRound + LpStrings.Match + set.match + LpStrings.P1, entrantList[set.entrantID1].name);
+                        FillLPParameter(ref output, bracketSide + outputRound + LpStrings.Match + set.match + LpStrings.P1 + LpStrings.Flag, entrantList[set.entrantID1].country);
+                        FillLPParameter(ref output, bracketSide + outputRound + LpStrings.Match + set.match + LpStrings.P1 + LpStrings.Score, LpStrings.Checkmark);
 
-                        FillLPParameter(ref output, bracketSide + outputRound + LP_MATCH + set.match + LP_WIN, "1");
+                        FillLPParameter(ref output, bracketSide + outputRound + LpStrings.Match + set.match + LpStrings.Win, "1");
                     }
                     else
                     {
                         // Fill in the set normally
-                        FillLPParameter(ref output, bracketSide + outputRound + LP_MATCH + set.match + LP_P1, entrantList[set.entrantID1].name);
-                        FillLPParameter(ref output, bracketSide + outputRound + LP_MATCH + set.match + LP_P1 + LP_FLAG, entrantList[set.entrantID1].country);
-                        FillLPParameter(ref output, bracketSide + outputRound + LP_MATCH + set.match + LP_P2, entrantList[set.entrantID2].name);
-                        FillLPParameter(ref output, bracketSide + outputRound + LP_MATCH + set.match + LP_P2 + LP_FLAG, entrantList[set.entrantID2].country);
+                        FillLPParameter(ref output, bracketSide + outputRound + LpStrings.Match + set.match + LpStrings.P1, entrantList[set.entrantID1].name);
+                        FillLPParameter(ref output, bracketSide + outputRound + LpStrings.Match + set.match + LpStrings.P1 + LpStrings.Flag, entrantList[set.entrantID1].country);
+                        FillLPParameter(ref output, bracketSide + outputRound + LpStrings.Match + set.match + LpStrings.P2, entrantList[set.entrantID2].name);
+                        FillLPParameter(ref output, bracketSide + outputRound + LpStrings.Match + set.match + LpStrings.P2 + LpStrings.Flag, entrantList[set.entrantID2].country);
 
                         // Check for DQs
                         if (set.entrant1wins == -1)
                         {
-                            FillLPParameter(ref output, bracketSide + outputRound + LP_MATCH + set.match + LP_P1 + LP_SCORE, "DQ");
-                            FillLPParameter(ref output, bracketSide + outputRound + LP_MATCH + set.match + LP_P2 + LP_SCORE, LP_CHECKMARK);
+                            FillLPParameter(ref output, bracketSide + outputRound + LpStrings.Match + set.match + LpStrings.P1 + LpStrings.Score, "DQ");
+                            FillLPParameter(ref output, bracketSide + outputRound + LpStrings.Match + set.match + LpStrings.P2 + LpStrings.Score, LpStrings.Checkmark);
                         }
                         else if (set.entrant2wins == -1)
                         {
-                            FillLPParameter(ref output, bracketSide + outputRound + LP_MATCH + set.match + LP_P2 + LP_SCORE, "DQ");
-                            FillLPParameter(ref output, bracketSide + outputRound + LP_MATCH + set.match + LP_P1 + LP_SCORE, LP_CHECKMARK);
+                            FillLPParameter(ref output, bracketSide + outputRound + LpStrings.Match + set.match + LpStrings.P2 + LpStrings.Score, "DQ");
+                            FillLPParameter(ref output, bracketSide + outputRound + LpStrings.Match + set.match + LpStrings.P1 + LpStrings.Score, LpStrings.Checkmark);
                         }
                         else
                         {
                             if (set.entrant1wins != -99 && set.entrant2wins != -99)
                             {
-                                FillLPParameter(ref output, bracketSide + outputRound + LP_MATCH + set.match + LP_P1 + LP_SCORE, set.entrant1wins.ToString());
-                                FillLPParameter(ref output, bracketSide + outputRound + LP_MATCH + set.match + LP_P2 + LP_SCORE, set.entrant2wins.ToString());
+                                FillLPParameter(ref output, bracketSide + outputRound + LpStrings.Match + set.match + LpStrings.P1 + LpStrings.Score, set.entrant1wins.ToString());
+                                FillLPParameter(ref output, bracketSide + outputRound + LpStrings.Match + set.match + LpStrings.P2 + LpStrings.Score, set.entrant2wins.ToString());
                             }
                             else
                             {
                                 if (set.winner == set.entrantID1)
                                 {
-                                    FillLPParameter(ref output, bracketSide + outputRound + LP_MATCH + set.match + LP_P1 + LP_SCORE, "{{win}}");
+                                    FillLPParameter(ref output, bracketSide + outputRound + LpStrings.Match + set.match + LpStrings.P1 + LpStrings.Score, "{{win}}");
                                 }
                                 else if (set.winner == set.entrantID2)
                                 {
-                                    FillLPParameter(ref output, bracketSide + outputRound + LP_MATCH + set.match + LP_P2 + LP_SCORE, "{{win}}");
+                                    FillLPParameter(ref output, bracketSide + outputRound + LpStrings.Match + set.match + LpStrings.P2 + LpStrings.Score, "{{win}}");
                                 }
                             }
                         }
@@ -376,11 +356,11 @@ namespace smashgg_api
                         // Set the winner
                         if (set.winner == set.entrantID1)
                         {
-                            FillLPParameter(ref output, bracketSide + outputRound + LP_MATCH + set.match + LP_WIN, "1");
+                            FillLPParameter(ref output, bracketSide + outputRound + LpStrings.Match + set.match + LpStrings.Win, "1");
                         }
                         else if (set.winner == set.entrantID2)
                         {
-                            FillLPParameter(ref output, bracketSide + outputRound + LP_MATCH + set.match + LP_WIN, "2");
+                            FillLPParameter(ref output, bracketSide + outputRound + LpStrings.Match + set.match + LpStrings.Win, "2");
                         }
                     }
                 }
@@ -399,38 +379,43 @@ namespace smashgg_api
             entrantList.Clear();
             setList.Clear();
 
-            string webText = string.Empty;
-            int endPos = 0;
+            
 
-            // Get the data from smash.gg
-            //if (!parseURL(PhaseType.Pool, textBoxURLSingles.Text, out webText))
-            //{
-            //    richTextBoxLog.Text += "Could not retrieve webpage.\r\n";
-            //    return;
-            //}
+            UpdateTournamentStructure();
+            int phaseNumber = parseURL(textBoxURLSingles.Text);
 
+            // Find the matching phase in the tournament structure
+            string json = string.Empty;
             smashgg parser = new smashgg();
-
-            // Get a list of groups
-            List<string> rawGroupList = new List<string>();
-            string temp;
-            string rawGroups = parser.ExpandOnly(webText, GG_GROUPS, 0, out endPos);
-            endPos = 0;
-            do
+            foreach (Phase phase in phaseList)
             {
-                temp = parser.SplitExpand(rawGroups, endPos, out endPos);
-                if (temp != string.Empty)
+                if (phase.phaseId == phaseNumber && phase.id.Count > 1)
                 {
-                    rawGroupList.Add(temp);
-                }
-            } while (temp != string.Empty);
+                    foreach (PhaseGroup phaseGroup in phase.id)
+                    {
+                        PhaseGroup newGroup = new PhaseGroup();
+                        newGroup.DisplayIdentifier = parser.GetStringParameter(groupString, SmashggStrings.DisplayIdent);
+                        newGroup.id = parser.GetIntParameter(groupString, SmashggStrings.ID);
 
-            List<Group> groupList = new List<Group>();
+                        if (!parseURL(PhaseType.Bracket, textBoxURLSingles.Text, out json))
+                        {
+                            richTextBoxLog.Text += "Error retrieving bracket " + phaseGroup + ".\r\n";
+                            continue;
+                        }
+
+                        JObject bracketJson = JsonConvert.DeserializeObject<JObject>(json);
+
+                        parser.GetEntrants(bracketJson.SelectToken("entities.entrants"), ref entrantList);
+                        parser.GetSets(bracketJson.SelectToken("entities.sets"), ref setList);
+                    }
+                }
+            }
+
+
+            List<PhaseGroup> groupList = new List<PhaseGroup>();
             foreach (string groupString in rawGroupList)
             {
-                Group newGroup = new Group();
-                newGroup.DisplayIdentifier = parser.GetStringParameter(groupString, GG_DISPLAYIDENT);
-                newGroup.id = parser.GetIntParameter(groupString, GG_ID);
+                
 
                 groupList.Add(newGroup);
             }
@@ -563,26 +548,26 @@ namespace smashgg_api
                     if (lastWave != groupList[j].Wave)
                     {
                         richTextBoxLiquipedia.Text += "==Wave " + groupList[j].Wave + "==\r\n";
-                        richTextBoxLiquipedia.Text += LP_BOX_START + "\r\n";
+                        richTextBoxLiquipedia.Text += LpStrings.BoxStart + "\r\n";
 
                         lastWave = groupList[j].Wave;
                     }
                 }
                 else if (j == 0)    // First element of groupList
                 {
-                    richTextBoxLiquipedia.Text += LP_BOX_START + "\r\n";
+                    richTextBoxLiquipedia.Text += LpStrings.BoxStart + "\r\n";
                 }
 
                 // Pool headers
                 if (groupList[0].waveNumberDetected)
                 {
-                    richTextBoxLiquipedia.Text += LP_SORT_START + "===" + groupList[j].Wave + groupList[j].Number.ToString() + "===" + LP_SORT_END + "\r\n";
-                    richTextBoxLiquipedia.Text += LP_GROUP_START + "Bracket " + groupList[j].Wave + groupList[j].Number.ToString() + LP_GROUP_STARTWIDTH + "\r\n";
+                    richTextBoxLiquipedia.Text += LpStrings.SortStart + "===" + groupList[j].Wave + groupList[j].Number.ToString() + "===" + LpStrings.SortEnd + "\r\n";
+                    richTextBoxLiquipedia.Text += LpStrings.GroupStart + "Bracket " + groupList[j].Wave + groupList[j].Number.ToString() + LpStrings.GroupStartWidth + "\r\n";
                 }
                 else
                 {
-                    richTextBoxLiquipedia.Text += LP_SORT_START + "===" + groupList[j].Wave + groupList[j].DisplayIdentifier.ToString() + "===" + LP_SORT_END + "\r\n";
-                    richTextBoxLiquipedia.Text += LP_GROUP_START + "Bracket " + groupList[j].DisplayIdentifier.ToString() + LP_GROUP_STARTWIDTH + "\r\n";
+                    richTextBoxLiquipedia.Text += LpStrings.SortStart + "===" + groupList[j].Wave + groupList[j].DisplayIdentifier.ToString() + "===" + LpStrings.SortEnd + "\r\n";
+                    richTextBoxLiquipedia.Text += LpStrings.GroupStart + "Bracket " + groupList[j].DisplayIdentifier.ToString() + LpStrings.GroupStartWidth + "\r\n";
                 }
 
                 // Pool slots
@@ -599,19 +584,19 @@ namespace smashgg_api
                     }
 
                     Player currentPlayer = entrantList[poolData.ElementAt(i).Key];
-                    richTextBoxLiquipedia.Text += LP_SLOT_START + currentPlayer.name +
-                                                  LP_SLOT_FLAG + currentPlayer.country +
-                                                  LP_SLOT_MWIN + poolData[poolData.ElementAt(i).Key].matchesWin +
-                                                  LP_SLOT_MLOSS + poolData[poolData.ElementAt(i).Key].matchesLoss;
+                    richTextBoxLiquipedia.Text += LpStrings.SlotStart + currentPlayer.name +
+                                                  LpStrings.SlotFlag + currentPlayer.country +
+                                                  LpStrings.SlotMWin + poolData[poolData.ElementAt(i).Key].matchesWin +
+                                                  LpStrings.SlotMLoss + poolData[poolData.ElementAt(i).Key].matchesLoss;
                     if (radioButtonRoundRobin.Checked == true)
                     {
                         if (poolData[poolData.ElementAt(i).Key].matchesWin == lastWin && poolData[poolData.ElementAt(i).Key].matchesLoss == lastLoss)
                         {
-                            richTextBoxLiquipedia.Text += LP_SLOT_PLACE + lastRank; 
+                            richTextBoxLiquipedia.Text += LpStrings.SlotPlace + lastRank; 
                         }
                         else
                         {
-                            richTextBoxLiquipedia.Text += LP_SLOT_PLACE + (i + 1);
+                            richTextBoxLiquipedia.Text += LpStrings.SlotPlace + (i + 1);
                             lastRank = i + 1;
                             lastWin = poolData[poolData.ElementAt(i).Key].matchesWin;
                             lastLoss = poolData[poolData.ElementAt(i).Key].matchesLoss;
@@ -619,52 +604,52 @@ namespace smashgg_api
                     }
                     else if (poolData[poolData.ElementAt(i).Key].rank != -99)
                     {
-                        richTextBoxLiquipedia.Text += LP_SLOT_PLACE + poolData[poolData.ElementAt(i).Key].rank;
+                        richTextBoxLiquipedia.Text += LpStrings.SlotPlace + poolData[poolData.ElementAt(i).Key].rank;
                     }
                     else
                     {
-                        richTextBoxLiquipedia.Text += LP_SLOT_PLACE;
+                        richTextBoxLiquipedia.Text += LpStrings.SlotPlace;
                     }
 
                     if (advance > 0)
                     {
-                        richTextBoxLiquipedia.Text += LP_SLOT_BG + "up";
+                        richTextBoxLiquipedia.Text += LpStrings.SlotBg + "up";
                         advance--;
                     }
                     else
                     {
-                        richTextBoxLiquipedia.Text += LP_SLOT_BG + "down";
+                        richTextBoxLiquipedia.Text += LpStrings.SlotBg + "down";
                     }
 
-                    richTextBoxLiquipedia.Text += LP_SLOT_END + "\r\n";
+                    richTextBoxLiquipedia.Text += LpStrings.SlotEnd + "\r\n";
                 }
 
                 // Pool footers
-                richTextBoxLiquipedia.Text += LP_GROUP_END + "\r\n";
+                richTextBoxLiquipedia.Text += LpStrings.GroupEnd + "\r\n";
                 if (groupList[0].waveNumberDetected)
                 {
                     if (j + 1 >= groupList.Count)
                     {
-                        richTextBoxLiquipedia.Text += LP_BOX_END + "\r\n\r\n";
+                        richTextBoxLiquipedia.Text += LpStrings.BoxEnd + "\r\n\r\n";
                     }
                     else if (groupList[j + 1].Wave != lastWave)
                     {
-                        richTextBoxLiquipedia.Text += LP_BOX_END + "\r\n\r\n";
+                        richTextBoxLiquipedia.Text += LpStrings.BoxEnd + "\r\n\r\n";
                     }
                     else
                     {
-                        richTextBoxLiquipedia.Text += LP_BOX_BREAK + "\r\n\r\n";
+                        richTextBoxLiquipedia.Text += LpStrings.BoxBreak + "\r\n\r\n";
                     }
                 }
                 else
                 {
                     if (j == groupList.Count - 1)
                     {
-                        richTextBoxLiquipedia.Text += LP_BOX_END + "\r\n\r\n";
+                        richTextBoxLiquipedia.Text += LpStrings.BoxEnd + "\r\n\r\n";
                     }
                     else
                     {
-                        richTextBoxLiquipedia.Text += LP_BOX_BREAK + "\r\n\r\n";
+                        richTextBoxLiquipedia.Text += LpStrings.BoxBreak + "\r\n\r\n";
                     }
                 }
             }
@@ -804,11 +789,11 @@ namespace smashgg_api
                 // Detect what side of the bracket this set is in. If the corresponding checkbox is not checked, skip that side of the bracket
                 if (set.round > 0 && checkBoxWinnersDoubles.Checked == true)
                 {
-                    bracketSide = LP_WROUND;
+                    bracketSide = LpStrings.WRound;
                 }
                 else if (set.round < 0 && checkBoxLosersDoubles.Checked == true)
                 {
-                    bracketSide = LP_LROUND;
+                    bracketSide = LpStrings.LRound;
                 }
                 else
                 {
@@ -836,72 +821,72 @@ namespace smashgg_api
                     else if (set.entrantID1 == PLAYER_BYE)
                     {
                         // Fill in team 1 as a bye
-                        FillLPParameter(ref output, bracketSide + outputRound + LP_MATCH + set.match + LP_T1 + LP_P1, "Bye");
-                        FillLPParameter(ref output, bracketSide + outputRound + LP_MATCH + set.match + LP_T1 + LP_P2, "Bye");
+                        FillLPParameter(ref output, bracketSide + outputRound + LpStrings.Match + set.match + LpStrings.T1 + LpStrings.P1, "Bye");
+                        FillLPParameter(ref output, bracketSide + outputRound + LpStrings.Match + set.match + LpStrings.T1 + LpStrings.P2, "Bye");
 
                         // Give team 2 a checkmark
-                        FillLPParameter(ref output, bracketSide + outputRound + LP_MATCH + set.match + LP_T2 + LP_P1, teamList[set.entrantID2].player1.name);
-                        FillLPParameter(ref output, bracketSide + outputRound + LP_MATCH + set.match + LP_T2 + LP_P1 + LP_FLAG, teamList[set.entrantID2].player1.country);
-                        FillLPParameter(ref output, bracketSide + outputRound + LP_MATCH + set.match + LP_T2 + LP_P2, teamList[set.entrantID2].player2.name);
-                        FillLPParameter(ref output, bracketSide + outputRound + LP_MATCH + set.match + LP_T2 + LP_P2 + LP_FLAG, teamList[set.entrantID2].player2.country);
-                        FillLPParameter(ref output, bracketSide + outputRound + LP_MATCH + set.match + LP_T2 + LP_SCORE, LP_CHECKMARK);
+                        FillLPParameter(ref output, bracketSide + outputRound + LpStrings.Match + set.match + LpStrings.T2 + LpStrings.P1, teamList[set.entrantID2].player1.name);
+                        FillLPParameter(ref output, bracketSide + outputRound + LpStrings.Match + set.match + LpStrings.T2 + LpStrings.P1 + LpStrings.Flag, teamList[set.entrantID2].player1.country);
+                        FillLPParameter(ref output, bracketSide + outputRound + LpStrings.Match + set.match + LpStrings.T2 + LpStrings.P2, teamList[set.entrantID2].player2.name);
+                        FillLPParameter(ref output, bracketSide + outputRound + LpStrings.Match + set.match + LpStrings.T2 + LpStrings.P2 + LpStrings.Flag, teamList[set.entrantID2].player2.country);
+                        FillLPParameter(ref output, bracketSide + outputRound + LpStrings.Match + set.match + LpStrings.T2 + LpStrings.Score, LpStrings.Checkmark);
 
-                        FillLPParameter(ref output, bracketSide + outputRound + LP_MATCH + set.match + LP_WIN, "2");
+                        FillLPParameter(ref output, bracketSide + outputRound + LpStrings.Match + set.match + LpStrings.Win, "2");
                     }
                     else if (set.entrantID2 == PLAYER_BYE)
                     {
                         // Fill in team 2 as a bye
-                        FillLPParameter(ref output, bracketSide + outputRound + LP_MATCH + set.match + LP_T2 + LP_P1, "Bye");
-                        FillLPParameter(ref output, bracketSide + outputRound + LP_MATCH + set.match + LP_T2 + LP_P2, "Bye");
+                        FillLPParameter(ref output, bracketSide + outputRound + LpStrings.Match + set.match + LpStrings.T2 + LpStrings.P1, "Bye");
+                        FillLPParameter(ref output, bracketSide + outputRound + LpStrings.Match + set.match + LpStrings.T2 + LpStrings.P2, "Bye");
 
                         // Give team 1 a checkmark
-                        FillLPParameter(ref output, bracketSide + outputRound + LP_MATCH + set.match + LP_T1 + LP_P1, teamList[set.entrantID1].player1.name);
-                        FillLPParameter(ref output, bracketSide + outputRound + LP_MATCH + set.match + LP_T1 + LP_P1 + LP_FLAG, teamList[set.entrantID1].player1.country);
-                        FillLPParameter(ref output, bracketSide + outputRound + LP_MATCH + set.match + LP_T1 + LP_P2, teamList[set.entrantID1].player2.name);
-                        FillLPParameter(ref output, bracketSide + outputRound + LP_MATCH + set.match + LP_T1 + LP_P2 + LP_FLAG, teamList[set.entrantID1].player2.country);
-                        FillLPParameter(ref output, bracketSide + outputRound + LP_MATCH + set.match + LP_T1 + LP_SCORE, LP_CHECKMARK);
+                        FillLPParameter(ref output, bracketSide + outputRound + LpStrings.Match + set.match + LpStrings.T1 + LpStrings.P1, teamList[set.entrantID1].player1.name);
+                        FillLPParameter(ref output, bracketSide + outputRound + LpStrings.Match + set.match + LpStrings.T1 + LpStrings.P1 + LpStrings.Flag, teamList[set.entrantID1].player1.country);
+                        FillLPParameter(ref output, bracketSide + outputRound + LpStrings.Match + set.match + LpStrings.T1 + LpStrings.P2, teamList[set.entrantID1].player2.name);
+                        FillLPParameter(ref output, bracketSide + outputRound + LpStrings.Match + set.match + LpStrings.T1 + LpStrings.P2 + LpStrings.Flag, teamList[set.entrantID1].player2.country);
+                        FillLPParameter(ref output, bracketSide + outputRound + LpStrings.Match + set.match + LpStrings.T1 + LpStrings.Score, LpStrings.Checkmark);
 
-                        FillLPParameter(ref output, bracketSide + outputRound + LP_MATCH + set.match + LP_WIN, "1");
+                        FillLPParameter(ref output, bracketSide + outputRound + LpStrings.Match + set.match + LpStrings.Win, "1");
                     }
                     else
                     {
                         // Fill in the set normally
-                        FillLPParameter(ref output, bracketSide + outputRound + LP_MATCH + set.match + LP_T1 + LP_P1, teamList[set.entrantID1].player1.name);
-                        FillLPParameter(ref output, bracketSide + outputRound + LP_MATCH + set.match + LP_T1 + LP_P1 + LP_FLAG, teamList[set.entrantID1].player1.country);
-                        FillLPParameter(ref output, bracketSide + outputRound + LP_MATCH + set.match + LP_T1 + LP_P2, teamList[set.entrantID1].player2.name);
-                        FillLPParameter(ref output, bracketSide + outputRound + LP_MATCH + set.match + LP_T1 + LP_P2 + LP_FLAG, teamList[set.entrantID1].player2.country);
-                        FillLPParameter(ref output, bracketSide + outputRound + LP_MATCH + set.match + LP_T2 + LP_P1, teamList[set.entrantID2].player1.name);
-                        FillLPParameter(ref output, bracketSide + outputRound + LP_MATCH + set.match + LP_T2 + LP_P1 + LP_FLAG, teamList[set.entrantID2].player1.country);
-                        FillLPParameter(ref output, bracketSide + outputRound + LP_MATCH + set.match + LP_T2 + LP_P2, teamList[set.entrantID2].player2.name);
-                        FillLPParameter(ref output, bracketSide + outputRound + LP_MATCH + set.match + LP_T2 + LP_P2 + LP_FLAG, teamList[set.entrantID2].player2.country);
+                        FillLPParameter(ref output, bracketSide + outputRound + LpStrings.Match + set.match + LpStrings.T1 + LpStrings.P1, teamList[set.entrantID1].player1.name);
+                        FillLPParameter(ref output, bracketSide + outputRound + LpStrings.Match + set.match + LpStrings.T1 + LpStrings.P1 + LpStrings.Flag, teamList[set.entrantID1].player1.country);
+                        FillLPParameter(ref output, bracketSide + outputRound + LpStrings.Match + set.match + LpStrings.T1 + LpStrings.P2, teamList[set.entrantID1].player2.name);
+                        FillLPParameter(ref output, bracketSide + outputRound + LpStrings.Match + set.match + LpStrings.T1 + LpStrings.P2 + LpStrings.Flag, teamList[set.entrantID1].player2.country);
+                        FillLPParameter(ref output, bracketSide + outputRound + LpStrings.Match + set.match + LpStrings.T2 + LpStrings.P1, teamList[set.entrantID2].player1.name);
+                        FillLPParameter(ref output, bracketSide + outputRound + LpStrings.Match + set.match + LpStrings.T2 + LpStrings.P1 + LpStrings.Flag, teamList[set.entrantID2].player1.country);
+                        FillLPParameter(ref output, bracketSide + outputRound + LpStrings.Match + set.match + LpStrings.T2 + LpStrings.P2, teamList[set.entrantID2].player2.name);
+                        FillLPParameter(ref output, bracketSide + outputRound + LpStrings.Match + set.match + LpStrings.T2 + LpStrings.P2 + LpStrings.Flag, teamList[set.entrantID2].player2.country);
 
                         // Check for DQs
                         if (set.entrant1wins == -1)
                         {
-                            FillLPParameter(ref output, bracketSide + outputRound + LP_MATCH + set.match + LP_T1 + LP_SCORE, "DQ");
-                            FillLPParameter(ref output, bracketSide + outputRound + LP_MATCH + set.match + LP_T2 + LP_SCORE, LP_CHECKMARK);
+                            FillLPParameter(ref output, bracketSide + outputRound + LpStrings.Match + set.match + LpStrings.T1 + LpStrings.Score, "DQ");
+                            FillLPParameter(ref output, bracketSide + outputRound + LpStrings.Match + set.match + LpStrings.T2 + LpStrings.Score, LpStrings.Checkmark);
                         }
                         else if (set.entrant2wins == -1)
                         {
-                            FillLPParameter(ref output, bracketSide + outputRound + LP_MATCH + set.match + LP_T2 + LP_SCORE, "DQ");
-                            FillLPParameter(ref output, bracketSide + outputRound + LP_MATCH + set.match + LP_T1 + LP_SCORE, LP_CHECKMARK);
+                            FillLPParameter(ref output, bracketSide + outputRound + LpStrings.Match + set.match + LpStrings.T2 + LpStrings.Score, "DQ");
+                            FillLPParameter(ref output, bracketSide + outputRound + LpStrings.Match + set.match + LpStrings.T1 + LpStrings.Score, LpStrings.Checkmark);
                         }
                         else
                         {
                             if (set.entrant1wins != -99 && set.entrant2wins != -99)
                             {
-                                FillLPParameter(ref output, bracketSide + outputRound + LP_MATCH + set.match + LP_T1 + LP_SCORE, set.entrant1wins.ToString());
-                                FillLPParameter(ref output, bracketSide + outputRound + LP_MATCH + set.match + LP_T2 + LP_SCORE, set.entrant2wins.ToString());
+                                FillLPParameter(ref output, bracketSide + outputRound + LpStrings.Match + set.match + LpStrings.T1 + LpStrings.Score, set.entrant1wins.ToString());
+                                FillLPParameter(ref output, bracketSide + outputRound + LpStrings.Match + set.match + LpStrings.T2 + LpStrings.Score, set.entrant2wins.ToString());
                             }
                             else
                             {
                                 if (set.winner == set.entrantID1)
                                 {
-                                    FillLPParameter(ref output, bracketSide + outputRound + LP_MATCH + set.match + LP_T1 + LP_SCORE, "{{win}}");
+                                    FillLPParameter(ref output, bracketSide + outputRound + LpStrings.Match + set.match + LpStrings.T1 + LpStrings.Score, "{{win}}");
                                 }
                                 else if (set.winner == set.entrantID2)
                                 {
-                                    FillLPParameter(ref output, bracketSide + outputRound + LP_MATCH + set.match + LP_T2 + LP_SCORE, "{{win}}");
+                                    FillLPParameter(ref output, bracketSide + outputRound + LpStrings.Match + set.match + LpStrings.T2 + LpStrings.Score, "{{win}}");
                                 }
                             }
                         }
@@ -909,11 +894,11 @@ namespace smashgg_api
                         // Set the winner
                         if (set.winner == set.entrantID1)
                         {
-                            FillLPParameter(ref output, bracketSide + outputRound + LP_MATCH + set.match + LP_WIN, "1");
+                            FillLPParameter(ref output, bracketSide + outputRound + LpStrings.Match + set.match + LpStrings.Win, "1");
                         }
                         else if (set.winner == set.entrantID2)
                         {
-                            FillLPParameter(ref output, bracketSide + outputRound + LP_MATCH + set.match + LP_WIN, "2");
+                            FillLPParameter(ref output, bracketSide + outputRound + LpStrings.Match + set.match + LpStrings.Win, "2");
                         }
                     }
                 }
@@ -1100,7 +1085,7 @@ namespace smashgg_api
                                 tournament = splitURL[i + 2];
 
                                 // Retrieve tournament page and get the json into a JObject
-                                WebRequest r = WebRequest.Create(GG_URL_TOURNAMENT + tournament + GG_URL_GROUPS);
+                                WebRequest r = WebRequest.Create(SmashggStrings.UrlPrefixTourney + tournament);
                                 WebResponse resp = r.GetResponse();
                                 using (StreamReader sr = new StreamReader(resp.GetResponseStream()))
                                 {
@@ -1114,15 +1099,19 @@ namespace smashgg_api
                 }
 
                 // Get phase data
-                foreach (JToken subObject in tournamentStructure.SelectToken("entities.groups"))
+                foreach (JToken token in tournamentStructure.SelectToken("entities.groups"))
                 {
                     // If the phase already exists, append the phase group id into the id list
                     bool phaseExists = false;
                     foreach (Phase phase in phaseList)
                     {
-                        if (phase.phaseId == subObject["phaseId"].Value<int>())
+                        if (phase.phaseId == token["phaseId"].Value<int>())
                         {
-                            phase.id.Add(subObject["phaseId"].Value<int>());
+                            PhaseGroup newPhaseGroup = new PhaseGroup();
+                            newPhaseGroup.id = token[SmashggStrings.ID].Value<int>();
+                            newPhaseGroup.DisplayIdentifier = token[SmashggStrings.DisplayIdent].Value<string>();
+
+                            phase.id.Add(newPhaseGroup);
                             phaseExists = true;
                             break;
                         }
@@ -1131,12 +1120,17 @@ namespace smashgg_api
                     // If the phase does not exist, create it
                     if (!phaseExists)
                     {
+                        PhaseGroup newPhaseGroup = new PhaseGroup();
+                        newPhaseGroup.id = token["phaseId"].Value<int>();
+                        newPhaseGroup.DisplayIdentifier = token[SmashggStrings.DisplayIdent].Value<string>();
+
                         Phase newPhase = new Phase();
-                        newPhase.id.Add(subObject["id"].Value<int>());
-                        newPhase.phaseId = subObject["phaseId"].Value<int>();
-                        if (!subObject["waveId"].IsNullOrEmpty())
+                        newPhase.id.Add(newPhaseGroup);
+                        newPhase.phaseId = token["phaseId"].Value<int>();
+
+                        if (!token["waveId"].IsNullOrEmpty())
                         {
-                            newPhase.WaveId = subObject["waveId"].Value<int>();
+                            newPhase.WaveId = token["waveId"].Value<int>();
                         }
 
                         phaseList.Add(newPhase);

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace smashgg_api
 {
-    class Group
+    class PhaseGroup
     {
         private string displayIdentifier;
         private string wave;
@@ -14,7 +14,7 @@ namespace smashgg_api
         public int id;
         public bool waveNumberDetected;
 
-        public Group()
+        public PhaseGroup()
         {
             wave = string.Empty;
             number = 0;

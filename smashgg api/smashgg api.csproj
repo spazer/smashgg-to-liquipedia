@@ -71,7 +71,12 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
-    <Compile Include="Group.cs" />
+    <Compile Include="LpStrings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>LpStrings.resx</DependentUpon>
+    </Compile>
+    <Compile Include="PhaseGroup.cs" />
     <Compile Include="JsonExtensions.cs" />
     <Compile Include="Phase.cs" />
     <Compile Include="Player.cs" />
@@ -80,9 +85,18 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Set.cs" />
     <Compile Include="smashgg.cs" />
+    <Compile Include="SmashggStrings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>SmashggStrings.resx</DependentUpon>
+    </Compile>
     <Compile Include="Team.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LpStrings.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>LpStrings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -93,6 +107,10 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="SmashggStrings.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>SmashggStrings.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <None Include="Flag List.csv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

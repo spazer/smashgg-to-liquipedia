@@ -10,7 +10,7 @@ namespace smashgg_api
 
     class Phase
     {
-        public List<int> id;
+        public List<PhaseGroup> id;
         public int phaseId;
         private int waveId;
         private Type phaseType;
@@ -18,7 +18,7 @@ namespace smashgg_api
         public Phase()
         {
             phaseType = Type.Bracket;
-            id = new List<int>();
+            id = new List<PhaseGroup>();
         }
 
         public int WaveId
