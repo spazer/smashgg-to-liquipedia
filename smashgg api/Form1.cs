@@ -10,6 +10,8 @@ using System.Windows.Forms;
 using System.Net;
 using System.IO;
 using System.Runtime.InteropServices;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace smashgg_api
 {
@@ -18,6 +20,7 @@ namespace smashgg_api
         // URLs
         static string GG_URL_PHASEGROUP = "https://api.smash.gg/phase_group/";
         static string GG_URL_PHASE = "https://api.smash.gg/phase/";
+        static string GG_URL_TOURNAMENT = "https://api.smash.gg/tournament/";
         static string GG_URL_BRACKET = "?expand[]=sets&expand[]=entrants";
         static string GG_URL_GROUPS = "?expand[]=groups";
 
@@ -71,6 +74,10 @@ namespace smashgg_api
         Dictionary<int, Player> entrantList = new Dictionary<int, Player>();
         Dictionary<int, Team> teamList = new Dictionary<int, Team>();
         List<Set> setList = new List<Set>();
+        List<Phase> phaseList = new List<Phase>();
+
+        JObject tournamentStructure;
+        string tournament = string.Empty;
 
         public Form1()
         {
@@ -80,51 +87,10 @@ namespace smashgg_api
             SetCueText(textBoxURLDoubles, DEFAULT_TEXTBOX_URL_TEXT);
         }
 
-        // The number for the api is already known
-        private bool parseURL(PhaseType type, int number, out string output)
-        {
-            output = string.Empty;
-            string urlPrefix = string.Empty;
-            string urlSuffix = string.Empty;
-
-            // The offset for URL parsing depends on whether this is a pool or a bracket
-            switch (type)
-            {
-                case PhaseType.Bracket:
-                    urlPrefix = GG_URL_PHASEGROUP;
-                    urlSuffix = GG_URL_BRACKET;
-                    break;
-                case PhaseType.Pool:
-                    urlPrefix = GG_URL_PHASE;
-                    urlSuffix = GG_URL_GROUPS;
-                    break;
-                default:
-                    return false;
-            }
-
-            try
-            {
-                WebRequest r = WebRequest.Create(urlPrefix + number.ToString() + urlSuffix);
-                WebResponse resp = r.GetResponse();
-                using (StreamReader sr = new StreamReader(resp.GetResponseStream()))
-                {
-                    output = sr.ReadToEnd();
-                }
-
-                return true;
-            }
-            catch (Exception ex)
-            {
-                richTextBoxLog.Text += ex + "\r\n";
-                return false;
-            }
-        }
-
         // Retrieve webpage via api
-        private bool parseURL(PhaseType type, string url, out string output)
+        private bool parseURL(PhaseType type, string url, out string json)
         {
-            int phaseNumber = 0;
-            output = string.Empty;
+            json = string.Empty;
             string urlPrefix = string.Empty;
             string urlSuffix = string.Empty;
 
@@ -132,60 +98,47 @@ namespace smashgg_api
             switch (type)
             {
                 case PhaseType.Bracket:
-                    phaseNumber = 3;
                     urlPrefix = GG_URL_PHASEGROUP;
                     urlSuffix = GG_URL_BRACKET;
                     break;
                 case PhaseType.Pool:
-                    phaseNumber = 2;
                     urlPrefix = GG_URL_PHASE;
                     urlSuffix = GG_URL_GROUPS;
                     break;
                 default:
                     return false;
             }
-            
-            // Example of a valid URL: https://smash.gg/tournament/well-played-september/brackets/17175/72177/229921
-            bool validURL = false;
+
+            // Example of a valid URL: https://smash.gg/tournament/genesis-3/events/melee-singles/brackets/3861
             try
             {
                 string[] splitURL = url.Split(new string[1] { "/" }, StringSplitOptions.RemoveEmptyEntries);
-                for (int i = 0; i < splitURL.Length; i++)
-                {
-                    // A valid url will have smash.gg followed by tournament
-                    if (splitURL[i].ToLower() == "smash.gg")
-                    {
-                        if (splitURL[i + 1].ToLower() == "tournament")
-                        {
-                            validURL = true;
-                        }
-                    }
 
-                    // find the "brackets" section then look forwards by a certain offset to find the relevant number
-                    else if (splitURL[i].ToLower() == "brackets" && validURL == true)
+                // Take the last number in the url
+                int num;
+                if (int.TryParse(splitURL[splitURL.Length - 1], out num))
+                {
+                    // Get the phase group id using the phase id
+                    foreach (Phase phase in phaseList)
                     {
-                        if (i + phaseNumber >= splitURL.Length)
+                        if (phase.phaseId == num && phase.PhaseType == Type.Bracket)
                         {
-                            richTextBoxLog.Text += "This URL is not valid.\r\n";
-                            return false;
-                        }
-                        else
-                        {
-                            int integer;
-                            if (int.TryParse(splitURL[i + phaseNumber], out integer))
+                            // fix this hack later
+                            WebRequest r = WebRequest.Create(urlPrefix + phase.id[0] + urlSuffix);
+                            WebResponse resp = r.GetResponse();
+                            using (StreamReader sr = new StreamReader(resp.GetResponseStream()))
                             {
-                                WebRequest r = WebRequest.Create(urlPrefix + splitURL[i + phaseNumber] + urlSuffix);
-                                WebResponse resp = r.GetResponse();
-                                using (StreamReader sr = new StreamReader(resp.GetResponseStream()))
-                                {
-                                    output = sr.ReadToEnd();
-                                }
+                                json = sr.ReadToEnd();
                             }
                         }
                     }
                 }
+                else
+                {
+                    return false;
+                }
 
-                return validURL;
+                return true;
             }
             catch (Exception ex)
             {
@@ -209,23 +162,21 @@ namespace smashgg_api
             checkBoxWinnersSingles.Checked = false;
             checkBoxLosersSingles.Checked = false;
 
-            string webText = string.Empty;
+            string json = string.Empty;
             int endPos = 0;
 
-            // Get the data from smash.gg
-            if (!parseURL(PhaseType.Bracket, textBoxURLSingles.Text, out webText))
+            UpdateTournamentStructure();
+            if (!parseURL(PhaseType.Bracket, textBoxURLSingles.Text, out json))
             {
-                richTextBoxLog.Text += "Could not retrieve webpage.\r\n";
+                richTextBoxLog.Text += "Error retrieving bracket.\r\n";
                 return;
             }
 
+            JObject bracketJson = JsonConvert.DeserializeObject<JObject>(json);
+
             smashgg parser = new smashgg();
-
-            string rawEntrants = parser.ExpandOnly(webText, GG_ENTRANTS, 0, out endPos);
-            parser.GetEntrants(rawEntrants, ref entrantList);
-
-            string rawSets = parser.ExpandOnly(webText, GG_SETS, 0, out endPos);
-            parser.GetSets(rawSets, ref setList);
+            parser.GetEntrants(bracketJson.SelectToken("entities.entrants"), ref entrantList);
+            parser.GetSets(bracketJson.SelectToken("entities.sets"), ref setList);
 
             // Set values in form controls
             foreach (Set set in setList)
@@ -452,11 +403,11 @@ namespace smashgg_api
             int endPos = 0;
 
             // Get the data from smash.gg
-            if (!parseURL(PhaseType.Pool, textBoxURLSingles.Text, out webText))
-            {
-                richTextBoxLog.Text += "Could not retrieve webpage.\r\n";
-                return;
-            }
+            //if (!parseURL(PhaseType.Pool, textBoxURLSingles.Text, out webText))
+            //{
+            //    richTextBoxLog.Text += "Could not retrieve webpage.\r\n";
+            //    return;
+            //}
 
             smashgg parser = new smashgg();
 
@@ -501,7 +452,7 @@ namespace smashgg_api
             for (int j = 0; j < groupList.Count; j++) 
             {
                 // Retrieve webpage
-                parseURL(PhaseType.Bracket, groupList[j].id, out webText);
+                //parseURL(PhaseType.Bracket, groupList[j].id, out webText);
 
                 // Clear data
                 entrantList.Clear();
@@ -510,11 +461,11 @@ namespace smashgg_api
                 richTextBoxWinners.Clear();
                 richTextBoxLosers.Clear();
 
-                string rawEntrants = parser.ExpandOnly(webText, GG_ENTRANTS, 0, out endPos);
-                parser.GetEntrants(rawEntrants, ref entrantList);
+                //string rawEntrants = parser.ExpandOnly(webText, GG_ENTRANTS, 0, out endPos);
+                //parser.GetEntrants(rawEntrants, ref entrantList);
                 
-                string rawSets = parser.ExpandOnly(webText, GG_SETS, 0, out endPos);
-                parser.GetSets(rawSets, ref setList);
+                //string rawSets = parser.ExpandOnly(webText, GG_SETS, 0, out endPos);
+                //parser.GetSets(rawSets, ref setList);
 
                 Dictionary<int, PoolRecord> poolData = new Dictionary<int, PoolRecord>();
                 foreach (KeyValuePair<int,Player> entrant in entrantList)
@@ -734,19 +685,19 @@ namespace smashgg_api
             int endPos = 0;
 
             // Get the data from smash.gg
-            if (!parseURL(PhaseType.Bracket, textBoxURLDoubles.Text, out webText))
-            {
-                richTextBoxLog.Text += "Could not retrieve webpage.\r\n";
-                return;
-            }
+            //if (!parseURL(PhaseType.Bracket, textBoxURLDoubles.Text, out webText))
+            //{
+            //    richTextBoxLog.Text += "Could not retrieve webpage.\r\n";
+            //    return;
+            //}
 
             smashgg parser = new smashgg_api.smashgg();
 
-            string rawEntrants = parser.ExpandOnly(webText, GG_ENTRANTS, 0, out endPos);
-            parser.GetDoublesEntrants(rawEntrants, ref teamList);
+            //string rawEntrants = parser.ExpandOnly(webText, GG_ENTRANTS, 0, out endPos);
+            //parser.GetDoublesEntrants(rawEntrants, ref teamList);
 
-            string rawSets = parser.ExpandOnly(webText, GG_SETS, 0, out endPos);
-            parser.GetSets(rawSets, ref setList);
+            //string rawSets = parser.ExpandOnly(webText, GG_SETS, 0, out endPos);
+            //parser.GetSets(rawSets, ref setList);
 
             // Set values in form controls
             foreach (Set set in setList)
@@ -1121,5 +1072,81 @@ namespace smashgg_api
             SendMessage(control.Handle, EM_SETCUEBANNER, 0, text);
         }
         #endregion
+
+        private void UpdateTournamentStructure()
+        {
+            TextBox box;
+            if (tabControl1.SelectedTab.Text == "Singles")
+            {
+                box = textBoxURLSingles;
+            }
+            else
+            {
+                box = textBoxURLDoubles;
+            }
+
+            try
+            {
+                string[] splitURL = box.Text.Split(new string[1] { "/" }, StringSplitOptions.RemoveEmptyEntries);
+                for (int i = 0; i < splitURL.Length; i++)
+                {
+                    // A valid url will have smash.gg followed by tournament
+                    if (splitURL[i].ToLower() == "smash.gg")
+                    {
+                        if (splitURL[i + 1].ToLower() == "tournament")
+                        {
+                            if (tournament != splitURL[i + 2])
+                            {
+                                tournament = splitURL[i + 2];
+
+                                // Retrieve tournament page and get the json into a JObject
+                                WebRequest r = WebRequest.Create(GG_URL_TOURNAMENT + tournament + GG_URL_GROUPS);
+                                WebResponse resp = r.GetResponse();
+                                using (StreamReader sr = new StreamReader(resp.GetResponseStream()))
+                                {
+                                    tournamentStructure = JsonConvert.DeserializeObject<JObject>(sr.ReadToEnd());
+                                }
+
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                // Get phase data
+                foreach (JToken subObject in tournamentStructure.SelectToken("entities.groups"))
+                {
+                    // If the phase already exists, append the phase group id into the id list
+                    bool phaseExists = false;
+                    foreach (Phase phase in phaseList)
+                    {
+                        if (phase.phaseId == subObject["phaseId"].Value<int>())
+                        {
+                            phase.id.Add(subObject["phaseId"].Value<int>());
+                            phaseExists = true;
+                            break;
+                        }
+                    }
+
+                    // If the phase does not exist, create it
+                    if (!phaseExists)
+                    {
+                        Phase newPhase = new Phase();
+                        newPhase.id.Add(subObject["id"].Value<int>());
+                        newPhase.phaseId = subObject["phaseId"].Value<int>();
+                        if (!subObject["waveId"].IsNullOrEmpty())
+                        {
+                            newPhase.WaveId = subObject["waveId"].Value<int>();
+                        }
+
+                        phaseList.Add(newPhase);
+                    }
+                }
+            }
+            catch
+            {
+                richTextBoxLog.Text += "Couldn't update tournament structure.\r\n";
+            }
+        }
     }
 }

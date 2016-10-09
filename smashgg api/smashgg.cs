@@ -4,32 +4,33 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json.Linq;
 
 namespace smashgg_api
 {
     class smashgg
     {
         // General parameters
-        static string GG_ID = "\"id\":";
+        static string GG_ID = "id";
         
         // Set parameters
-        static string GG_ENTRANT1 = "\"entrant1Id\":";
-        static string GG_ENTRANT2 = "\"entrant2Id\":";
-        static string GG_WPLACEMENT = "\"wPlacement\":";
-        static string GG_LPLACEMENT = "\"lPlacement\":";
-        static string GG_ROUND = "\"round\":";
-        static string GG_ORIGINALROUND = "\"originalRound\":";
-        static string GG_ENTRANT1SCORE = "\"entrant1Score\":";
-        static string GG_ENTRANT2SCORE = "\"entrant2Score\":";
-        static string GG_WINNERID = "\"winnerId\":";
-        static string GG_ENTRANT1TYPE = "\"entrant1PrereqType\":";
-        static string GG_ENTRANT2TYPE = "\"entrant2PrereqType\":";
-        static string GG_STATE = "\"state\":";
+        static string GG_ENTRANT1 = "entrant1Id";
+        static string GG_ENTRANT2 = "entrant2Id";
+        static string GG_WPLACEMENT = "wPlacement";
+        static string GG_LPLACEMENT = "lPlacement";
+        static string GG_ROUND = "round";
+        static string GG_ORIGINALROUND = "originalRound";
+        static string GG_ENTRANT1SCORE = "entrant1Score";
+        static string GG_ENTRANT2SCORE = "entrant2Score";
+        static string GG_WINNERID = "winnerId\":";
+        static string GG_ENTRANT1TYPE = "entrant1PrereqType";
+        static string GG_ENTRANT2TYPE = "entrant2PrereqType";
+        static string GG_STATE = "state";
 
         // Player parameters
-        static string GG_GAMERTAG = "\"gamerTag\":";
-        static string GG_COUNTRY = "\"country\":";
-        static string GG_PLAYERS = "\"players\":";
+        static string GG_GAMERTAG = "gamerTag";
+        static string GG_COUNTRY = "country";
+        static string GG_PLAYERS = "players";
 
         // Misc
         static int PLAYER_BYE = -1;
@@ -158,41 +159,41 @@ namespace smashgg_api
             return input.Substring(startPos, endPos - startPos);
         }
 
-        public void GetEntrants(string input, ref Dictionary<int, Player> entrantList)
+        public void GetEntrants(JToken input, ref Dictionary<int, Player> entrantList)
         {
-            List<string> rawEntrantData = new List<string>();
-            int endPos = 0;
-            string temp;
-
             // Add bye info
             entrantList.Add(-1, new Player("Bye", string.Empty));
 
             // Divide input into manageable chunks
-            do
-            {
-                temp = SplitExpand(input, endPos, out endPos);
-                if (temp != string.Empty)
-                {
-                    rawEntrantData.Add(temp);
-                }
-            } while (temp != string.Empty);
-
-            foreach (string entrant in rawEntrantData)
+            foreach (JToken entrant in input.Children())
             {
                 Player newPlayer = new Player();
 
                 // Get player ID
-                int id = GetIntParameter(entrant, GG_ID);
-                if (id == -99) continue;
+                if (entrant[GG_ID].IsNullOrEmpty()) { continue; }
+                int id = entrant[GG_ID].Value<int>();
 
-                // Get player tag
-                newPlayer.name = GetStringParameter(entrant, GG_GAMERTAG);
-                newPlayer.name = System.Text.RegularExpressions.Regex.Unescape(newPlayer.name);
+                var players = entrant.SelectToken("mutations.players");
+                if (players.Type == JTokenType.Object)
+                {
+                    // Get player tag
+                    newPlayer.name = players.First.First[GG_GAMERTAG].Value<string>();
 
-                // Get player country
-                temp = ExpandOnly(entrant, GG_PLAYERS, 0, out endPos);
-                string country = GetStringParameter(temp, GG_COUNTRY);
-                newPlayer.country = CountryAbbreviation(country);
+                    // Get player country
+                    if (!players.First.First[GG_COUNTRY].IsNullOrEmpty())
+                    {
+                        newPlayer.country = CountryAbbreviation(players.First.First[GG_COUNTRY].Value<string>());
+
+                    }
+                }
+                else if (players.Type == JTokenType.Array)
+                {
+                    // Not implemented
+                }
+                else
+                {
+                    
+                }
 
                 entrantList.Add(id, newPlayer);
             }
@@ -252,26 +253,12 @@ namespace smashgg_api
             }
         }
 
-        public void GetSets(string input, ref List<Set> setList)
+        public void GetSets(JToken input, ref List<Set> setList)
         {
-            List<string> rawSetData = new List<string>();
-            int endPos = 0;
-            string temp;
-
-            // Divide input into manageable chunks
-            do
-            {
-                temp = SplitExpand(input, endPos, out endPos);
-                if (temp != string.Empty)
-                {
-                    rawSetData.Add(temp);
-                }
-            } while (temp != string.Empty);
-
             // Get set data
             List<int> matchCountWinners = new List<int>();
             List<int> matchCountLosers = new List<int>();
-            foreach (string set in rawSetData)
+            foreach (JToken set in input.Children())
             {
                 Set newSet = new Set();
 
@@ -279,18 +266,13 @@ namespace smashgg_api
                 newSet.entrantID1 = GetIntParameter(set, GG_ENTRANT1);
                 if (newSet.entrantID1 == -99)
                 {
-                    //if (GetStringParameter(set, GG_ENTRANT1TYPE) == "bye")
-                    //{
                     newSet.entrantID1 = PLAYER_BYE;
-                    //}
                 }
+
                 newSet.entrantID2 = GetIntParameter(set, GG_ENTRANT2);
                 if (newSet.entrantID2 == -99)
                 {
-                    //if (GetStringParameter(set, GG_ENTRANT2TYPE) == "bye")
-                    //{
                     newSet.entrantID2 = PLAYER_BYE;
-                    //}
                 }
 
                 // Get match data
@@ -336,41 +318,11 @@ namespace smashgg_api
             }
         }
 
-        public int GetIntParameter(string input, string param)
+        public int GetIntParameter(JToken token, string param)
         {
-            if (input.IndexOf(param) != -1)
+            if (!token[param].IsNullOrEmpty())
             {
-                int start = input.IndexOf(param) + param.Length;
-                int length = 0;     // Current length of int
-                int temp;
-                int output = -99;
-
-                do
-                {
-                    if (int.TryParse(input.Substring(start, length + 1), out temp))
-                    {
-                        output = temp;
-                        length++;
-                    }
-                    else
-                    {
-                        // Keep going if a dash is detected since it may be a negative number.
-                        if (input.Substring(start, length + 1) == "-")
-                        {
-                            length++;
-                        }
-                        else if (length == 0)
-                        {
-                            return -99;
-                        }
-                        else
-                        {
-                            return output;
-                        }
-                    }
-                } while (length < 15);  // Arbitrary limit
-
-                return -99;
+                return token[param].Value<int>();
             }
             else
             {
