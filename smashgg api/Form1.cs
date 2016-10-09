@@ -137,16 +137,19 @@ namespace smashgg_api
             richTextBoxLosers.Clear();
             entrantList.Clear();
             setList.Clear();
-            numericUpDownStartSingles.Value = 0;
-            numericUpDownEndSingles.Value = 0;
-            numericUpDownOffsetSingles.Value = 0;
+            numericUpDownWinnersStart.Value = 0;
+            numericUpDownWinnersEnd.Value = 0;
+            numericUpDownWinnersOffset.Value = 0;
+            numericUpDownLosersStart.Value = 0;
+            numericUpDownLosersEnd.Value = 0;
+            numericUpDownLosersOffset.Value = 0;
             checkBoxWinnersSingles.Checked = false;
             checkBoxLosersSingles.Checked = false;
 
             string json = string.Empty;
 
             UpdateTournamentStructure();
-            if (!parseURL(PhaseType.Bracket, textBoxURLSingles.Text, out json))
+            if (!retrievePhaseGroup(parseURL(textBoxURLSingles.Text), out json))
             {
                 richTextBoxLog.Text += "Error retrieving bracket.\r\n";
                 return;
@@ -166,30 +169,50 @@ namespace smashgg_api
                 if (set.round > 0)
                 {
                     checkBoxWinnersSingles.Checked = true;
+
+                    // Remember lowest round number
+                    if (numericUpDownWinnersStart.Value == 0)
+                    {
+                        numericUpDownWinnersStart.Value = round;
+                    }
+                    else if (round < numericUpDownWinnersStart.Value)
+                    {
+                        numericUpDownWinnersStart.Value = round;
+                    }
+
+                    // Remember highest round number
+                    if (numericUpDownWinnersEnd.Value == 0)
+                    {
+                        numericUpDownWinnersEnd.Value = round;
+                    }
+                    else if (round > numericUpDownWinnersEnd.Value)
+                    {
+                        numericUpDownWinnersEnd.Value = round;
+                    }
                 }
                 else if (set.round < 0)
                 {
                     checkBoxLosersSingles.Checked = true;
-                }
 
-                // Remember lowest round number
-                if (numericUpDownStartSingles.Value == 0)
-                {
-                    numericUpDownStartSingles.Value = round;
-                }
-                else if (round < numericUpDownStartSingles.Value)
-                {
-                    numericUpDownStartSingles.Value = round;
-                }
+                    // Remember lowest round number
+                    if (numericUpDownLosersStart.Value == 0)
+                    {
+                        numericUpDownLosersStart.Value = round;
+                    }
+                    else if (round < numericUpDownLosersStart.Value)
+                    {
+                        numericUpDownLosersStart.Value = round;
+                    }
 
-                // Remember highest round number
-                if (numericUpDownEndSingles.Value == 0)
-                {
-                    numericUpDownEndSingles.Value = round;
-                }
-                else if (round > numericUpDownEndSingles.Value)
-                {
-                    numericUpDownEndSingles.Value = round;
+                    // Remember highest round number
+                    if (numericUpDownLosersEnd.Value == 0)
+                    {
+                        numericUpDownLosersEnd.Value = round;
+                    }
+                    else if (round > numericUpDownLosersEnd.Value)
+                    {
+                        numericUpDownLosersEnd.Value = round;
+                    }
                 }
             }
 
@@ -258,14 +281,34 @@ namespace smashgg_api
 
             foreach (Set set in setList)
             {
+                int outputRound;
+
                 // Detect what side of the bracket this set is in. If the corresponding checkbox is not checked, skip that side of the bracket
                 if (set.round > 0 && checkBoxWinnersSingles.Checked == true)
                 {
                     bracketSide = LpStrings.WRound;
+
+                    // The set's round number must be within the bounds of the numericUpDown controls
+                    if (Math.Abs(set.round) < numericUpDownWinnersStart.Value || Math.Abs(set.round) > numericUpDownWinnersEnd.Value)
+                    {
+                        continue;
+                    }
+
+                    // Offset the output round by the number specified in the numericUpDown control
+                    outputRound = Math.Abs(set.round) + (int)numericUpDownWinnersOffset.Value;
                 }
                 else if (set.round < 0 && checkBoxLosersSingles.Checked == true)
                 {
                     bracketSide = LpStrings.LRound;
+
+                    // The set's round number must be within the bounds of the numericUpDown controls
+                    if (Math.Abs(set.round) < numericUpDownLosersStart.Value || Math.Abs(set.round) > numericUpDownLosersEnd.Value)
+                    {
+                        continue;
+                    }
+
+                    // Offset the output round by the number specified in the numericUpDown control
+                    outputRound = Math.Abs(set.round) + (int)numericUpDownLosersOffset.Value;
                 }
                 else
                 {
@@ -278,90 +321,83 @@ namespace smashgg_api
                     continue;
                 }
 
-                // The set's round number must be within the bounds of the numericUpDown controls
-                if (Math.Abs(set.round) >= numericUpDownStartSingles.Value && Math.Abs(set.round) <= numericUpDownEndSingles.Value)
+                // Check for player byes
+                if (set.entrantID1 == PLAYER_BYE && set.entrantID2 == PLAYER_BYE)
                 {
-                    // Offset the output round by the number specified in the numericUpDown control
-                    int outputRound = Math.Abs(set.round) + (int)numericUpDownOffsetSingles.Value;
+                    // If both players are byes, skip this entry
+                    continue;
+                }
+                else if (set.entrantID1 == PLAYER_BYE)
+                {
+                    // Fill in player 1 as a bye
+                    FillLPParameter(ref output, bracketSide + outputRound + LpStrings.Match + set.match + LpStrings.P1, "Bye");
 
-                    // Check for player byes
-                    if (set.entrantID1 == PLAYER_BYE && set.entrantID2 == PLAYER_BYE)
-                    {
-                        // If both players are byes, skip this entry
-                        continue;
-                    }
-                    else if (set.entrantID1 == PLAYER_BYE)
-                    {
-                        // Fill in player 1 as a bye
-                        FillLPParameter(ref output, bracketSide + outputRound + LpStrings.Match + set.match + LpStrings.P1, "Bye");
+                    // Give player 2 a checkmark
+                    FillLPParameter(ref output, bracketSide + outputRound + LpStrings.Match + set.match + LpStrings.P2, entrantList[set.entrantID2].name);
+                    FillLPParameter(ref output, bracketSide + outputRound + LpStrings.Match + set.match + LpStrings.P2 + LpStrings.Flag, entrantList[set.entrantID2].country);
+                    FillLPParameter(ref output, bracketSide + outputRound + LpStrings.Match + set.match + LpStrings.P2 + LpStrings.Score, LpStrings.Checkmark);
 
-                        // Give player 2 a checkmark
-                        FillLPParameter(ref output, bracketSide + outputRound + LpStrings.Match + set.match + LpStrings.P2, entrantList[set.entrantID2].name);
-                        FillLPParameter(ref output, bracketSide + outputRound + LpStrings.Match + set.match + LpStrings.P2 + LpStrings.Flag, entrantList[set.entrantID2].country);
+                    FillLPParameter(ref output, bracketSide + outputRound + LpStrings.Match + set.match + LpStrings.Win, "2");
+                }
+                else if (set.entrantID2 == PLAYER_BYE)
+                {
+                    // Fill in player 2 as a bye
+                    FillLPParameter(ref output, bracketSide + outputRound + LpStrings.Match + set.match + LpStrings.P2, "Bye");
+
+                    // Give player 1 a checkmark
+                    FillLPParameter(ref output, bracketSide + outputRound + LpStrings.Match + set.match + LpStrings.P1, entrantList[set.entrantID1].name);
+                    FillLPParameter(ref output, bracketSide + outputRound + LpStrings.Match + set.match + LpStrings.P1 + LpStrings.Flag, entrantList[set.entrantID1].country);
+                    FillLPParameter(ref output, bracketSide + outputRound + LpStrings.Match + set.match + LpStrings.P1 + LpStrings.Score, LpStrings.Checkmark);
+
+                    FillLPParameter(ref output, bracketSide + outputRound + LpStrings.Match + set.match + LpStrings.Win, "1");
+                }
+                else
+                {
+                    // Fill in the set normally
+                    FillLPParameter(ref output, bracketSide + outputRound + LpStrings.Match + set.match + LpStrings.P1, entrantList[set.entrantID1].name);
+                    FillLPParameter(ref output, bracketSide + outputRound + LpStrings.Match + set.match + LpStrings.P1 + LpStrings.Flag, entrantList[set.entrantID1].country);
+                    FillLPParameter(ref output, bracketSide + outputRound + LpStrings.Match + set.match + LpStrings.P2, entrantList[set.entrantID2].name);
+                    FillLPParameter(ref output, bracketSide + outputRound + LpStrings.Match + set.match + LpStrings.P2 + LpStrings.Flag, entrantList[set.entrantID2].country);
+
+                    // Check for DQs
+                    if (set.entrant1wins == -1)
+                    {
+                        FillLPParameter(ref output, bracketSide + outputRound + LpStrings.Match + set.match + LpStrings.P1 + LpStrings.Score, "DQ");
                         FillLPParameter(ref output, bracketSide + outputRound + LpStrings.Match + set.match + LpStrings.P2 + LpStrings.Score, LpStrings.Checkmark);
-
-                        FillLPParameter(ref output, bracketSide + outputRound + LpStrings.Match + set.match + LpStrings.Win, "2");
                     }
-                    else if (set.entrantID2 == PLAYER_BYE)
+                    else if (set.entrant2wins == -1)
                     {
-                        // Fill in player 2 as a bye
-                        FillLPParameter(ref output, bracketSide + outputRound + LpStrings.Match + set.match + LpStrings.P2, "Bye");
-
-                        // Give player 1 a checkmark
-                        FillLPParameter(ref output, bracketSide + outputRound + LpStrings.Match + set.match + LpStrings.P1, entrantList[set.entrantID1].name);
-                        FillLPParameter(ref output, bracketSide + outputRound + LpStrings.Match + set.match + LpStrings.P1 + LpStrings.Flag, entrantList[set.entrantID1].country);
+                        FillLPParameter(ref output, bracketSide + outputRound + LpStrings.Match + set.match + LpStrings.P2 + LpStrings.Score, "DQ");
                         FillLPParameter(ref output, bracketSide + outputRound + LpStrings.Match + set.match + LpStrings.P1 + LpStrings.Score, LpStrings.Checkmark);
-
-                        FillLPParameter(ref output, bracketSide + outputRound + LpStrings.Match + set.match + LpStrings.Win, "1");
                     }
                     else
                     {
-                        // Fill in the set normally
-                        FillLPParameter(ref output, bracketSide + outputRound + LpStrings.Match + set.match + LpStrings.P1, entrantList[set.entrantID1].name);
-                        FillLPParameter(ref output, bracketSide + outputRound + LpStrings.Match + set.match + LpStrings.P1 + LpStrings.Flag, entrantList[set.entrantID1].country);
-                        FillLPParameter(ref output, bracketSide + outputRound + LpStrings.Match + set.match + LpStrings.P2, entrantList[set.entrantID2].name);
-                        FillLPParameter(ref output, bracketSide + outputRound + LpStrings.Match + set.match + LpStrings.P2 + LpStrings.Flag, entrantList[set.entrantID2].country);
-
-                        // Check for DQs
-                        if (set.entrant1wins == -1)
+                        if (set.entrant1wins != -99 && set.entrant2wins != -99)
                         {
-                            FillLPParameter(ref output, bracketSide + outputRound + LpStrings.Match + set.match + LpStrings.P1 + LpStrings.Score, "DQ");
-                            FillLPParameter(ref output, bracketSide + outputRound + LpStrings.Match + set.match + LpStrings.P2 + LpStrings.Score, LpStrings.Checkmark);
-                        }
-                        else if (set.entrant2wins == -1)
-                        {
-                            FillLPParameter(ref output, bracketSide + outputRound + LpStrings.Match + set.match + LpStrings.P2 + LpStrings.Score, "DQ");
-                            FillLPParameter(ref output, bracketSide + outputRound + LpStrings.Match + set.match + LpStrings.P1 + LpStrings.Score, LpStrings.Checkmark);
+                            FillLPParameter(ref output, bracketSide + outputRound + LpStrings.Match + set.match + LpStrings.P1 + LpStrings.Score, set.entrant1wins.ToString());
+                            FillLPParameter(ref output, bracketSide + outputRound + LpStrings.Match + set.match + LpStrings.P2 + LpStrings.Score, set.entrant2wins.ToString());
                         }
                         else
                         {
-                            if (set.entrant1wins != -99 && set.entrant2wins != -99)
+                            if (set.winner == set.entrantID1)
                             {
-                                FillLPParameter(ref output, bracketSide + outputRound + LpStrings.Match + set.match + LpStrings.P1 + LpStrings.Score, set.entrant1wins.ToString());
-                                FillLPParameter(ref output, bracketSide + outputRound + LpStrings.Match + set.match + LpStrings.P2 + LpStrings.Score, set.entrant2wins.ToString());
+                                FillLPParameter(ref output, bracketSide + outputRound + LpStrings.Match + set.match + LpStrings.P1 + LpStrings.Score, "{{win}}");
                             }
-                            else
+                            else if (set.winner == set.entrantID2)
                             {
-                                if (set.winner == set.entrantID1)
-                                {
-                                    FillLPParameter(ref output, bracketSide + outputRound + LpStrings.Match + set.match + LpStrings.P1 + LpStrings.Score, "{{win}}");
-                                }
-                                else if (set.winner == set.entrantID2)
-                                {
-                                    FillLPParameter(ref output, bracketSide + outputRound + LpStrings.Match + set.match + LpStrings.P2 + LpStrings.Score, "{{win}}");
-                                }
+                                FillLPParameter(ref output, bracketSide + outputRound + LpStrings.Match + set.match + LpStrings.P2 + LpStrings.Score, "{{win}}");
                             }
                         }
+                    }
 
-                        // Set the winner
-                        if (set.winner == set.entrantID1)
-                        {
-                            FillLPParameter(ref output, bracketSide + outputRound + LpStrings.Match + set.match + LpStrings.Win, "1");
-                        }
-                        else if (set.winner == set.entrantID2)
-                        {
-                            FillLPParameter(ref output, bracketSide + outputRound + LpStrings.Match + set.match + LpStrings.Win, "2");
-                        }
+                    // Set the winner
+                    if (set.winner == set.entrantID1)
+                    {
+                        FillLPParameter(ref output, bracketSide + outputRound + LpStrings.Match + set.match + LpStrings.Win, "1");
+                    }
+                    else if (set.winner == set.entrantID2)
+                    {
+                        FillLPParameter(ref output, bracketSide + outputRound + LpStrings.Match + set.match + LpStrings.Win, "2");
                     }
                 }
             }
