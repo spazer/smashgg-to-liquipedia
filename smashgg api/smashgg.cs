@@ -269,14 +269,15 @@ namespace smashgg_api
                 newSet.lPlacement = GetIntParameter(set, SmashggStrings.lPlace);
 
                 // Round and match identifiers
-                newSet.round = GetIntParameter(set, SmashggStrings.OriginalRound);
-                int round = Math.Abs(newSet.round);
+                newSet.originalRound = GetIntParameter(set, SmashggStrings.OriginalRound);
+                newSet.displayRound = GetIntParameter(set, SmashggStrings.DisplayRound);
+                int round = Math.Abs(newSet.originalRound);
 
-                if (newSet.round == -99)
+                if (newSet.originalRound == -99)
                 {
                     continue;
                 }
-                else if (newSet.round > 0)
+                else if (newSet.originalRound > 0)
                 {
                     while (round > matchCountWinners.Count)
                     {
@@ -286,7 +287,7 @@ namespace smashgg_api
                     matchCountWinners[round - 1]++;
                     newSet.match = matchCountWinners[round - 1];
                 }
-                else if (newSet.round < 0)
+                else if (newSet.originalRound < 0)
                 {
                     while (round > matchCountLosers.Count)
                     {

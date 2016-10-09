@@ -79,6 +79,24 @@ namespace smashgg_api {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to displayRound.
+        /// </summary>
+        internal static string DisplayRound {
+            get {
+                return ResourceManager.GetString("DisplayRound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to entities.
+        /// </summary>
+        internal static string Entities {
+            get {
+                return ResourceManager.GetString("Entities", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to entrant1Id.
         /// </summary>
         internal static string Entrant1Id {

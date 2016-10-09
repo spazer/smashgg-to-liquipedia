@@ -13,7 +13,8 @@ namespace smashgg_api
         public int entrant1wins;
         public int entrant2wins;
         public int winner;
-        public int round;
+        public int originalRound;
+        public int displayRound;
         public int match;
         public int state;
 

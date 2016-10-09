@@ -198,4 +198,10 @@
   <data name="wPlace" xml:space="preserve">
     <value>wPlacement</value>
   </data>
+  <data name="DisplayRound" xml:space="preserve">
+    <value>displayRound</value>
+  </data>
+  <data name="Entities" xml:space="preserve">
+    <value>entities</value>
+  </data>
 </root>
