@@ -10,9 +10,6 @@ namespace smashgg_api
 {
     class smashgg
     {
-        // General parameters
-        static string GG_ID = "id";
-        
         // Set parameters
         static string GG_ENTRANT1 = "entrant1Id";
         static string GG_ENTRANT2 = "entrant2Id";
@@ -22,7 +19,7 @@ namespace smashgg_api
         static string GG_ORIGINALROUND = "originalRound";
         static string GG_ENTRANT1SCORE = "entrant1Score";
         static string GG_ENTRANT2SCORE = "entrant2Score";
-        static string GG_WINNERID = "winnerId\":";
+        static string GG_WINNERID = "winnerId";
         static string GG_ENTRANT1TYPE = "entrant1PrereqType";
         static string GG_ENTRANT2TYPE = "entrant2PrereqType";
         static string GG_STATE = "state";
@@ -170,8 +167,8 @@ namespace smashgg_api
                 Player newPlayer = new Player();
 
                 // Get player ID
-                if (entrant[GG_ID].IsNullOrEmpty()) { continue; }
-                int id = entrant[GG_ID].Value<int>();
+                if (entrant[SmashggStrings.ID].IsNullOrEmpty()) { continue; }
+                int id = entrant[SmashggStrings.ID].Value<int>();
 
                 var players = entrant.SelectToken("mutations.players");
                 if (players.Type == JTokenType.Object)
@@ -223,7 +220,7 @@ namespace smashgg_api
                 Team newTeam = new Team();
 
                 // Get team ID
-                int id = GetIntParameter(entrant, GG_ID);
+                int id = GetIntParameter(entrant, SmashggStrings.ID);
                 if (id == -99) continue;
 
                 // Get team players

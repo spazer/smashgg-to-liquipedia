@@ -129,6 +129,9 @@
   <data name="ID" xml:space="preserve">
     <value>id</value>
   </data>
+  <data name="PhaseId" xml:space="preserve">
+    <value>phaseId</value>
+  </data>
   <data name="Sets" xml:space="preserve">
     <value>sets</value>
   </data>
@@ -146,5 +149,8 @@
   </data>
   <data name="UrlSuffixPhaseGroup" xml:space="preserve">
     <value>?expand[]=sets&amp;expand[]=entrants</value>
+  </data>
+  <data name="WaveId" xml:space="preserve">
+    <value>waveId</value>
   </data>
 </root>

@@ -97,6 +97,15 @@ namespace smashgg_api {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to phaseId.
+        /// </summary>
+        internal static string PhaseId {
+            get {
+                return ResourceManager.GetString("PhaseId", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to sets.
         /// </summary>
         internal static string Sets {
@@ -147,6 +156,15 @@ namespace smashgg_api {
         internal static string UrlSuffixPhaseGroup {
             get {
                 return ResourceManager.GetString("UrlSuffixPhaseGroup", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to waveId.
+        /// </summary>
+        internal static string WaveId {
+            get {
+                return ResourceManager.GetString("WaveId", resourceCulture);
             }
         }
     }
