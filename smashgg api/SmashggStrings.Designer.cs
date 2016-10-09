@@ -61,6 +61,15 @@ namespace smashgg_api {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to country.
+        /// </summary>
+        internal static string Country {
+            get {
+                return ResourceManager.GetString("Country", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to displayIdentifier.
         /// </summary>
         internal static string DisplayIdent {
@@ -70,11 +79,74 @@ namespace smashgg_api {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to entrant1Id.
+        /// </summary>
+        internal static string Entrant1Id {
+            get {
+                return ResourceManager.GetString("Entrant1Id", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to entrant1Score.
+        /// </summary>
+        internal static string Entrant1Score {
+            get {
+                return ResourceManager.GetString("Entrant1Score", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to entrant1PrereqType.
+        /// </summary>
+        internal static string Entrant1Type {
+            get {
+                return ResourceManager.GetString("Entrant1Type", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to entrant2Id.
+        /// </summary>
+        internal static string Entrant2Id {
+            get {
+                return ResourceManager.GetString("Entrant2Id", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to entrant2Score.
+        /// </summary>
+        internal static string Entrant2Score {
+            get {
+                return ResourceManager.GetString("Entrant2Score", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to entrant2PrereqType.
+        /// </summary>
+        internal static string Entrant2Type {
+            get {
+                return ResourceManager.GetString("Entrant2Type", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to entrants.
         /// </summary>
         internal static string Entrants {
             get {
                 return ResourceManager.GetString("Entrants", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to gamerTag.
+        /// </summary>
+        internal static string Gamertag {
+            get {
+                return ResourceManager.GetString("Gamertag", resourceCulture);
             }
         }
         
@@ -97,6 +169,24 @@ namespace smashgg_api {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to lPlacement.
+        /// </summary>
+        internal static string lPlace {
+            get {
+                return ResourceManager.GetString("lPlace", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to originalRound.
+        /// </summary>
+        internal static string OriginalRound {
+            get {
+                return ResourceManager.GetString("OriginalRound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to phaseId.
         /// </summary>
         internal static string PhaseId {
@@ -106,11 +196,38 @@ namespace smashgg_api {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to players.
+        /// </summary>
+        internal static string Players {
+            get {
+                return ResourceManager.GetString("Players", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to round.
+        /// </summary>
+        internal static string Round {
+            get {
+                return ResourceManager.GetString("Round", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to sets.
         /// </summary>
         internal static string Sets {
             get {
                 return ResourceManager.GetString("Sets", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to state.
+        /// </summary>
+        internal static string State {
+            get {
+                return ResourceManager.GetString("State", resourceCulture);
             }
         }
         
@@ -165,6 +282,24 @@ namespace smashgg_api {
         internal static string WaveId {
             get {
                 return ResourceManager.GetString("WaveId", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to winnerId.
+        /// </summary>
+        internal static string Winner {
+            get {
+                return ResourceManager.GetString("Winner", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to wPlacement.
+        /// </summary>
+        internal static string wPlace {
+            get {
+                return ResourceManager.GetString("wPlace", resourceCulture);
             }
         }
     }

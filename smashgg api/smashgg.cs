@@ -10,20 +10,6 @@ namespace smashgg_api
 {
     class smashgg
     {
-        // Set parameters
-        static string GG_ENTRANT1 = "entrant1Id";
-        static string GG_ENTRANT2 = "entrant2Id";
-        static string GG_WPLACEMENT = "wPlacement";
-        static string GG_LPLACEMENT = "lPlacement";
-        static string GG_ROUND = "round";
-        static string GG_ORIGINALROUND = "originalRound";
-        static string GG_ENTRANT1SCORE = "entrant1Score";
-        static string GG_ENTRANT2SCORE = "entrant2Score";
-        static string GG_WINNERID = "winnerId";
-        static string GG_ENTRANT1TYPE = "entrant1PrereqType";
-        static string GG_ENTRANT2TYPE = "entrant2PrereqType";
-        static string GG_STATE = "state";
-
         // Player parameters
         static string GG_GAMERTAG = "gamerTag";
         static string GG_COUNTRY = "country";
@@ -260,30 +246,30 @@ namespace smashgg_api
                 Set newSet = new Set();
 
                 // Get the entrant IDs. Set the entrant as a bye if it is null.
-                newSet.entrantID1 = GetIntParameter(set, GG_ENTRANT1);
+                newSet.entrantID1 = GetIntParameter(set, SmashggStrings.Entrant1Id);
                 if (newSet.entrantID1 == -99)
                 {
                     newSet.entrantID1 = PLAYER_BYE;
                 }
 
-                newSet.entrantID2 = GetIntParameter(set, GG_ENTRANT2);
+                newSet.entrantID2 = GetIntParameter(set, SmashggStrings.Entrant2Id);
                 if (newSet.entrantID2 == -99)
                 {
                     newSet.entrantID2 = PLAYER_BYE;
                 }
 
                 // Get match data
-                newSet.entrant1wins = GetIntParameter(set, GG_ENTRANT1SCORE);
-                newSet.entrant2wins = GetIntParameter(set, GG_ENTRANT2SCORE);
-                newSet.winner = GetIntParameter(set, GG_WINNERID);
-                newSet.state = GetIntParameter(set, GG_STATE);
+                newSet.entrant1wins = GetIntParameter(set, SmashggStrings.Entrant1Score);
+                newSet.entrant2wins = GetIntParameter(set, SmashggStrings.Entrant2Score);
+                newSet.winner = GetIntParameter(set, SmashggStrings.Winner);
+                newSet.state = GetIntParameter(set, SmashggStrings.State);
 
                 // Bracket rank
-                newSet.wPlacement = GetIntParameter(set, GG_WPLACEMENT);
-                newSet.lPlacement = GetIntParameter(set, GG_LPLACEMENT);
+                newSet.wPlacement = GetIntParameter(set, SmashggStrings.wPlace);
+                newSet.lPlacement = GetIntParameter(set, SmashggStrings.lPlace);
 
                 // Round and match identifiers
-                newSet.round = GetIntParameter(set, GG_ORIGINALROUND);
+                newSet.round = GetIntParameter(set, SmashggStrings.OriginalRound);
                 int round = Math.Abs(newSet.round);
 
                 if (newSet.round == -99)

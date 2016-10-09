@@ -117,11 +117,35 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Country" xml:space="preserve">
+    <value>country</value>
+  </data>
   <data name="DisplayIdent" xml:space="preserve">
     <value>displayIdentifier</value>
   </data>
+  <data name="Entrant1Id" xml:space="preserve">
+    <value>entrant1Id</value>
+  </data>
+  <data name="Entrant1Score" xml:space="preserve">
+    <value>entrant1Score</value>
+  </data>
+  <data name="Entrant1Type" xml:space="preserve">
+    <value>entrant1PrereqType</value>
+  </data>
+  <data name="Entrant2Id" xml:space="preserve">
+    <value>entrant2Id</value>
+  </data>
+  <data name="Entrant2Score" xml:space="preserve">
+    <value>entrant2Score</value>
+  </data>
+  <data name="Entrant2Type" xml:space="preserve">
+    <value>entrant2PrereqType</value>
+  </data>
   <data name="Entrants" xml:space="preserve">
     <value>entrants</value>
+  </data>
+  <data name="Gamertag" xml:space="preserve">
+    <value>gamerTag</value>
   </data>
   <data name="Groups" xml:space="preserve">
     <value>groups</value>
@@ -129,11 +153,26 @@
   <data name="ID" xml:space="preserve">
     <value>id</value>
   </data>
+  <data name="lPlace" xml:space="preserve">
+    <value>lPlacement</value>
+  </data>
+  <data name="OriginalRound" xml:space="preserve">
+    <value>originalRound</value>
+  </data>
   <data name="PhaseId" xml:space="preserve">
     <value>phaseId</value>
   </data>
+  <data name="Players" xml:space="preserve">
+    <value>players</value>
+  </data>
+  <data name="Round" xml:space="preserve">
+    <value>round</value>
+  </data>
   <data name="Sets" xml:space="preserve">
     <value>sets</value>
+  </data>
+  <data name="State" xml:space="preserve">
+    <value>state</value>
   </data>
   <data name="UrlPrefixPhase" xml:space="preserve">
     <value>https://api.smash.gg/phase/</value>
@@ -152,5 +191,11 @@
   </data>
   <data name="WaveId" xml:space="preserve">
     <value>waveId</value>
+  </data>
+  <data name="Winner" xml:space="preserve">
+    <value>winnerId</value>
+  </data>
+  <data name="wPlace" xml:space="preserve">
+    <value>wPlacement</value>
   </data>
 </root>
