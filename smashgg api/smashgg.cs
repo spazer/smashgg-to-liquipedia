@@ -166,7 +166,10 @@ namespace smashgg_api
                     if (!players.First.First[GG_COUNTRY].IsNullOrEmpty())
                     {
                         newPlayer.country = CountryAbbreviation(players.First.First[GG_COUNTRY].Value<string>());
-
+                    }
+                    else
+                    {
+                        newPlayer.country = string.Empty;
                     }
                 }
                 else if (players.Type == JTokenType.Array)

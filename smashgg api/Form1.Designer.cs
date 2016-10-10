@@ -38,7 +38,7 @@
             this.numericUpDownAdvance = new System.Windows.Forms.NumericUpDown();
             this.richTextBoxWinners = new System.Windows.Forms.RichTextBox();
             this.richTextBoxLosers = new System.Windows.Forms.RichTextBox();
-            this.richTextBoxLiquipedia = new System.Windows.Forms.RichTextBox();
+            this.richTextBoxLpOutput = new System.Windows.Forms.RichTextBox();
             this.buttonFill = new System.Windows.Forms.Button();
             this.buttonFillDoubles = new System.Windows.Forms.Button();
             this.richTextBoxLog = new System.Windows.Forms.RichTextBox();
@@ -48,12 +48,6 @@
             this.checkBoxFillUnfinishedSingles = new System.Windows.Forms.CheckBox();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPageSingles = new System.Windows.Forms.TabPage();
-            this.numericUpDownWinnersStart = new System.Windows.Forms.NumericUpDown();
-            this.label4 = new System.Windows.Forms.Label();
-            this.numericUpDownWinnersEnd = new System.Windows.Forms.NumericUpDown();
-            this.label3 = new System.Windows.Forms.Label();
-            this.numericUpDownWinnersOffset = new System.Windows.Forms.NumericUpDown();
-            this.label2 = new System.Windows.Forms.Label();
             this.tabPageDoubles = new System.Windows.Forms.TabPage();
             this.checkBoxFillUnfinishedDoubles = new System.Windows.Forms.CheckBox();
             this.checkBoxLosersDoubles = new System.Windows.Forms.CheckBox();
@@ -66,6 +60,12 @@
             this.label8 = new System.Windows.Forms.Label();
             this.buttonDoubles = new System.Windows.Forms.Button();
             this.textBoxURLDoubles = new System.Windows.Forms.TextBox();
+            this.numericUpDownWinnersStart = new System.Windows.Forms.NumericUpDown();
+            this.label4 = new System.Windows.Forms.Label();
+            this.numericUpDownWinnersEnd = new System.Windows.Forms.NumericUpDown();
+            this.label3 = new System.Windows.Forms.Label();
+            this.numericUpDownWinnersOffset = new System.Windows.Forms.NumericUpDown();
+            this.label2 = new System.Windows.Forms.Label();
             this.label9 = new System.Windows.Forms.Label();
             this.label10 = new System.Windows.Forms.Label();
             this.numericUpDownLosersStart = new System.Windows.Forms.NumericUpDown();
@@ -74,16 +74,20 @@
             this.label12 = new System.Windows.Forms.Label();
             this.label13 = new System.Windows.Forms.Label();
             this.numericUpDownLosersEnd = new System.Windows.Forms.NumericUpDown();
+            this.richTextBoxExLpWinnersBracket = new RichTextBoxEx();
+            this.richTextBoxExLpLosersBracket = new RichTextBoxEx();
+            this.checkBoxLockWinners = new System.Windows.Forms.CheckBox();
+            this.checkBoxLockLosers = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAdvance)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabPageSingles.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownWinnersStart)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownWinnersEnd)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownWinnersOffset)).BeginInit();
             this.tabPageDoubles.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownStartDoubles)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownEndDoubles)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownOffsetDoubles)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownWinnersStart)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownWinnersEnd)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownWinnersOffset)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownLosersStart)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownLosersOffset)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownLosersEnd)).BeginInit();
@@ -187,14 +191,14 @@
             this.richTextBoxLosers.TabIndex = 0;
             this.richTextBoxLosers.Text = "";
             // 
-            // richTextBoxLiquipedia
+            // richTextBoxLpOutput
             // 
-            this.richTextBoxLiquipedia.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.richTextBoxLiquipedia.Location = new System.Drawing.Point(12, 367);
-            this.richTextBoxLiquipedia.Name = "richTextBoxLiquipedia";
-            this.richTextBoxLiquipedia.Size = new System.Drawing.Size(691, 170);
-            this.richTextBoxLiquipedia.TabIndex = 0;
-            this.richTextBoxLiquipedia.Text = "";
+            this.richTextBoxLpOutput.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.richTextBoxLpOutput.Location = new System.Drawing.Point(12, 524);
+            this.richTextBoxLpOutput.Name = "richTextBoxLpOutput";
+            this.richTextBoxLpOutput.Size = new System.Drawing.Size(691, 154);
+            this.richTextBoxLpOutput.TabIndex = 0;
+            this.richTextBoxLpOutput.Text = "";
             // 
             // buttonFill
             // 
@@ -220,7 +224,7 @@
             // 
             this.richTextBoxLog.Location = new System.Drawing.Point(709, 368);
             this.richTextBoxLog.Name = "richTextBoxLog";
-            this.richTextBoxLog.Size = new System.Drawing.Size(225, 169);
+            this.richTextBoxLog.Size = new System.Drawing.Size(225, 310);
             this.richTextBoxLog.TabIndex = 4;
             this.richTextBoxLog.Text = "";
             // 
@@ -294,64 +298,6 @@
             this.tabPageSingles.TabIndex = 0;
             this.tabPageSingles.Text = "Singles";
             this.tabPageSingles.UseVisualStyleBackColor = true;
-            // 
-            // numericUpDownWinnersStart
-            // 
-            this.numericUpDownWinnersStart.Location = new System.Drawing.Point(64, 187);
-            this.numericUpDownWinnersStart.Name = "numericUpDownWinnersStart";
-            this.numericUpDownWinnersStart.Size = new System.Drawing.Size(38, 20);
-            this.numericUpDownWinnersStart.TabIndex = 3;
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(149, 170);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(35, 13);
-            this.label4.TabIndex = 6;
-            this.label4.Text = "Offset";
-            // 
-            // numericUpDownWinnersEnd
-            // 
-            this.numericUpDownWinnersEnd.Location = new System.Drawing.Point(108, 187);
-            this.numericUpDownWinnersEnd.Name = "numericUpDownWinnersEnd";
-            this.numericUpDownWinnersEnd.Size = new System.Drawing.Size(38, 20);
-            this.numericUpDownWinnersEnd.TabIndex = 3;
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(105, 170);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(26, 13);
-            this.label3.TabIndex = 6;
-            this.label3.Text = "End";
-            // 
-            // numericUpDownWinnersOffset
-            // 
-            this.numericUpDownWinnersOffset.Location = new System.Drawing.Point(152, 187);
-            this.numericUpDownWinnersOffset.Maximum = new decimal(new int[] {
-            20,
-            0,
-            0,
-            0});
-            this.numericUpDownWinnersOffset.Minimum = new decimal(new int[] {
-            20,
-            0,
-            0,
-            -2147483648});
-            this.numericUpDownWinnersOffset.Name = "numericUpDownWinnersOffset";
-            this.numericUpDownWinnersOffset.Size = new System.Drawing.Size(38, 20);
-            this.numericUpDownWinnersOffset.TabIndex = 3;
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(61, 170);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(29, 13);
-            this.label2.TabIndex = 6;
-            this.label2.Text = "Start";
             // 
             // tabPageDoubles
             // 
@@ -480,6 +426,64 @@
             this.textBoxURLDoubles.Size = new System.Drawing.Size(187, 20);
             this.textBoxURLDoubles.TabIndex = 2;
             // 
+            // numericUpDownWinnersStart
+            // 
+            this.numericUpDownWinnersStart.Location = new System.Drawing.Point(64, 187);
+            this.numericUpDownWinnersStart.Name = "numericUpDownWinnersStart";
+            this.numericUpDownWinnersStart.Size = new System.Drawing.Size(38, 20);
+            this.numericUpDownWinnersStart.TabIndex = 3;
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(149, 170);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(35, 13);
+            this.label4.TabIndex = 6;
+            this.label4.Text = "Offset";
+            // 
+            // numericUpDownWinnersEnd
+            // 
+            this.numericUpDownWinnersEnd.Location = new System.Drawing.Point(108, 187);
+            this.numericUpDownWinnersEnd.Name = "numericUpDownWinnersEnd";
+            this.numericUpDownWinnersEnd.Size = new System.Drawing.Size(38, 20);
+            this.numericUpDownWinnersEnd.TabIndex = 3;
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(105, 170);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(26, 13);
+            this.label3.TabIndex = 6;
+            this.label3.Text = "End";
+            // 
+            // numericUpDownWinnersOffset
+            // 
+            this.numericUpDownWinnersOffset.Location = new System.Drawing.Point(152, 187);
+            this.numericUpDownWinnersOffset.Maximum = new decimal(new int[] {
+            20,
+            0,
+            0,
+            0});
+            this.numericUpDownWinnersOffset.Minimum = new decimal(new int[] {
+            20,
+            0,
+            0,
+            -2147483648});
+            this.numericUpDownWinnersOffset.Name = "numericUpDownWinnersOffset";
+            this.numericUpDownWinnersOffset.Size = new System.Drawing.Size(38, 20);
+            this.numericUpDownWinnersOffset.TabIndex = 3;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(61, 170);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(29, 13);
+            this.label2.TabIndex = 6;
+            this.label2.Text = "Start";
+            // 
             // label9
             // 
             this.label9.AutoSize = true;
@@ -556,11 +560,55 @@
             this.numericUpDownLosersEnd.Size = new System.Drawing.Size(38, 20);
             this.numericUpDownLosersEnd.TabIndex = 9;
             // 
+            // richTextBoxExLpWinnersBracket
+            // 
+            this.richTextBoxExLpWinnersBracket.Cue = null;
+            this.richTextBoxExLpWinnersBracket.Location = new System.Drawing.Point(13, 367);
+            this.richTextBoxExLpWinnersBracket.Name = "richTextBoxExLpWinnersBracket";
+            this.richTextBoxExLpWinnersBracket.Size = new System.Drawing.Size(341, 150);
+            this.richTextBoxExLpWinnersBracket.TabIndex = 13;
+            this.richTextBoxExLpWinnersBracket.Text = "";
+            // 
+            // richTextBoxExLpLosersBracket
+            // 
+            this.richTextBoxExLpLosersBracket.Cue = null;
+            this.richTextBoxExLpLosersBracket.Location = new System.Drawing.Point(360, 368);
+            this.richTextBoxExLpLosersBracket.Name = "richTextBoxExLpLosersBracket";
+            this.richTextBoxExLpLosersBracket.Size = new System.Drawing.Size(341, 150);
+            this.richTextBoxExLpLosersBracket.TabIndex = 13;
+            this.richTextBoxExLpLosersBracket.Text = "";
+            // 
+            // checkBoxLockWinners
+            // 
+            this.checkBoxLockWinners.AutoSize = true;
+            this.checkBoxLockWinners.Location = new System.Drawing.Point(196, 188);
+            this.checkBoxLockWinners.Name = "checkBoxLockWinners";
+            this.checkBoxLockWinners.Size = new System.Drawing.Size(50, 17);
+            this.checkBoxLockWinners.TabIndex = 14;
+            this.checkBoxLockWinners.Text = "Lock";
+            this.checkBoxLockWinners.UseVisualStyleBackColor = true;
+            this.checkBoxLockWinners.CheckedChanged += new System.EventHandler(this.checkBoxLock_CheckedChanged);
+            // 
+            // checkBoxLockLosers
+            // 
+            this.checkBoxLockLosers.AutoSize = true;
+            this.checkBoxLockLosers.Location = new System.Drawing.Point(534, 188);
+            this.checkBoxLockLosers.Name = "checkBoxLockLosers";
+            this.checkBoxLockLosers.Size = new System.Drawing.Size(50, 17);
+            this.checkBoxLockLosers.TabIndex = 14;
+            this.checkBoxLockLosers.Text = "Lock";
+            this.checkBoxLockLosers.UseVisualStyleBackColor = true;
+            this.checkBoxLockLosers.CheckedChanged += new System.EventHandler(this.checkBoxLock_CheckedChanged);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(948, 551);
+            this.ClientSize = new System.Drawing.Size(948, 690);
+            this.Controls.Add(this.checkBoxLockLosers);
+            this.Controls.Add(this.checkBoxLockWinners);
+            this.Controls.Add(this.richTextBoxExLpWinnersBracket);
+            this.Controls.Add(this.richTextBoxExLpLosersBracket);
             this.Controls.Add(this.numericUpDownLosersStart);
             this.Controls.Add(this.label11);
             this.Controls.Add(this.numericUpDownLosersOffset);
@@ -570,7 +618,7 @@
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.richTextBoxLog);
-            this.Controls.Add(this.richTextBoxLiquipedia);
+            this.Controls.Add(this.richTextBoxLpOutput);
             this.Controls.Add(this.richTextBoxLosers);
             this.Controls.Add(this.richTextBoxWinners);
             this.Controls.Add(this.richTextBoxEntrants);
@@ -588,14 +636,14 @@
             this.tabControl1.ResumeLayout(false);
             this.tabPageSingles.ResumeLayout(false);
             this.tabPageSingles.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownWinnersStart)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownWinnersEnd)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownWinnersOffset)).EndInit();
             this.tabPageDoubles.ResumeLayout(false);
             this.tabPageDoubles.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownStartDoubles)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownEndDoubles)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownOffsetDoubles)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownWinnersStart)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownWinnersEnd)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownWinnersOffset)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownLosersStart)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownLosersOffset)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownLosersEnd)).EndInit();
@@ -616,7 +664,7 @@
         private System.Windows.Forms.NumericUpDown numericUpDownAdvance;
         private System.Windows.Forms.RichTextBox richTextBoxWinners;
         private System.Windows.Forms.RichTextBox richTextBoxLosers;
-        private System.Windows.Forms.RichTextBox richTextBoxLiquipedia;
+        private System.Windows.Forms.RichTextBox richTextBoxLpOutput;
         private System.Windows.Forms.Button buttonFill;
         private System.Windows.Forms.Button buttonFillDoubles;
         private System.Windows.Forms.RichTextBox richTextBoxLog;
@@ -652,6 +700,10 @@
         private System.Windows.Forms.Label label12;
         private System.Windows.Forms.Label label13;
         private System.Windows.Forms.NumericUpDown numericUpDownLosersEnd;
+        private RichTextBoxEx richTextBoxExLpLosersBracket;
+        private RichTextBoxEx richTextBoxExLpWinnersBracket;
+        private System.Windows.Forms.CheckBox checkBoxLockWinners;
+        private System.Windows.Forms.CheckBox checkBoxLockLosers;
     }
 }
 
