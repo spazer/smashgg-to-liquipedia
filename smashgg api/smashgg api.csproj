@@ -98,7 +98,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>SmashggStrings.resx</DependentUpon>
     </Compile>
-    <Compile Include="Team.cs" />
+    <Compile Include="Entrant.cs" />
     <EmbeddedResource Include="FormStrings.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>FormStrings.Designer.cs</LastGenOutput>

@@ -196,6 +196,15 @@ namespace smashgg_api {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to mutations.
+        /// </summary>
+        internal static string Mutations {
+            get {
+                return ResourceManager.GetString("Mutations", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to originalRound.
         /// </summary>
         internal static string OriginalRound {
@@ -205,11 +214,29 @@ namespace smashgg_api {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to participantIds.
+        /// </summary>
+        internal static string ParticipantIds {
+            get {
+                return ResourceManager.GetString("ParticipantIds", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to phaseId.
         /// </summary>
         internal static string PhaseId {
             get {
                 return ResourceManager.GetString("PhaseId", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to playerIds.
+        /// </summary>
+        internal static string PlayerIds {
+            get {
+                return ResourceManager.GetString("PlayerIds", resourceCulture);
             }
         }
         

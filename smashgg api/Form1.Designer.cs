@@ -52,12 +52,6 @@
             this.checkBoxFillUnfinishedDoubles = new System.Windows.Forms.CheckBox();
             this.checkBoxLosersDoubles = new System.Windows.Forms.CheckBox();
             this.checkBoxWinnersDoubles = new System.Windows.Forms.CheckBox();
-            this.numericUpDownStartDoubles = new System.Windows.Forms.NumericUpDown();
-            this.label6 = new System.Windows.Forms.Label();
-            this.numericUpDownEndDoubles = new System.Windows.Forms.NumericUpDown();
-            this.label7 = new System.Windows.Forms.Label();
-            this.numericUpDownOffsetDoubles = new System.Windows.Forms.NumericUpDown();
-            this.label8 = new System.Windows.Forms.Label();
             this.buttonDoubles = new System.Windows.Forms.Button();
             this.textBoxURLDoubles = new System.Windows.Forms.TextBox();
             this.numericUpDownWinnersStart = new System.Windows.Forms.NumericUpDown();
@@ -82,9 +76,6 @@
             this.tabControl1.SuspendLayout();
             this.tabPageSingles.SuspendLayout();
             this.tabPageDoubles.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownStartDoubles)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownEndDoubles)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownOffsetDoubles)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownWinnersStart)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownWinnersEnd)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownWinnersOffset)).BeginInit();
@@ -304,12 +295,6 @@
             this.tabPageDoubles.Controls.Add(this.checkBoxFillUnfinishedDoubles);
             this.tabPageDoubles.Controls.Add(this.checkBoxLosersDoubles);
             this.tabPageDoubles.Controls.Add(this.checkBoxWinnersDoubles);
-            this.tabPageDoubles.Controls.Add(this.numericUpDownStartDoubles);
-            this.tabPageDoubles.Controls.Add(this.label6);
-            this.tabPageDoubles.Controls.Add(this.numericUpDownEndDoubles);
-            this.tabPageDoubles.Controls.Add(this.label7);
-            this.tabPageDoubles.Controls.Add(this.numericUpDownOffsetDoubles);
-            this.tabPageDoubles.Controls.Add(this.label8);
             this.tabPageDoubles.Controls.Add(this.buttonDoubles);
             this.tabPageDoubles.Controls.Add(this.textBoxURLDoubles);
             this.tabPageDoubles.Controls.Add(this.buttonFillDoubles);
@@ -350,64 +335,6 @@
             this.checkBoxWinnersDoubles.TabIndex = 16;
             this.checkBoxWinnersDoubles.Text = "Winners";
             this.checkBoxWinnersDoubles.UseVisualStyleBackColor = true;
-            // 
-            // numericUpDownStartDoubles
-            // 
-            this.numericUpDownStartDoubles.Location = new System.Drawing.Point(3, 181);
-            this.numericUpDownStartDoubles.Name = "numericUpDownStartDoubles";
-            this.numericUpDownStartDoubles.Size = new System.Drawing.Size(38, 20);
-            this.numericUpDownStartDoubles.TabIndex = 8;
-            // 
-            // label6
-            // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(88, 164);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(35, 13);
-            this.label6.TabIndex = 11;
-            this.label6.Text = "Offset";
-            // 
-            // numericUpDownEndDoubles
-            // 
-            this.numericUpDownEndDoubles.Location = new System.Drawing.Point(47, 181);
-            this.numericUpDownEndDoubles.Name = "numericUpDownEndDoubles";
-            this.numericUpDownEndDoubles.Size = new System.Drawing.Size(38, 20);
-            this.numericUpDownEndDoubles.TabIndex = 9;
-            // 
-            // label7
-            // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(44, 164);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(26, 13);
-            this.label7.TabIndex = 12;
-            this.label7.Text = "End";
-            // 
-            // numericUpDownOffsetDoubles
-            // 
-            this.numericUpDownOffsetDoubles.Location = new System.Drawing.Point(91, 181);
-            this.numericUpDownOffsetDoubles.Maximum = new decimal(new int[] {
-            20,
-            0,
-            0,
-            0});
-            this.numericUpDownOffsetDoubles.Minimum = new decimal(new int[] {
-            20,
-            0,
-            0,
-            -2147483648});
-            this.numericUpDownOffsetDoubles.Name = "numericUpDownOffsetDoubles";
-            this.numericUpDownOffsetDoubles.Size = new System.Drawing.Size(38, 20);
-            this.numericUpDownOffsetDoubles.TabIndex = 10;
-            // 
-            // label8
-            // 
-            this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(0, 164);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(29, 13);
-            this.label8.TabIndex = 13;
-            this.label8.Text = "Start";
             // 
             // buttonDoubles
             // 
@@ -638,9 +565,6 @@
             this.tabPageSingles.PerformLayout();
             this.tabPageDoubles.ResumeLayout(false);
             this.tabPageDoubles.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownStartDoubles)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownEndDoubles)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownOffsetDoubles)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownWinnersStart)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownWinnersEnd)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownWinnersOffset)).EndInit();
@@ -684,12 +608,6 @@
         private System.Windows.Forms.CheckBox checkBoxFillUnfinishedDoubles;
         private System.Windows.Forms.CheckBox checkBoxLosersDoubles;
         private System.Windows.Forms.CheckBox checkBoxWinnersDoubles;
-        private System.Windows.Forms.NumericUpDown numericUpDownStartDoubles;
-        private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.NumericUpDown numericUpDownEndDoubles;
-        private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.NumericUpDown numericUpDownOffsetDoubles;
-        private System.Windows.Forms.Label label8;
         private System.Windows.Forms.Button buttonDoubles;
         private System.Windows.Forms.TextBox textBoxURLDoubles;
         private System.Windows.Forms.Label label9;

@@ -204,4 +204,13 @@
   <data name="Entities" xml:space="preserve">
     <value>entities</value>
   </data>
+  <data name="Mutations" xml:space="preserve">
+    <value>mutations</value>
+  </data>
+  <data name="ParticipantIds" xml:space="preserve">
+    <value>participantIds</value>
+  </data>
+  <data name="PlayerIds" xml:space="preserve">
+    <value>playerIds</value>
+  </data>
 </root>
