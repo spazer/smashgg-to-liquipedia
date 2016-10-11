@@ -4,9 +4,9 @@ Queries the smash.gg api for data to put in Liquipedia pages
 ## Getting the data
 1. Pick the singles or doubles tab (Doubles pools is not supported yet)
 2. Copy paste a valid smash.gg URL into the URL textbox.
-  * **Singles bracket example:** https://smash.gg/tournament/shine-2016-1/brackets/12013/62944/203287
-  * **Singles pools example:** https://smash.gg/tournament/shine-2016-1/brackets/12013/19006
-  * **Doubles bracket example:** https://smash.gg/tournament/shine-2016-1/brackets/12014/62936/203272
+  * **Singles bracket example:** https://smash.gg/tournament/the-big-house-6/events/melee-singles/brackets/76016
+  * **Singles pools example:** https://smash.gg/tournament/the-big-house-6/events/melee-singles/brackets/76014
+  * **Doubles bracket example:** https://smash.gg/tournament/the-big-house-6/events/melee-doubles/brackets/76019
 3. If you're doing pools, click on **Bracket Pools** or **Round Robin** depending on the pool type. **Advance** denotes the number of players that advance to the next phase of the tournament. 
 4. Press **Get Bracket** for singles, **Get Doubles** for doubles, or **Get Phase** for pools.
 
