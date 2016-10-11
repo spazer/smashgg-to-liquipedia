@@ -195,4 +195,19 @@
   <data name="WRound" xml:space="preserve">
     <value>r</value>
   </data>
+  <data name="DoublesSlotP1" xml:space="preserve">
+    <value>|p1=</value>
+  </data>
+  <data name="DoublesSlotP1Flag" xml:space="preserve">
+    <value>|p1flag=</value>
+  </data>
+  <data name="DoublesSlotP2" xml:space="preserve">
+    <value>|p2=</value>
+  </data>
+  <data name="DoublesSlotP2Flag" xml:space="preserve">
+    <value>|p2flag=</value>
+  </data>
+  <data name="DoublesSlotStart" xml:space="preserve">
+    <value>{{DoublesGroupTableSlot</value>
+  </data>
 </root>

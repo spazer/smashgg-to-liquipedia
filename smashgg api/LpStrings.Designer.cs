@@ -97,6 +97,51 @@ namespace smashgg_api {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to |p1=.
+        /// </summary>
+        internal static string DoublesSlotP1 {
+            get {
+                return ResourceManager.GetString("DoublesSlotP1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to |p1flag=.
+        /// </summary>
+        internal static string DoublesSlotP1Flag {
+            get {
+                return ResourceManager.GetString("DoublesSlotP1Flag", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to |p2=.
+        /// </summary>
+        internal static string DoublesSlotP2 {
+            get {
+                return ResourceManager.GetString("DoublesSlotP2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to |p2flag=.
+        /// </summary>
+        internal static string DoublesSlotP2Flag {
+            get {
+                return ResourceManager.GetString("DoublesSlotP2Flag", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {{DoublesGroupTableSlot.
+        /// </summary>
+        internal static string DoublesSlotStart {
+            get {
+                return ResourceManager.GetString("DoublesSlotStart", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to flag.
         /// </summary>
         internal static string Flag {

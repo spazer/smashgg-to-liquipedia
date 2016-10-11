@@ -30,12 +30,12 @@
         {
             this.richTextBoxEntrants = new System.Windows.Forms.RichTextBox();
             this.textBoxURLSingles = new System.Windows.Forms.TextBox();
-            this.buttonBracket = new System.Windows.Forms.Button();
-            this.buttonPhase = new System.Windows.Forms.Button();
-            this.radioButtonBracket = new System.Windows.Forms.RadioButton();
-            this.radioButtonRoundRobin = new System.Windows.Forms.RadioButton();
+            this.buttonSingles = new System.Windows.Forms.Button();
+            this.buttonPhaseSingles = new System.Windows.Forms.Button();
+            this.radioButtonBracketSingles = new System.Windows.Forms.RadioButton();
+            this.radioButtonRRSingles = new System.Windows.Forms.RadioButton();
             this.label5 = new System.Windows.Forms.Label();
-            this.numericUpDownAdvance = new System.Windows.Forms.NumericUpDown();
+            this.numericUpDownAdvanceSingles = new System.Windows.Forms.NumericUpDown();
             this.richTextBoxWinners = new System.Windows.Forms.RichTextBox();
             this.richTextBoxLosers = new System.Windows.Forms.RichTextBox();
             this.richTextBoxLpOutput = new System.Windows.Forms.RichTextBox();
@@ -68,11 +68,16 @@
             this.label12 = new System.Windows.Forms.Label();
             this.label13 = new System.Windows.Forms.Label();
             this.numericUpDownLosersEnd = new System.Windows.Forms.NumericUpDown();
-            this.richTextBoxExLpWinnersBracket = new RichTextBoxEx();
-            this.richTextBoxExLpLosersBracket = new RichTextBoxEx();
             this.checkBoxLockWinners = new System.Windows.Forms.CheckBox();
             this.checkBoxLockLosers = new System.Windows.Forms.CheckBox();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAdvance)).BeginInit();
+            this.richTextBoxExLpWinnersBracket = new RichTextBoxEx();
+            this.richTextBoxExLpLosersBracket = new RichTextBoxEx();
+            this.numericUpDownAdvanceDoubles = new System.Windows.Forms.NumericUpDown();
+            this.radioButtonRRDoubles = new System.Windows.Forms.RadioButton();
+            this.radioButtonBracketDoubles = new System.Windows.Forms.RadioButton();
+            this.buttonPhaseDoubles = new System.Windows.Forms.Button();
+            this.label6 = new System.Windows.Forms.Label();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAdvanceSingles)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabPageSingles.SuspendLayout();
             this.tabPageDoubles.SuspendLayout();
@@ -82,6 +87,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownLosersStart)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownLosersOffset)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownLosersEnd)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAdvanceDoubles)).BeginInit();
             this.SuspendLayout();
             // 
             // richTextBoxEntrants
@@ -101,47 +107,47 @@
             this.textBoxURLSingles.Size = new System.Drawing.Size(187, 20);
             this.textBoxURLSingles.TabIndex = 1;
             // 
-            // buttonBracket
+            // buttonSingles
             // 
-            this.buttonBracket.Location = new System.Drawing.Point(3, 29);
-            this.buttonBracket.Name = "buttonBracket";
-            this.buttonBracket.Size = new System.Drawing.Size(75, 23);
-            this.buttonBracket.TabIndex = 2;
-            this.buttonBracket.Text = "Get Bracket";
-            this.buttonBracket.UseVisualStyleBackColor = true;
-            this.buttonBracket.Click += new System.EventHandler(this.buttonBracket_Click);
+            this.buttonSingles.Location = new System.Drawing.Point(3, 29);
+            this.buttonSingles.Name = "buttonSingles";
+            this.buttonSingles.Size = new System.Drawing.Size(75, 23);
+            this.buttonSingles.TabIndex = 2;
+            this.buttonSingles.Text = "Get Singles";
+            this.buttonSingles.UseVisualStyleBackColor = true;
+            this.buttonSingles.Click += new System.EventHandler(this.buttonSingles_Click);
             // 
-            // buttonPhase
+            // buttonPhaseSingles
             // 
-            this.buttonPhase.Location = new System.Drawing.Point(115, 29);
-            this.buttonPhase.Name = "buttonPhase";
-            this.buttonPhase.Size = new System.Drawing.Size(75, 23);
-            this.buttonPhase.TabIndex = 2;
-            this.buttonPhase.Text = "Get Phase";
-            this.buttonPhase.UseVisualStyleBackColor = true;
-            this.buttonPhase.Click += new System.EventHandler(this.buttonPhase_Click);
+            this.buttonPhaseSingles.Location = new System.Drawing.Point(115, 29);
+            this.buttonPhaseSingles.Name = "buttonPhaseSingles";
+            this.buttonPhaseSingles.Size = new System.Drawing.Size(75, 23);
+            this.buttonPhaseSingles.TabIndex = 2;
+            this.buttonPhaseSingles.Text = "Get Phase";
+            this.buttonPhaseSingles.UseVisualStyleBackColor = true;
+            this.buttonPhaseSingles.Click += new System.EventHandler(this.buttonPhaseSingles_Click);
             // 
-            // radioButtonBracket
+            // radioButtonBracketSingles
             // 
-            this.radioButtonBracket.AutoSize = true;
-            this.radioButtonBracket.Checked = true;
-            this.radioButtonBracket.Location = new System.Drawing.Point(115, 59);
-            this.radioButtonBracket.Name = "radioButtonBracket";
-            this.radioButtonBracket.Size = new System.Drawing.Size(91, 17);
-            this.radioButtonBracket.TabIndex = 8;
-            this.radioButtonBracket.TabStop = true;
-            this.radioButtonBracket.Text = "Bracket Pools";
-            this.radioButtonBracket.UseVisualStyleBackColor = true;
+            this.radioButtonBracketSingles.AutoSize = true;
+            this.radioButtonBracketSingles.Checked = true;
+            this.radioButtonBracketSingles.Location = new System.Drawing.Point(115, 59);
+            this.radioButtonBracketSingles.Name = "radioButtonBracketSingles";
+            this.radioButtonBracketSingles.Size = new System.Drawing.Size(91, 17);
+            this.radioButtonBracketSingles.TabIndex = 8;
+            this.radioButtonBracketSingles.TabStop = true;
+            this.radioButtonBracketSingles.Text = "Bracket Pools";
+            this.radioButtonBracketSingles.UseVisualStyleBackColor = true;
             // 
-            // radioButtonRoundRobin
+            // radioButtonRRSingles
             // 
-            this.radioButtonRoundRobin.AutoSize = true;
-            this.radioButtonRoundRobin.Location = new System.Drawing.Point(115, 82);
-            this.radioButtonRoundRobin.Name = "radioButtonRoundRobin";
-            this.radioButtonRoundRobin.Size = new System.Drawing.Size(88, 17);
-            this.radioButtonRoundRobin.TabIndex = 9;
-            this.radioButtonRoundRobin.Text = "Round Robin";
-            this.radioButtonRoundRobin.UseVisualStyleBackColor = true;
+            this.radioButtonRRSingles.AutoSize = true;
+            this.radioButtonRRSingles.Location = new System.Drawing.Point(115, 82);
+            this.radioButtonRRSingles.Name = "radioButtonRRSingles";
+            this.radioButtonRRSingles.Size = new System.Drawing.Size(88, 17);
+            this.radioButtonRRSingles.TabIndex = 9;
+            this.radioButtonRRSingles.Text = "Round Robin";
+            this.radioButtonRRSingles.UseVisualStyleBackColor = true;
             // 
             // label5
             // 
@@ -152,13 +158,13 @@
             this.label5.TabIndex = 5;
             this.label5.Text = "Advance";
             // 
-            // numericUpDownAdvance
+            // numericUpDownAdvanceSingles
             // 
-            this.numericUpDownAdvance.Location = new System.Drawing.Point(115, 105);
-            this.numericUpDownAdvance.Name = "numericUpDownAdvance";
-            this.numericUpDownAdvance.Size = new System.Drawing.Size(32, 20);
-            this.numericUpDownAdvance.TabIndex = 10;
-            this.numericUpDownAdvance.Value = new decimal(new int[] {
+            this.numericUpDownAdvanceSingles.Location = new System.Drawing.Point(115, 105);
+            this.numericUpDownAdvanceSingles.Name = "numericUpDownAdvanceSingles";
+            this.numericUpDownAdvanceSingles.Size = new System.Drawing.Size(32, 20);
+            this.numericUpDownAdvanceSingles.TabIndex = 10;
+            this.numericUpDownAdvanceSingles.Value = new decimal(new int[] {
             2,
             0,
             0,
@@ -272,14 +278,14 @@
             // tabPageSingles
             // 
             this.tabPageSingles.Controls.Add(this.textBoxURLSingles);
-            this.tabPageSingles.Controls.Add(this.numericUpDownAdvance);
-            this.tabPageSingles.Controls.Add(this.buttonBracket);
-            this.tabPageSingles.Controls.Add(this.radioButtonRoundRobin);
-            this.tabPageSingles.Controls.Add(this.radioButtonBracket);
+            this.tabPageSingles.Controls.Add(this.numericUpDownAdvanceSingles);
+            this.tabPageSingles.Controls.Add(this.buttonSingles);
+            this.tabPageSingles.Controls.Add(this.radioButtonRRSingles);
+            this.tabPageSingles.Controls.Add(this.radioButtonBracketSingles);
             this.tabPageSingles.Controls.Add(this.buttonFill);
             this.tabPageSingles.Controls.Add(this.checkBoxFillUnfinishedSingles);
             this.tabPageSingles.Controls.Add(this.checkBoxLosersSingles);
-            this.tabPageSingles.Controls.Add(this.buttonPhase);
+            this.tabPageSingles.Controls.Add(this.buttonPhaseSingles);
             this.tabPageSingles.Controls.Add(this.checkBoxWinnersSingles);
             this.tabPageSingles.Controls.Add(this.label5);
             this.tabPageSingles.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -292,6 +298,11 @@
             // 
             // tabPageDoubles
             // 
+            this.tabPageDoubles.Controls.Add(this.numericUpDownAdvanceDoubles);
+            this.tabPageDoubles.Controls.Add(this.radioButtonRRDoubles);
+            this.tabPageDoubles.Controls.Add(this.radioButtonBracketDoubles);
+            this.tabPageDoubles.Controls.Add(this.buttonPhaseDoubles);
+            this.tabPageDoubles.Controls.Add(this.label6);
             this.tabPageDoubles.Controls.Add(this.checkBoxFillUnfinishedDoubles);
             this.tabPageDoubles.Controls.Add(this.checkBoxLosersDoubles);
             this.tabPageDoubles.Controls.Add(this.checkBoxWinnersDoubles);
@@ -487,24 +498,6 @@
             this.numericUpDownLosersEnd.Size = new System.Drawing.Size(38, 20);
             this.numericUpDownLosersEnd.TabIndex = 9;
             // 
-            // richTextBoxExLpWinnersBracket
-            // 
-            this.richTextBoxExLpWinnersBracket.Cue = null;
-            this.richTextBoxExLpWinnersBracket.Location = new System.Drawing.Point(13, 367);
-            this.richTextBoxExLpWinnersBracket.Name = "richTextBoxExLpWinnersBracket";
-            this.richTextBoxExLpWinnersBracket.Size = new System.Drawing.Size(341, 150);
-            this.richTextBoxExLpWinnersBracket.TabIndex = 13;
-            this.richTextBoxExLpWinnersBracket.Text = "";
-            // 
-            // richTextBoxExLpLosersBracket
-            // 
-            this.richTextBoxExLpLosersBracket.Cue = null;
-            this.richTextBoxExLpLosersBracket.Location = new System.Drawing.Point(360, 368);
-            this.richTextBoxExLpLosersBracket.Name = "richTextBoxExLpLosersBracket";
-            this.richTextBoxExLpLosersBracket.Size = new System.Drawing.Size(341, 150);
-            this.richTextBoxExLpLosersBracket.TabIndex = 13;
-            this.richTextBoxExLpLosersBracket.Text = "";
-            // 
             // checkBoxLockWinners
             // 
             this.checkBoxLockWinners.AutoSize = true;
@@ -526,6 +519,77 @@
             this.checkBoxLockLosers.Text = "Lock";
             this.checkBoxLockLosers.UseVisualStyleBackColor = true;
             this.checkBoxLockLosers.CheckedChanged += new System.EventHandler(this.checkBoxLock_CheckedChanged);
+            // 
+            // richTextBoxExLpWinnersBracket
+            // 
+            this.richTextBoxExLpWinnersBracket.Cue = null;
+            this.richTextBoxExLpWinnersBracket.Location = new System.Drawing.Point(13, 367);
+            this.richTextBoxExLpWinnersBracket.Name = "richTextBoxExLpWinnersBracket";
+            this.richTextBoxExLpWinnersBracket.Size = new System.Drawing.Size(341, 150);
+            this.richTextBoxExLpWinnersBracket.TabIndex = 13;
+            this.richTextBoxExLpWinnersBracket.Text = "";
+            // 
+            // richTextBoxExLpLosersBracket
+            // 
+            this.richTextBoxExLpLosersBracket.Cue = null;
+            this.richTextBoxExLpLosersBracket.Location = new System.Drawing.Point(360, 368);
+            this.richTextBoxExLpLosersBracket.Name = "richTextBoxExLpLosersBracket";
+            this.richTextBoxExLpLosersBracket.Size = new System.Drawing.Size(341, 150);
+            this.richTextBoxExLpLosersBracket.TabIndex = 13;
+            this.richTextBoxExLpLosersBracket.Text = "";
+            // 
+            // numericUpDownAdvanceDoubles
+            // 
+            this.numericUpDownAdvanceDoubles.Location = new System.Drawing.Point(115, 105);
+            this.numericUpDownAdvanceDoubles.Name = "numericUpDownAdvanceDoubles";
+            this.numericUpDownAdvanceDoubles.Size = new System.Drawing.Size(32, 20);
+            this.numericUpDownAdvanceDoubles.TabIndex = 21;
+            this.numericUpDownAdvanceDoubles.Value = new decimal(new int[] {
+            2,
+            0,
+            0,
+            0});
+            // 
+            // radioButtonRRDoubles
+            // 
+            this.radioButtonRRDoubles.AutoSize = true;
+            this.radioButtonRRDoubles.Location = new System.Drawing.Point(115, 82);
+            this.radioButtonRRDoubles.Name = "radioButtonRRDoubles";
+            this.radioButtonRRDoubles.Size = new System.Drawing.Size(88, 17);
+            this.radioButtonRRDoubles.TabIndex = 20;
+            this.radioButtonRRDoubles.Text = "Round Robin";
+            this.radioButtonRRDoubles.UseVisualStyleBackColor = true;
+            // 
+            // radioButtonBracketDoubles
+            // 
+            this.radioButtonBracketDoubles.AutoSize = true;
+            this.radioButtonBracketDoubles.Checked = true;
+            this.radioButtonBracketDoubles.Location = new System.Drawing.Point(115, 59);
+            this.radioButtonBracketDoubles.Name = "radioButtonBracketDoubles";
+            this.radioButtonBracketDoubles.Size = new System.Drawing.Size(91, 17);
+            this.radioButtonBracketDoubles.TabIndex = 19;
+            this.radioButtonBracketDoubles.TabStop = true;
+            this.radioButtonBracketDoubles.Text = "Bracket Pools";
+            this.radioButtonBracketDoubles.UseVisualStyleBackColor = true;
+            // 
+            // buttonPhaseDoubles
+            // 
+            this.buttonPhaseDoubles.Location = new System.Drawing.Point(115, 29);
+            this.buttonPhaseDoubles.Name = "buttonPhaseDoubles";
+            this.buttonPhaseDoubles.Size = new System.Drawing.Size(75, 23);
+            this.buttonPhaseDoubles.TabIndex = 17;
+            this.buttonPhaseDoubles.Text = "Get Phase";
+            this.buttonPhaseDoubles.UseVisualStyleBackColor = true;
+            this.buttonPhaseDoubles.Click += new System.EventHandler(this.buttonPhaseDoubles_Click);
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(155, 107);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(50, 13);
+            this.label6.TabIndex = 18;
+            this.label6.Text = "Advance";
             // 
             // Form1
             // 
@@ -559,7 +623,7 @@
             this.Controls.Add(this.numericUpDownWinnersEnd);
             this.Name = "Form1";
             this.Text = "Smash.gg to Liquipedia";
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAdvance)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAdvanceSingles)).EndInit();
             this.tabControl1.ResumeLayout(false);
             this.tabPageSingles.ResumeLayout(false);
             this.tabPageSingles.PerformLayout();
@@ -571,6 +635,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownLosersStart)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownLosersOffset)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownLosersEnd)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAdvanceDoubles)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -580,12 +645,12 @@
 
         private System.Windows.Forms.RichTextBox richTextBoxEntrants;
         private System.Windows.Forms.TextBox textBoxURLSingles;
-        private System.Windows.Forms.Button buttonBracket;
-        private System.Windows.Forms.Button buttonPhase;
-        private System.Windows.Forms.RadioButton radioButtonBracket;
-        private System.Windows.Forms.RadioButton radioButtonRoundRobin;
+        private System.Windows.Forms.Button buttonSingles;
+        private System.Windows.Forms.Button buttonPhaseSingles;
+        private System.Windows.Forms.RadioButton radioButtonBracketSingles;
+        private System.Windows.Forms.RadioButton radioButtonRRSingles;
         private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.NumericUpDown numericUpDownAdvance;
+        private System.Windows.Forms.NumericUpDown numericUpDownAdvanceSingles;
         private System.Windows.Forms.RichTextBox richTextBoxWinners;
         private System.Windows.Forms.RichTextBox richTextBoxLosers;
         private System.Windows.Forms.RichTextBox richTextBoxLpOutput;
@@ -622,6 +687,11 @@
         private RichTextBoxEx richTextBoxExLpWinnersBracket;
         private System.Windows.Forms.CheckBox checkBoxLockWinners;
         private System.Windows.Forms.CheckBox checkBoxLockLosers;
+        private System.Windows.Forms.NumericUpDown numericUpDownAdvanceDoubles;
+        private System.Windows.Forms.RadioButton radioButtonRRDoubles;
+        private System.Windows.Forms.RadioButton radioButtonBracketDoubles;
+        private System.Windows.Forms.Button buttonPhaseDoubles;
+        private System.Windows.Forms.Label label6;
     }
 }
 
