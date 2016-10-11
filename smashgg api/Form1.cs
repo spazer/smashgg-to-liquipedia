@@ -20,6 +20,7 @@ namespace smashgg_api
         static int PLAYER_BYE = -1;
 
         enum UrlNumberType { Phase, Phase_Group, None }
+        enum EventType { Singles, Doubles}
 
         Dictionary<int, Entrant> entrantList = new Dictionary<int, Entrant>();
         List<Set> setList = new List<Set>();
@@ -117,7 +118,7 @@ namespace smashgg_api
                 }
             }
 
-            updateNumericUpDownControls();
+            updateNumericUpDownControls(EventType.Singles);
 
             int p1padding = 0;
             int wpadding = 0;
@@ -515,7 +516,7 @@ namespace smashgg_api
                 }
             }
 
-            updateNumericUpDownControls();
+            updateNumericUpDownControls(EventType.Doubles);
 
             // Set padding for textbox output
             int t1padding = 0;
@@ -895,11 +896,11 @@ namespace smashgg_api
             }
 
             // If the corresponding checkbox is not checked, skip that side of the bracket
-            if (checkBoxWinnersSingles.Checked == true)
+            if (checkBoxWinnersDoubles.Checked == true)
             {
                 fillBracketDoubles((int)numericUpDownWinnersStart.Value, (int)numericUpDownWinnersEnd.Value, (int)numericUpDownWinnersOffset.Value, ref output);
             }
-            if (checkBoxLosersSingles.Checked == true)
+            if (checkBoxLosersDoubles.Checked == true)
             {
                 fillBracketDoubles(-(int)numericUpDownLosersStart.Value, -(int)numericUpDownLosersEnd.Value, (int)numericUpDownLosersOffset.Value, ref output);
             }
@@ -1540,7 +1541,7 @@ namespace smashgg_api
         /// <summary>
         /// Update the numericUpDown controls
         /// </summary>
-        private void updateNumericUpDownControls()
+        private void updateNumericUpDownControls(EventType eventType)
         {
             // Clear winners side numericUpDown controls unless it's locked
             if (!checkBoxLockWinners.Checked)
@@ -1565,7 +1566,14 @@ namespace smashgg_api
 
                 if (displayRound > 0)
                 {
-                    checkBoxWinnersSingles.Checked = true;
+                    if (eventType == EventType.Singles)
+                    {
+                        checkBoxWinnersSingles.Checked = true;
+                    }
+                    else
+                    {
+                        checkBoxWinnersDoubles.Checked = true;
+                    }
 
                     if (checkBoxLockWinners.Checked) continue;
 
@@ -1591,7 +1599,14 @@ namespace smashgg_api
                 }
                 else if (displayRound < 0)
                 {
-                    checkBoxLosersSingles.Checked = true;
+                    if (eventType == EventType.Singles)
+                    {
+                        checkBoxWinnersSingles.Checked = true;
+                    }
+                    else
+                    {
+                        checkBoxWinnersDoubles.Checked = true;
+                    }
 
                     if (checkBoxLockLosers.Checked) continue;
 
