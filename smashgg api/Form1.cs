@@ -757,7 +757,7 @@ namespace smashgg_api
                         int lastRank = 0;
                         int lastWin = 0;
                         int lastLoss = 0;
-                        int advance = (int)numericUpDownAdvanceSingles.Value;
+                        int advance = (int)numericUpDownAdvanceDoubles.Value;
                         for (int i = 0; i < poolData.Count; i++)
                         {
                             // Skip bye
@@ -775,7 +775,7 @@ namespace smashgg_api
                                                         LpStrings.SlotMWin + poolData[poolData.ElementAt(i).Key].matchesWin +
                                                         LpStrings.SlotMLoss + poolData[poolData.ElementAt(i).Key].matchesLoss;
 
-                            if (radioButtonRRSingles.Checked == true)
+                            if (radioButtonRRDoubles.Checked == true)
                             {
                                 if (poolData[poolData.ElementAt(i).Key].matchesWin == lastWin && poolData[poolData.ElementAt(i).Key].matchesLoss == lastLoss)
                                 {
