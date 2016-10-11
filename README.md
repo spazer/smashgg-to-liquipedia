@@ -19,13 +19,14 @@ Liquipedia code is automatically generated. You can ignore the rest of the butto
 1. Copy a blank template for the desired bracket to be filled out. Winners and losers brackets should be done *seperately*.
   * **Singles example:** http://wiki.teamliquid.net/smash/Template:32DEWBracketA
   * **Doubles example:** http://wiki.teamliquid.net/smash/Template:32DELBracketA
-2. Paste this template into the bottom left textbox.
+2. Paste these templates into the two indicated textboxes.
 3. The two textboxes in the middle show the Winners and Losers matches respectively. The numbers on the left denote the *round*.
-4. Set the **Start** and **End** numbers on the right side of the window. This denotes the starting and ending rounds that will be filled into the template.
+4. Set the **Start** and **End** numbers if desired. Everything between the start and end rounds will be into the templates.
 5. Set the **Offset** if needed.
   * **Ex.** If you want smash.gg Winner's Round 2 filled into Liquipedia Winner's Round 1, set Offset to -1.
   * **Note:** Chances are good you'll need to use this for Losers because of how smash.gg round numbering works.
-6. Click **Fill Bracket** or **Fill Doubles**.
+6. You can **Lock** the Start, End, and Offset controls if you want. Otherwise, these controls will be changed whenever data is retrieved from smash.gg. Locking is useful if you want to perform the same actions for a batch of brackets.
+7. Click **Fill Bracket** or **Fill Doubles**.
 
 You can check/uncheck the Winners/Losers checkboxes to make the program ignore one or the other when filling out brackets. You usually won't need this.
 
