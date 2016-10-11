@@ -49,6 +49,11 @@
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPageSingles = new System.Windows.Forms.TabPage();
             this.tabPageDoubles = new System.Windows.Forms.TabPage();
+            this.numericUpDownAdvanceDoubles = new System.Windows.Forms.NumericUpDown();
+            this.radioButtonRRDoubles = new System.Windows.Forms.RadioButton();
+            this.radioButtonBracketDoubles = new System.Windows.Forms.RadioButton();
+            this.buttonPhaseDoubles = new System.Windows.Forms.Button();
+            this.label6 = new System.Windows.Forms.Label();
             this.checkBoxFillUnfinishedDoubles = new System.Windows.Forms.CheckBox();
             this.checkBoxLosersDoubles = new System.Windows.Forms.CheckBox();
             this.checkBoxWinnersDoubles = new System.Windows.Forms.CheckBox();
@@ -70,24 +75,20 @@
             this.numericUpDownLosersEnd = new System.Windows.Forms.NumericUpDown();
             this.checkBoxLockWinners = new System.Windows.Forms.CheckBox();
             this.checkBoxLockLosers = new System.Windows.Forms.CheckBox();
+            this.progressBar = new System.Windows.Forms.ProgressBar();
             this.richTextBoxExLpWinnersBracket = new RichTextBoxEx();
             this.richTextBoxExLpLosersBracket = new RichTextBoxEx();
-            this.numericUpDownAdvanceDoubles = new System.Windows.Forms.NumericUpDown();
-            this.radioButtonRRDoubles = new System.Windows.Forms.RadioButton();
-            this.radioButtonBracketDoubles = new System.Windows.Forms.RadioButton();
-            this.buttonPhaseDoubles = new System.Windows.Forms.Button();
-            this.label6 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAdvanceSingles)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabPageSingles.SuspendLayout();
             this.tabPageDoubles.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAdvanceDoubles)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownWinnersStart)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownWinnersEnd)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownWinnersOffset)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownLosersStart)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownLosersOffset)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownLosersEnd)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAdvanceDoubles)).BeginInit();
             this.SuspendLayout();
             // 
             // richTextBoxEntrants
@@ -221,7 +222,7 @@
             // 
             this.richTextBoxLog.Location = new System.Drawing.Point(709, 368);
             this.richTextBoxLog.Name = "richTextBoxLog";
-            this.richTextBoxLog.Size = new System.Drawing.Size(225, 310);
+            this.richTextBoxLog.Size = new System.Drawing.Size(225, 281);
             this.richTextBoxLog.TabIndex = 4;
             this.richTextBoxLog.Text = "";
             // 
@@ -316,6 +317,59 @@
             this.tabPageDoubles.TabIndex = 0;
             this.tabPageDoubles.Text = "Doubles";
             this.tabPageDoubles.UseVisualStyleBackColor = true;
+            // 
+            // numericUpDownAdvanceDoubles
+            // 
+            this.numericUpDownAdvanceDoubles.Location = new System.Drawing.Point(115, 105);
+            this.numericUpDownAdvanceDoubles.Name = "numericUpDownAdvanceDoubles";
+            this.numericUpDownAdvanceDoubles.Size = new System.Drawing.Size(32, 20);
+            this.numericUpDownAdvanceDoubles.TabIndex = 21;
+            this.numericUpDownAdvanceDoubles.Value = new decimal(new int[] {
+            2,
+            0,
+            0,
+            0});
+            // 
+            // radioButtonRRDoubles
+            // 
+            this.radioButtonRRDoubles.AutoSize = true;
+            this.radioButtonRRDoubles.Location = new System.Drawing.Point(115, 82);
+            this.radioButtonRRDoubles.Name = "radioButtonRRDoubles";
+            this.radioButtonRRDoubles.Size = new System.Drawing.Size(88, 17);
+            this.radioButtonRRDoubles.TabIndex = 20;
+            this.radioButtonRRDoubles.Text = "Round Robin";
+            this.radioButtonRRDoubles.UseVisualStyleBackColor = true;
+            // 
+            // radioButtonBracketDoubles
+            // 
+            this.radioButtonBracketDoubles.AutoSize = true;
+            this.radioButtonBracketDoubles.Checked = true;
+            this.radioButtonBracketDoubles.Location = new System.Drawing.Point(115, 59);
+            this.radioButtonBracketDoubles.Name = "radioButtonBracketDoubles";
+            this.radioButtonBracketDoubles.Size = new System.Drawing.Size(91, 17);
+            this.radioButtonBracketDoubles.TabIndex = 19;
+            this.radioButtonBracketDoubles.TabStop = true;
+            this.radioButtonBracketDoubles.Text = "Bracket Pools";
+            this.radioButtonBracketDoubles.UseVisualStyleBackColor = true;
+            // 
+            // buttonPhaseDoubles
+            // 
+            this.buttonPhaseDoubles.Location = new System.Drawing.Point(115, 29);
+            this.buttonPhaseDoubles.Name = "buttonPhaseDoubles";
+            this.buttonPhaseDoubles.Size = new System.Drawing.Size(75, 23);
+            this.buttonPhaseDoubles.TabIndex = 17;
+            this.buttonPhaseDoubles.Text = "Get Phase";
+            this.buttonPhaseDoubles.UseVisualStyleBackColor = true;
+            this.buttonPhaseDoubles.Click += new System.EventHandler(this.buttonPhaseDoubles_Click);
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(155, 107);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(50, 13);
+            this.label6.TabIndex = 18;
+            this.label6.Text = "Advance";
             // 
             // checkBoxFillUnfinishedDoubles
             // 
@@ -520,6 +574,13 @@
             this.checkBoxLockLosers.UseVisualStyleBackColor = true;
             this.checkBoxLockLosers.CheckedChanged += new System.EventHandler(this.checkBoxLock_CheckedChanged);
             // 
+            // progressBar
+            // 
+            this.progressBar.Location = new System.Drawing.Point(709, 655);
+            this.progressBar.Name = "progressBar";
+            this.progressBar.Size = new System.Drawing.Size(225, 23);
+            this.progressBar.TabIndex = 15;
+            // 
             // richTextBoxExLpWinnersBracket
             // 
             this.richTextBoxExLpWinnersBracket.Cue = null;
@@ -538,64 +599,12 @@
             this.richTextBoxExLpLosersBracket.TabIndex = 13;
             this.richTextBoxExLpLosersBracket.Text = "";
             // 
-            // numericUpDownAdvanceDoubles
-            // 
-            this.numericUpDownAdvanceDoubles.Location = new System.Drawing.Point(115, 105);
-            this.numericUpDownAdvanceDoubles.Name = "numericUpDownAdvanceDoubles";
-            this.numericUpDownAdvanceDoubles.Size = new System.Drawing.Size(32, 20);
-            this.numericUpDownAdvanceDoubles.TabIndex = 21;
-            this.numericUpDownAdvanceDoubles.Value = new decimal(new int[] {
-            2,
-            0,
-            0,
-            0});
-            // 
-            // radioButtonRRDoubles
-            // 
-            this.radioButtonRRDoubles.AutoSize = true;
-            this.radioButtonRRDoubles.Location = new System.Drawing.Point(115, 82);
-            this.radioButtonRRDoubles.Name = "radioButtonRRDoubles";
-            this.radioButtonRRDoubles.Size = new System.Drawing.Size(88, 17);
-            this.radioButtonRRDoubles.TabIndex = 20;
-            this.radioButtonRRDoubles.Text = "Round Robin";
-            this.radioButtonRRDoubles.UseVisualStyleBackColor = true;
-            // 
-            // radioButtonBracketDoubles
-            // 
-            this.radioButtonBracketDoubles.AutoSize = true;
-            this.radioButtonBracketDoubles.Checked = true;
-            this.radioButtonBracketDoubles.Location = new System.Drawing.Point(115, 59);
-            this.radioButtonBracketDoubles.Name = "radioButtonBracketDoubles";
-            this.radioButtonBracketDoubles.Size = new System.Drawing.Size(91, 17);
-            this.radioButtonBracketDoubles.TabIndex = 19;
-            this.radioButtonBracketDoubles.TabStop = true;
-            this.radioButtonBracketDoubles.Text = "Bracket Pools";
-            this.radioButtonBracketDoubles.UseVisualStyleBackColor = true;
-            // 
-            // buttonPhaseDoubles
-            // 
-            this.buttonPhaseDoubles.Location = new System.Drawing.Point(115, 29);
-            this.buttonPhaseDoubles.Name = "buttonPhaseDoubles";
-            this.buttonPhaseDoubles.Size = new System.Drawing.Size(75, 23);
-            this.buttonPhaseDoubles.TabIndex = 17;
-            this.buttonPhaseDoubles.Text = "Get Phase";
-            this.buttonPhaseDoubles.UseVisualStyleBackColor = true;
-            this.buttonPhaseDoubles.Click += new System.EventHandler(this.buttonPhaseDoubles_Click);
-            // 
-            // label6
-            // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(155, 107);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(50, 13);
-            this.label6.TabIndex = 18;
-            this.label6.Text = "Advance";
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(948, 690);
+            this.Controls.Add(this.progressBar);
             this.Controls.Add(this.checkBoxLockLosers);
             this.Controls.Add(this.checkBoxLockWinners);
             this.Controls.Add(this.richTextBoxExLpWinnersBracket);
@@ -629,13 +638,13 @@
             this.tabPageSingles.PerformLayout();
             this.tabPageDoubles.ResumeLayout(false);
             this.tabPageDoubles.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAdvanceDoubles)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownWinnersStart)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownWinnersEnd)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownWinnersOffset)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownLosersStart)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownLosersOffset)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownLosersEnd)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAdvanceDoubles)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -692,6 +701,7 @@
         private System.Windows.Forms.RadioButton radioButtonBracketDoubles;
         private System.Windows.Forms.Button buttonPhaseDoubles;
         private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.ProgressBar progressBar;
     }
 }
 

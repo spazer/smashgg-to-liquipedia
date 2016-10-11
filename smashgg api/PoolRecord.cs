@@ -47,7 +47,7 @@ namespace smashgg_api
 
         private void CalculateRatio()
         {
-            if (gamesLoss != 0 || gamesWin != 0)
+            if (gamesWin + gamesLoss != 0)
             {
                 gameWinrate = (double)gamesWin / (double)(gamesWin + gamesLoss) * 100;
             }
