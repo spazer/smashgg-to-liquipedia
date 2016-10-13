@@ -187,7 +187,7 @@
     <value>?expand[]=groups</value>
   </data>
   <data name="UrlSuffixPhaseGroup" xml:space="preserve">
-    <value>?expand[]=sets&amp;expand[]=entrants</value>
+    <value>?expand[]=entrants&amp;expand[]=sets</value>
   </data>
   <data name="WaveId" xml:space="preserve">
     <value>waveId</value>
@@ -212,5 +212,14 @@
   </data>
   <data name="PlayerIds" xml:space="preserve">
     <value>playerIds</value>
+  </data>
+  <data name="Entrant1PrereqId" xml:space="preserve">
+    <value>entrant1PrereqId</value>
+  </data>
+  <data name="Entrant2PrereqId" xml:space="preserve">
+    <value>entrant2PrereqId</value>
+  </data>
+  <data name="IsGF" xml:space="preserve">
+    <value>isGF</value>
   </data>
 </root>

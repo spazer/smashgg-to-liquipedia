@@ -121,13 +121,25 @@ namespace smashgg_api
                 newSet.winner = GetIntParameter(set, SmashggStrings.Winner);
                 newSet.state = GetIntParameter(set, SmashggStrings.State);
 
+                if (!set[SmashggStrings.IsGF].IsNullOrEmpty())
+                {
+                    newSet.isGF = set[SmashggStrings.IsGF].Value<bool>();
+                }
+                else
+                {
+                    newSet.isGF = false;
+                }
+                
                 // Bracket rank
                 newSet.wPlacement = GetIntParameter(set, SmashggStrings.wPlace);
                 newSet.lPlacement = GetIntParameter(set, SmashggStrings.lPlace);
 
                 // Round and match identifiers
+                newSet.id = GetIntParameter(set, SmashggStrings.ID);
                 newSet.originalRound = GetIntParameter(set, SmashggStrings.OriginalRound);
                 newSet.displayRound = GetIntParameter(set, SmashggStrings.DisplayRound);
+                newSet.entrant1PrereqId = GetIntParameter(set, SmashggStrings.Entrant1PrereqId);
+                newSet.entrant2PrereqId = GetIntParameter(set, SmashggStrings.Entrant2PrereqId);
                 int round = Math.Abs(newSet.originalRound);
 
                 if (newSet.originalRound == -99)

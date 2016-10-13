@@ -78,6 +78,7 @@
             this.progressBar = new System.Windows.Forms.ProgressBar();
             this.richTextBoxExLpWinnersBracket = new RichTextBoxEx();
             this.richTextBoxExLpLosersBracket = new RichTextBoxEx();
+            this.checkBoxGuessFinal = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAdvanceSingles)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabPageSingles.SuspendLayout();
@@ -599,12 +600,24 @@
             this.richTextBoxExLpLosersBracket.TabIndex = 13;
             this.richTextBoxExLpLosersBracket.Text = "";
             // 
+            // checkBoxGuessFinal
+            // 
+            this.checkBoxGuessFinal.AutoSize = true;
+            this.checkBoxGuessFinal.Location = new System.Drawing.Point(580, 151);
+            this.checkBoxGuessFinal.Name = "checkBoxGuessFinal";
+            this.checkBoxGuessFinal.Size = new System.Drawing.Size(121, 17);
+            this.checkBoxGuessFinal.TabIndex = 14;
+            this.checkBoxGuessFinal.Text = "Guess Final Bracket";
+            this.checkBoxGuessFinal.UseVisualStyleBackColor = true;
+            this.checkBoxGuessFinal.CheckedChanged += new System.EventHandler(this.checkBoxLock_CheckedChanged);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(948, 690);
             this.Controls.Add(this.progressBar);
+            this.Controls.Add(this.checkBoxGuessFinal);
             this.Controls.Add(this.checkBoxLockLosers);
             this.Controls.Add(this.checkBoxLockWinners);
             this.Controls.Add(this.richTextBoxExLpWinnersBracket);
@@ -702,6 +715,7 @@
         private System.Windows.Forms.Button buttonPhaseDoubles;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.ProgressBar progressBar;
+        private System.Windows.Forms.CheckBox checkBoxGuessFinal;
     }
 }
 

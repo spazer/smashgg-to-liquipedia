@@ -106,6 +106,15 @@ namespace smashgg_api {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to entrant1PrereqId.
+        /// </summary>
+        internal static string Entrant1PrereqId {
+            get {
+                return ResourceManager.GetString("Entrant1PrereqId", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to entrant1Score.
         /// </summary>
         internal static string Entrant1Score {
@@ -129,6 +138,15 @@ namespace smashgg_api {
         internal static string Entrant2Id {
             get {
                 return ResourceManager.GetString("Entrant2Id", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to entrant2PrereqId.
+        /// </summary>
+        internal static string Entrant2PrereqId {
+            get {
+                return ResourceManager.GetString("Entrant2PrereqId", resourceCulture);
             }
         }
         
@@ -183,6 +201,15 @@ namespace smashgg_api {
         internal static string ID {
             get {
                 return ResourceManager.GetString("ID", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to isGF.
+        /// </summary>
+        internal static string IsGF {
+            get {
+                return ResourceManager.GetString("IsGF", resourceCulture);
             }
         }
         
@@ -313,7 +340,7 @@ namespace smashgg_api {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to ?expand[]=sets&amp;expand[]=entrants.
+        ///   Looks up a localized string similar to ?expand[]=entrants&amp;expand[]=sets.
         /// </summary>
         internal static string UrlSuffixPhaseGroup {
             get {
