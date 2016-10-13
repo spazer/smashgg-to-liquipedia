@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
-using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Net;
@@ -18,6 +18,25 @@ namespace smashgg_api
     public partial class Form1 : Form
     {
         static int PLAYER_BYE = -1;
+
+        static string deFinalBracketTemplateReset = "{{DEFinalBracket\r\n" +
+                                                    "<!-- FROM WINNERS -->\r\n" +
+                                                    "|r1m1p1= |r1m1p1flag= |r1m1p1score=\r\n" +
+                                                    "|r1m1p2= |r1m1p2flag= |r1m1p2score=\r\n" +
+                                                    "|r1m1win=\r\n\r\n" +
+                                                    "<!-- FROM LOSERS -->\r\n" +
+                                                    "|l1m1p1= |l1m1p1flag= |l1m1p1score=\r\n" +
+                                                    "|l1m1p2= |l1m1p2flag= |l1m1p2score=\r\n" +
+                                                    "|l1m1win=\r\n\r\n" +
+                                                    "<!-- LOSERS FINALS -->\r\n" +
+                                                    "|l2m1p1= |l2m1p1flag= |l2m1p1score=\r\n" +
+                                                    "|l2m1p2= |l2m1p2flag= |l2m1p2score=\r\n" +
+                                                    "|l2m1win=\r\n\r\n" +
+                                                    "<!-- GRAND FINALS -->\r\n" +
+                                                    "|r3m1p1= |r3m1p1flag= |r3m1p1score= |r3m2p1score=\r\n" +
+                                                    "|r3m1p2= |r3m1p2flag= |r3m1p2score= |r3m2p2score=\r\n" +
+                                                    "|r3m1win=\r\n" +
+                                                    "}}";
 
         static string deFinalBracketTemplate =  "{{DEFinalBracket\r\n" +
                                                 "<!-- FROM WINNERS -->\r\n" +
@@ -33,8 +52,8 @@ namespace smashgg_api
                                                 "|l2m1p2= |l2m1p2flag= |l2m1p2score=\r\n" +
                                                 "|l2m1win=\r\n\r\n" +
                                                 "<!-- GRAND FINALS -->\r\n" +
-                                                "|r3m1p1= |r3m1p1flag= |r3m1p1score= |r3m2p1score=\r\n" +
-                                                "|r3m1p2= |r3m1p2flag= |r3m1p2score= |r3m2p2score=\r\n" +
+                                                "|r3m1p1= |r3m1p1flag= |r3m1p1score=\r\n" +
+                                                "|r3m1p2= |r3m1p2flag= |r3m1p2score=\r\n" +
                                                 "|r3m1win=\r\n" +
                                                 "}}";
 
@@ -60,6 +79,9 @@ namespace smashgg_api
 
             richTextBoxExLpWinnersBracket.Cue = FormStrings.CuetextLpWinners;
             richTextBoxExLpLosersBracket.Cue = FormStrings.CuetextLpLosers;
+
+            richTextBoxExRegexFind.Cue = FormStrings.CuetextRegexFind;
+            richTextBoxExRegexReplace.Cue = FormStrings.CuetextRegexReplace;
         }
 
         #region Buttons
@@ -906,6 +928,11 @@ namespace smashgg_api
                     // Get grand finals
                     if (gf.Value[0].isGF == true)
                     {
+                        if (gf.Value.Count > 1)
+                        {
+                            finalBracketOutput = deFinalBracketTemplateReset;
+                        }
+                        
                         // Fill in R3
                         fillBracketSingles(gf.Key, gf.Key, 3 - gf.Key, ref finalBracketOutput);
 
@@ -954,6 +981,8 @@ namespace smashgg_api
             }
 
             richTextBoxLpOutput.Text = output;
+
+            buttonRegexReplace_Click(sender, e);
         }
 
         /// <summary>
@@ -1779,6 +1808,38 @@ namespace smashgg_api
                     }
                 }
             }
+        }
+
+        private void buttonRegexReplace_Click(object sender, EventArgs e)
+        {
+            if (richTextBoxExRegexFind.Text != FormStrings.CuetextRegexFind)
+            {
+                string replace = string.Empty;
+                if (richTextBoxExRegexReplace.Text != FormStrings.CuetextRegexReplace)
+                {
+                    replace = richTextBoxExRegexReplace.Text;
+                }
+
+                if (Regex.IsMatch(richTextBoxLpOutput.Text, richTextBoxExRegexFind.Text))
+                {
+                    richTextBoxLpOutput.Text = Regex.Replace(richTextBoxLpOutput.Text, richTextBoxExRegexFind.Text, replace);
+                    richTextBoxLog.Text += "Match(es) found.\r\n";
+                }
+                else
+                {
+                    richTextBoxLog.Text += "No regex match found.\r\n";
+                }
+            }            
+        }
+
+        private void textBoxURL_Enter(object sender, EventArgs e)
+        {
+            TextBox box = (TextBox)sender;
+
+            BeginInvoke((Action)delegate
+            {
+                box.SelectAll();
+            });
         }
     }
 }

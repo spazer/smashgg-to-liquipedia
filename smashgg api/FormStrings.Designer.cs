@@ -79,6 +79,24 @@ namespace smashgg_api {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Regex find expression.
+        /// </summary>
+        internal static string CuetextRegexFind {
+            get {
+                return ResourceManager.GetString("CuetextRegexFind", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Regex replace expression.
+        /// </summary>
+        internal static string CuetextRegexReplace {
+            get {
+                return ResourceManager.GetString("CuetextRegexReplace", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to URL.
         /// </summary>
         internal static string CuetextURL {

@@ -123,6 +123,12 @@
   <data name="CuetextLpWinners" xml:space="preserve">
     <value>Paste winners bracket here</value>
   </data>
+  <data name="CuetextRegexFind" xml:space="preserve">
+    <value>Regex find expression</value>
+  </data>
+  <data name="CuetextRegexReplace" xml:space="preserve">
+    <value>Regex replace expression</value>
+  </data>
   <data name="CuetextURL" xml:space="preserve">
     <value>URL</value>
   </data>
