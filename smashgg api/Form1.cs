@@ -57,6 +57,66 @@ namespace smashgg_api
                                                 "|r3m1win=\r\n" +
                                                 "}}";
 
+        static string deFinalDoublesBracketTemplate = "{{DEFinalDoublesBracket\r\n" +
+                                                        "<!-- FROM WINNERS -->\r\n" +
+                                                        "|r1m1t1p1= |r1m1t1p1flag=\r\n" +
+                                                        "|r1m1t1p2= |r1m1t1p2flag= |r1m1t1score=\r\n" +
+                                                        "|r1m1t2p1= |r1m1t2p1flag=\r\n" +
+                                                        "|r1m1t2p2= |r1m1t2p2flag= |r1m1t2score=\r\n" +
+                                                        "|r1m1win=\r\n" +
+                                                        "\r\n" +
+                                                        "<!-- FROM LOSERS -->\r\n" +
+                                                        "|l1m1t1p1= |l1m1t1p1flag=\r\n" +
+                                                        "|l1m1t1p2= |l1m1t1p2flag= |l1m1t1score=\r\n" +
+                                                        "|l1m1t2p1= |l1m1t2p1flag=\r\n" +
+                                                        "|l1m1t2p2= |l1m1t2p2flag= |l1m1t2score=\r\n" +
+                                                        "|l1m1win=\r\n" +
+                                                        "\r\n" +
+                                                        "<!-- LOSERS FINALS -->\r\n" +
+                                                        "|l2m1t1p1= |l2m1t1p1flag=\r\n" +
+                                                        "|l2m1t1p2= |l2m1t1p2flag= |l2m1t1score=\r\n" +
+                                                        "|l2m1t2p1= |l2m1t2p1flag=\r\n" +
+                                                        "|l2m1t2p2= |l2m1t2p2flag= |l2m1t2score=\r\n" +
+                                                        "|l2m1win=\r\n" +
+                                                        "\r\n" +
+                                                        "<!-- GRAND FINALS -->\r\n" +
+                                                        "|r3m1t1p1= |r3m1t1p1flag=\r\n" +
+                                                        "|r3m1t1p2= |r3m1t1p2flag= |r3m1t1score= |r3m2t1score=\r\n" +
+                                                        "|r3m1t2p1= |r3m1t2p1flag=\r\n" +
+                                                        "|r3m1t2p2= |r3m1t2p2flag= |r3m1t2score= |r3m2t1score=\r\n" +
+                                                        "|r3m1win=\r\n" +
+                                                        "}}";
+
+        static string deFinalDoublesBracketTemplateReset = "{{DEFinalDoublesBracket\r\n" +
+                                                            "<!-- FROM WINNERS -->\r\n" +
+                                                            "|r1m1t1p1= |r1m1t1p1flag=\r\n" +
+                                                            "|r1m1t1p2= |r1m1t1p2flag= |r1m1t1score=\r\n" +
+                                                            "|r1m1t2p1= |r1m1t2p1flag=\r\n" +
+                                                            "|r1m1t2p2= |r1m1t2p2flag= |r1m1t2score=\r\n" +
+                                                            "|r1m1win=\r\n" +
+                                                            "\r\n" +
+                                                            "<!-- FROM LOSERS -->\r\n" +
+                                                            "|l1m1t1p1= |l1m1t1p1flag=\r\n" +
+                                                            "|l1m1t1p2= |l1m1t1p2flag= |l1m1t1score=\r\n" +
+                                                            "|l1m1t2p1= |l1m1t2p1flag=\r\n" +
+                                                            "|l1m1t2p2= |l1m1t2p2flag= |l1m1t2score=\r\n" +
+                                                            "|l1m1win=\r\n" +
+                                                            "\r\n" +
+                                                            "<!-- LOSERS FINALS -->\r\n" +
+                                                            "|l2m1t1p1= |l2m1t1p1flag=\r\n" +
+                                                            "|l2m1t1p2= |l2m1t1p2flag= |l2m1t1score=\r\n" +
+                                                            "|l2m1t2p1= |l2m1t2p1flag=\r\n" +
+                                                            "|l2m1t2p2= |l2m1t2p2flag= |l2m1t2score=\r\n" +
+                                                            "|l2m1win=\r\n" +
+                                                            "\r\n" +
+                                                            "<!-- GRAND FINALS -->\r\n" +
+                                                            "|r3m1t1p1= |r3m1t1p1flag=\r\n" +
+                                                            "|r3m1t1p2= |r3m1t1p2flag= |r3m1t1score=\r\n" +
+                                                            "|r3m1t2p1= |r3m1t2p1flag=\r\n" +
+                                                            "|r3m1t2p2= |r3m1t2p2flag= |r3m1t2score=\r\n" +
+                                                            "|r3m1win=\r\n" +
+                                                            "}}";
+
         enum UrlNumberType { Phase, Phase_Group, None }
         enum EventType { Singles, Doubles }
         enum PoolType { Bracket, RoundRobin }
@@ -993,28 +1053,91 @@ namespace smashgg_api
         private void buttonFillDoubles_Click(object sender, EventArgs e)
         {
             string output = string.Empty;
+            string finalBracketOutput = string.Empty;
 
-            if (richTextBoxExLpWinnersBracket.Text != string.Empty)
+            if (richTextBoxExLpWinnersBracket.Text != FormStrings.CuetextLpWinners)
             {
                 output += "==Winners Bracket==\r\n" + richTextBoxExLpWinnersBracket.Text + "\r\n";
             }
 
-            if (richTextBoxExLpLosersBracket.Text != string.Empty)
+            if (richTextBoxExLpLosersBracket.Text != FormStrings.CuetextLpLosers)
             {
                 output += "==Losers Bracket==\r\n" + richTextBoxExLpLosersBracket.Text + "\r\n";
             }
 
             // If the corresponding checkbox is not checked, skip that side of the bracket
-            if (checkBoxWinnersDoubles.Checked == true)
+            if (checkBoxWinnersDoubles.Checked)
             {
                 fillBracketDoubles((int)numericUpDownWinnersStart.Value, (int)numericUpDownWinnersEnd.Value, (int)numericUpDownWinnersOffset.Value, ref output);
             }
-            if (checkBoxLosersDoubles.Checked == true)
+            if (checkBoxLosersDoubles.Checked)
             {
                 fillBracketDoubles(-(int)numericUpDownLosersStart.Value, -(int)numericUpDownLosersEnd.Value, (int)numericUpDownLosersOffset.Value, ref output);
             }
+            if (checkBoxGuessFinal.Checked)
+            {
+                finalBracketOutput = deFinalDoublesBracketTemplate;
+
+                foreach (KeyValuePair<int, List<Set>> gf in roundList)
+                {
+                    // Get grand finals
+                    if (gf.Value[0].isGF == true)
+                    {
+                        if (gf.Value.Count > 1)
+                        {
+                            finalBracketOutput = deFinalDoublesBracketTemplateReset;
+                        }
+
+                        // Fill in R3
+                        fillBracketDoubles(gf.Key, gf.Key, 3 - gf.Key, ref finalBracketOutput);
+
+                        // Get losers finals
+                        foreach (KeyValuePair<int, List<Set>> lf in roundList)
+                        {
+                            if (gf.Value[0].entrant2PrereqId == lf.Value[0].id)
+                            {
+                                // Fill in L2
+                                fillBracketDoubles(lf.Key, lf.Key, 2 - Math.Abs(lf.Key), ref finalBracketOutput);
+
+                                // Get losers semis
+                                foreach (KeyValuePair<int, List<Set>> ls in roundList)
+                                {
+                                    if (lf.Value[0].entrant2PrereqId == ls.Value[0].id)
+                                    {
+                                        // Fill in L1
+                                        fillBracketDoubles(ls.Key, ls.Key, 1 - Math.Abs(ls.Key), ref finalBracketOutput);
+                                        break;
+                                    }
+                                }
+
+                                break;
+                            }
+                        }
+
+                        // Get winners finals
+                        foreach (KeyValuePair<int, List<Set>> wf in roundList)
+                        {
+                            if (gf.Value[0].entrant1PrereqId == wf.Value[0].id)
+                            {
+                                // Fill in R1
+                                fillBracketDoubles(wf.Key, wf.Key, 1 - wf.Key, ref finalBracketOutput);
+                                break;
+                            }
+                        }
+
+                        break;
+                    }
+                }
+
+                // Replace L2 with R2 because liquipedia markup is inconsistent
+                finalBracketOutput = finalBracketOutput.Replace("l2m", "r2m");
+
+                output += "==Final Doubles Bracket==\r\n" + finalBracketOutput;
+            }
 
             richTextBoxLpOutput.Text = output;
+
+            buttonRegexReplace_Click(sender, e);
         }
         #endregion
 
@@ -1810,6 +1933,11 @@ namespace smashgg_api
             }
         }
 
+        /// <summary>
+        /// Performs regex replacement on the liquipedia output textbox
+        /// </summary>
+        /// <param name="sender">N/A</param>
+        /// <param name="e">N/A</param>
         private void buttonRegexReplace_Click(object sender, EventArgs e)
         {
             if (richTextBoxExRegexFind.Text != FormStrings.CuetextRegexFind)
@@ -1832,6 +1960,11 @@ namespace smashgg_api
             }            
         }
 
+        /// <summary>
+        /// Attempts to highlight all text in a textbox when given focus. Doesn't work consistently.
+        /// </summary>
+        /// <param name="sender">Textboxt to select all text in</param>
+        /// <param name="e">N/A</param>
         private void textBoxURL_Enter(object sender, EventArgs e)
         {
             TextBox box = (TextBox)sender;
