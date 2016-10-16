@@ -41,8 +41,11 @@ namespace smashgg_api
         /// </summary>
         /// <param name="input">json of the entrants token</param>
         /// <param name="entrantList">List of entrants to be outputted to</param>
-        public void GetEntrants(JToken input, ref Dictionary<int, Entrant> entrantList)
+        /// <returns>Returns true if successful, false otherwise</returns>
+        public bool GetEntrants(JToken input, ref Dictionary<int, Entrant> entrantList)
         {
+            if (input == null) return false;
+            
             // Add bye info
             entrantList.Add(-1, new Entrant(new Player("Bye", string.Empty)));
 
@@ -86,6 +89,8 @@ namespace smashgg_api
                 Entrant newEntrant = new Entrant(pIds.Values.ToList<Player>());
                 entrantList.Add(id, newEntrant);
             }
+
+            return true;
         }
 
         /// <summary>
@@ -93,8 +98,11 @@ namespace smashgg_api
         /// </summary>
         /// <param name="input">json of the sets token</param>
         /// <param name="entrantList">List of sets to be outputted to</param>
-        public void GetSets(JToken input, ref List<Set> setList)
+        /// <returns>Returns true if successful, false otherwise</returns>
+        public bool GetSets(JToken input, ref List<Set> setList)
         {
+            if (input == null) return false;
+            
             // Get set data
             List<int> matchCountWinners = new List<int>();
             List<int> matchCountLosers = new List<int>();
@@ -169,6 +177,8 @@ namespace smashgg_api
 
                 setList.Add(newSet);
             }
+
+            return true;
         }
 
         /// <summary>

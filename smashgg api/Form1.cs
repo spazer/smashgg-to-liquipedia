@@ -18,7 +18,7 @@ namespace smashgg_api
     public partial class Form1 : Form
     {
         static int PLAYER_BYE = -1;
-
+        #region Bracket Template Contants
         static string deFinalBracketTemplateReset = "{{DEFinalBracket\r\n" +
                                                     "<!-- FROM WINNERS -->\r\n" +
                                                     "|r1m1p1= |r1m1p1flag= |r1m1p1score=\r\n" +
@@ -57,7 +57,7 @@ namespace smashgg_api
                                                 "|r3m1win=\r\n" +
                                                 "}}";
 
-        static string deFinalDoublesBracketTemplate = "{{DEFinalDoublesBracket\r\n" +
+        static string deFinalDoublesBracketTemplateReset = "{{DEFinalDoublesBracket\r\n" +
                                                         "<!-- FROM WINNERS -->\r\n" +
                                                         "|r1m1t1p1= |r1m1t1p1flag=\r\n" +
                                                         "|r1m1t1p2= |r1m1t1p2flag= |r1m1t1score=\r\n" +
@@ -87,7 +87,7 @@ namespace smashgg_api
                                                         "|r3m1win=\r\n" +
                                                         "}}";
 
-        static string deFinalDoublesBracketTemplateReset = "{{DEFinalDoublesBracket\r\n" +
+        static string deFinalDoublesBracketTemplate = "{{DEFinalDoublesBracket\r\n" +
                                                             "<!-- FROM WINNERS -->\r\n" +
                                                             "|r1m1t1p1= |r1m1t1p1flag=\r\n" +
                                                             "|r1m1t1p2= |r1m1t1p2flag= |r1m1t1score=\r\n" +
@@ -116,6 +116,7 @@ namespace smashgg_api
                                                             "|r3m1t2p2= |r3m1t2p2flag= |r3m1t2score=\r\n" +
                                                             "|r3m1win=\r\n" +
                                                             "}}";
+        #endregion
 
         enum UrlNumberType { Phase, Phase_Group, None }
         enum EventType { Singles, Doubles }
@@ -191,8 +192,16 @@ namespace smashgg_api
 
             // Fill entrant and set lists
             smashgg parser = new smashgg();
-            parser.GetEntrants(bracketJson.SelectToken(SmashggStrings.Entities + "." + SmashggStrings.Entrants), ref entrantList);
-            parser.GetSets(bracketJson.SelectToken(SmashggStrings.Entities + "." + SmashggStrings.Sets), ref setList);
+            if(!parser.GetEntrants(bracketJson.SelectToken(SmashggStrings.Entities + "." + SmashggStrings.Entrants), ref entrantList))
+            {
+                richTextBoxLog.Text += "No entrants detected.\r\n";
+                return;
+            }
+            if(!parser.GetSets(bracketJson.SelectToken(SmashggStrings.Entities + "." + SmashggStrings.Sets), ref setList))
+            {
+                richTextBoxLog.Text += "No sets detected.\r\n";
+                return;
+            }
 
             // Fill round list based on set list
             foreach (Set currentSet in setList)
@@ -505,8 +514,17 @@ namespace smashgg_api
 
             // Fill entrant and set lists
             smashgg parser = new smashgg();
-            parser.GetEntrants(bracketJson.SelectToken(SmashggStrings.Entities + "." + SmashggStrings.Entrants), ref entrantList);
-            parser.GetSets(bracketJson.SelectToken(SmashggStrings.Entities + "." + SmashggStrings.Sets), ref setList);
+            if (!parser.GetEntrants(bracketJson.SelectToken(SmashggStrings.Entities + "." + SmashggStrings.Entrants), ref entrantList))
+            {
+                richTextBoxLog.Text += "No entrants detected.\r\n";
+                return;
+            }
+            if (!parser.GetSets(bracketJson.SelectToken(SmashggStrings.Entities + "." + SmashggStrings.Sets), ref setList))
+            {
+                richTextBoxLog.Text += "No sets detected.\r\n";
+                return;
+            }
+
 
             // Fill round list based on set list
             foreach (Set currentSet in setList)
@@ -1220,6 +1238,8 @@ namespace smashgg_api
         /// </summary> 
         private bool retrievePhaseGroup(int phaseGroup, out string json)
         {
+            richTextBoxLog.Text += "Retrieving phase group " + phaseGroup;
+
             json = string.Empty;
             try
             {
@@ -1230,10 +1250,12 @@ namespace smashgg_api
                     json = sr.ReadToEnd();
                 }
 
+                richTextBoxLog.Text += " - Success\r\n";
                 return true;
             }
             catch (Exception ex)
             {
+                richTextBoxLog.Text += " - Fail\r\n";
                 richTextBoxLog.Text += ex + "\r\n";
                 return false;
             }
@@ -1531,13 +1553,31 @@ namespace smashgg_api
                         }
 
                         // Set the winner
-                        if (currentSet.winner == currentSet.entrantID1)
+                        if (currentSet.isGF && currentSet.match == 2)
                         {
-                            FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + currentSet.match + LpStrings.Win, "1");
+                            if (currentSet.winner == currentSet.entrantID1)
+                            {
+                                FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + 1 + LpStrings.Win, "2");
+                            }
+                            else if (currentSet.winner == currentSet.entrantID2)
+                            {
+                                FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + 1 + LpStrings.Win, "1");
+                            }
                         }
-                        else if (currentSet.winner == currentSet.entrantID2)
+                        else if (currentSet.isGF && currentSet.match == 1 && roundList[i].Count > 1)
                         {
-                            FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + currentSet.match + LpStrings.Win, "2");
+                            continue;
+                        }
+                        else
+                        {
+                            if (currentSet.winner == currentSet.entrantID1)
+                            {
+                                FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + currentSet.match + LpStrings.Win, "1");
+                            }
+                            else if (currentSet.winner == currentSet.entrantID2)
+                            {
+                                FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + currentSet.match + LpStrings.Win, "2");
+                            }
                         }
                     }
                 }
