@@ -30,12 +30,12 @@
         {
             this.richTextBoxEntrants = new System.Windows.Forms.RichTextBox();
             this.textBoxURLSingles = new System.Windows.Forms.TextBox();
-            this.buttonSingles = new System.Windows.Forms.Button();
-            this.buttonPhaseSingles = new System.Windows.Forms.Button();
-            this.radioButtonBracketSingles = new System.Windows.Forms.RadioButton();
-            this.radioButtonRRSingles = new System.Windows.Forms.RadioButton();
+            this.buttonGetBracket = new System.Windows.Forms.Button();
+            this.buttonGetPhase = new System.Windows.Forms.Button();
+            this.radioButtonBracket = new System.Windows.Forms.RadioButton();
+            this.radioButtonRR = new System.Windows.Forms.RadioButton();
             this.label5 = new System.Windows.Forms.Label();
-            this.numericUpDownAdvanceSingles = new System.Windows.Forms.NumericUpDown();
+            this.numericUpDownAdvance = new System.Windows.Forms.NumericUpDown();
             this.richTextBoxWinners = new System.Windows.Forms.RichTextBox();
             this.richTextBoxLosers = new System.Windows.Forms.RichTextBox();
             this.richTextBoxLpOutput = new System.Windows.Forms.RichTextBox();
@@ -43,23 +43,14 @@
             this.buttonFillDoubles = new System.Windows.Forms.Button();
             this.richTextBoxLog = new System.Windows.Forms.RichTextBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.checkBoxWinnersSingles = new System.Windows.Forms.CheckBox();
-            this.checkBoxLosersSingles = new System.Windows.Forms.CheckBox();
-            this.checkBoxFillUnfinishedSingles = new System.Windows.Forms.CheckBox();
+            this.checkBoxWinners = new System.Windows.Forms.CheckBox();
+            this.checkBoxLosers = new System.Windows.Forms.CheckBox();
+            this.checkBoxFillUnfinished = new System.Windows.Forms.CheckBox();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPageSingles = new System.Windows.Forms.TabPage();
-            this.buttonRegexReplace = new System.Windows.Forms.Button();
             this.tabPageDoubles = new System.Windows.Forms.TabPage();
-            this.numericUpDownAdvanceDoubles = new System.Windows.Forms.NumericUpDown();
-            this.radioButtonRRDoubles = new System.Windows.Forms.RadioButton();
-            this.radioButtonBracketDoubles = new System.Windows.Forms.RadioButton();
-            this.buttonPhaseDoubles = new System.Windows.Forms.Button();
-            this.label6 = new System.Windows.Forms.Label();
-            this.checkBoxFillUnfinishedDoubles = new System.Windows.Forms.CheckBox();
-            this.checkBoxLosersDoubles = new System.Windows.Forms.CheckBox();
-            this.checkBoxWinnersDoubles = new System.Windows.Forms.CheckBox();
-            this.buttonDoubles = new System.Windows.Forms.Button();
             this.textBoxURLDoubles = new System.Windows.Forms.TextBox();
+            this.buttonRegexReplace = new System.Windows.Forms.Button();
             this.numericUpDownWinnersStart = new System.Windows.Forms.NumericUpDown();
             this.label4 = new System.Windows.Forms.Label();
             this.numericUpDownWinnersEnd = new System.Windows.Forms.NumericUpDown();
@@ -82,11 +73,10 @@
             this.richTextBoxExRegexFind = new RichTextBoxEx();
             this.richTextBoxExLpWinnersBracket = new RichTextBoxEx();
             this.richTextBoxExLpLosersBracket = new RichTextBoxEx();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAdvanceSingles)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAdvance)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabPageSingles.SuspendLayout();
             this.tabPageDoubles.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAdvanceDoubles)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownWinnersStart)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownWinnersEnd)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownWinnersOffset)).BeginInit();
@@ -107,70 +97,70 @@
             // 
             // textBoxURLSingles
             // 
-            this.textBoxURLSingles.Location = new System.Drawing.Point(3, 3);
+            this.textBoxURLSingles.Location = new System.Drawing.Point(3, 16);
             this.textBoxURLSingles.Name = "textBoxURLSingles";
-            this.textBoxURLSingles.Size = new System.Drawing.Size(187, 20);
+            this.textBoxURLSingles.Size = new System.Drawing.Size(215, 20);
             this.textBoxURLSingles.TabIndex = 1;
             this.textBoxURLSingles.Enter += new System.EventHandler(this.textBoxURL_Enter);
             // 
-            // buttonSingles
+            // buttonGetBracket
             // 
-            this.buttonSingles.Location = new System.Drawing.Point(3, 29);
-            this.buttonSingles.Name = "buttonSingles";
-            this.buttonSingles.Size = new System.Drawing.Size(75, 23);
-            this.buttonSingles.TabIndex = 2;
-            this.buttonSingles.Text = "Get Singles";
-            this.buttonSingles.UseVisualStyleBackColor = true;
-            this.buttonSingles.Click += new System.EventHandler(this.buttonSingles_Click);
+            this.buttonGetBracket.Location = new System.Drawing.Point(709, 107);
+            this.buttonGetBracket.Name = "buttonGetBracket";
+            this.buttonGetBracket.Size = new System.Drawing.Size(75, 23);
+            this.buttonGetBracket.TabIndex = 2;
+            this.buttonGetBracket.Text = "Get Bracket";
+            this.buttonGetBracket.UseVisualStyleBackColor = true;
+            this.buttonGetBracket.Click += new System.EventHandler(this.buttonGetBracket_Click);
             // 
-            // buttonPhaseSingles
+            // buttonGetPhase
             // 
-            this.buttonPhaseSingles.Location = new System.Drawing.Point(115, 29);
-            this.buttonPhaseSingles.Name = "buttonPhaseSingles";
-            this.buttonPhaseSingles.Size = new System.Drawing.Size(75, 23);
-            this.buttonPhaseSingles.TabIndex = 2;
-            this.buttonPhaseSingles.Text = "Get Phase";
-            this.buttonPhaseSingles.UseVisualStyleBackColor = true;
-            this.buttonPhaseSingles.Click += new System.EventHandler(this.buttonPhaseSingles_Click);
+            this.buttonGetPhase.Location = new System.Drawing.Point(863, 107);
+            this.buttonGetPhase.Name = "buttonGetPhase";
+            this.buttonGetPhase.Size = new System.Drawing.Size(75, 23);
+            this.buttonGetPhase.TabIndex = 2;
+            this.buttonGetPhase.Text = "Get Phase";
+            this.buttonGetPhase.UseVisualStyleBackColor = true;
+            this.buttonGetPhase.Click += new System.EventHandler(this.buttonGetPhase_Click);
             // 
-            // radioButtonBracketSingles
+            // radioButtonBracket
             // 
-            this.radioButtonBracketSingles.AutoSize = true;
-            this.radioButtonBracketSingles.Checked = true;
-            this.radioButtonBracketSingles.Location = new System.Drawing.Point(115, 59);
-            this.radioButtonBracketSingles.Name = "radioButtonBracketSingles";
-            this.radioButtonBracketSingles.Size = new System.Drawing.Size(91, 17);
-            this.radioButtonBracketSingles.TabIndex = 8;
-            this.radioButtonBracketSingles.TabStop = true;
-            this.radioButtonBracketSingles.Text = "Bracket Pools";
-            this.radioButtonBracketSingles.UseVisualStyleBackColor = true;
+            this.radioButtonBracket.AutoSize = true;
+            this.radioButtonBracket.Checked = true;
+            this.radioButtonBracket.Location = new System.Drawing.Point(847, 136);
+            this.radioButtonBracket.Name = "radioButtonBracket";
+            this.radioButtonBracket.Size = new System.Drawing.Size(91, 17);
+            this.radioButtonBracket.TabIndex = 8;
+            this.radioButtonBracket.TabStop = true;
+            this.radioButtonBracket.Text = "Bracket Pools";
+            this.radioButtonBracket.UseVisualStyleBackColor = true;
             // 
-            // radioButtonRRSingles
+            // radioButtonRR
             // 
-            this.radioButtonRRSingles.AutoSize = true;
-            this.radioButtonRRSingles.Location = new System.Drawing.Point(115, 82);
-            this.radioButtonRRSingles.Name = "radioButtonRRSingles";
-            this.radioButtonRRSingles.Size = new System.Drawing.Size(88, 17);
-            this.radioButtonRRSingles.TabIndex = 9;
-            this.radioButtonRRSingles.Text = "Round Robin";
-            this.radioButtonRRSingles.UseVisualStyleBackColor = true;
+            this.radioButtonRR.AutoSize = true;
+            this.radioButtonRR.Location = new System.Drawing.Point(847, 159);
+            this.radioButtonRR.Name = "radioButtonRR";
+            this.radioButtonRR.Size = new System.Drawing.Size(88, 17);
+            this.radioButtonRR.TabIndex = 9;
+            this.radioButtonRR.Text = "Round Robin";
+            this.radioButtonRR.UseVisualStyleBackColor = true;
             // 
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(155, 107);
+            this.label5.Location = new System.Drawing.Point(887, 184);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(50, 13);
             this.label5.TabIndex = 5;
             this.label5.Text = "Advance";
             // 
-            // numericUpDownAdvanceSingles
+            // numericUpDownAdvance
             // 
-            this.numericUpDownAdvanceSingles.Location = new System.Drawing.Point(115, 105);
-            this.numericUpDownAdvanceSingles.Name = "numericUpDownAdvanceSingles";
-            this.numericUpDownAdvanceSingles.Size = new System.Drawing.Size(32, 20);
-            this.numericUpDownAdvanceSingles.TabIndex = 10;
-            this.numericUpDownAdvanceSingles.Value = new decimal(new int[] {
+            this.numericUpDownAdvance.Location = new System.Drawing.Point(847, 182);
+            this.numericUpDownAdvance.Name = "numericUpDownAdvance";
+            this.numericUpDownAdvance.Size = new System.Drawing.Size(32, 20);
+            this.numericUpDownAdvance.TabIndex = 10;
+            this.numericUpDownAdvance.Value = new decimal(new int[] {
             2,
             0,
             0,
@@ -205,17 +195,17 @@
             // 
             // buttonFill
             // 
-            this.buttonFill.Location = new System.Drawing.Point(3, 276);
+            this.buttonFill.Location = new System.Drawing.Point(716, 286);
             this.buttonFill.Name = "buttonFill";
             this.buttonFill.Size = new System.Drawing.Size(75, 23);
             this.buttonFill.TabIndex = 2;
-            this.buttonFill.Text = "Fill Bracket";
+            this.buttonFill.Text = "Fill Singles";
             this.buttonFill.UseVisualStyleBackColor = true;
             this.buttonFill.Click += new System.EventHandler(this.buttonFillSingles_Click);
             // 
             // buttonFillDoubles
             // 
-            this.buttonFillDoubles.Location = new System.Drawing.Point(3, 276);
+            this.buttonFillDoubles.Location = new System.Drawing.Point(716, 315);
             this.buttonFillDoubles.Name = "buttonFillDoubles";
             this.buttonFillDoubles.Size = new System.Drawing.Size(75, 23);
             this.buttonFillDoubles.TabIndex = 2;
@@ -240,35 +230,35 @@
             this.label1.TabIndex = 5;
             this.label1.Text = "Log:";
             // 
-            // checkBoxWinnersSingles
+            // checkBoxWinners
             // 
-            this.checkBoxWinnersSingles.AutoSize = true;
-            this.checkBoxWinnersSingles.Location = new System.Drawing.Point(3, 207);
-            this.checkBoxWinnersSingles.Name = "checkBoxWinnersSingles";
-            this.checkBoxWinnersSingles.Size = new System.Drawing.Size(65, 17);
-            this.checkBoxWinnersSingles.TabIndex = 7;
-            this.checkBoxWinnersSingles.Text = "Winners";
-            this.checkBoxWinnersSingles.UseVisualStyleBackColor = true;
+            this.checkBoxWinners.AutoSize = true;
+            this.checkBoxWinners.Location = new System.Drawing.Point(709, 185);
+            this.checkBoxWinners.Name = "checkBoxWinners";
+            this.checkBoxWinners.Size = new System.Drawing.Size(65, 17);
+            this.checkBoxWinners.TabIndex = 7;
+            this.checkBoxWinners.Text = "Winners";
+            this.checkBoxWinners.UseVisualStyleBackColor = true;
             // 
-            // checkBoxLosersSingles
+            // checkBoxLosers
             // 
-            this.checkBoxLosersSingles.AutoSize = true;
-            this.checkBoxLosersSingles.Location = new System.Drawing.Point(3, 230);
-            this.checkBoxLosersSingles.Name = "checkBoxLosersSingles";
-            this.checkBoxLosersSingles.Size = new System.Drawing.Size(57, 17);
-            this.checkBoxLosersSingles.TabIndex = 7;
-            this.checkBoxLosersSingles.Text = "Losers";
-            this.checkBoxLosersSingles.UseVisualStyleBackColor = true;
+            this.checkBoxLosers.AutoSize = true;
+            this.checkBoxLosers.Location = new System.Drawing.Point(709, 208);
+            this.checkBoxLosers.Name = "checkBoxLosers";
+            this.checkBoxLosers.Size = new System.Drawing.Size(57, 17);
+            this.checkBoxLosers.TabIndex = 7;
+            this.checkBoxLosers.Text = "Losers";
+            this.checkBoxLosers.UseVisualStyleBackColor = true;
             // 
-            // checkBoxFillUnfinishedSingles
+            // checkBoxFillUnfinished
             // 
-            this.checkBoxFillUnfinishedSingles.AutoSize = true;
-            this.checkBoxFillUnfinishedSingles.Location = new System.Drawing.Point(3, 253);
-            this.checkBoxFillUnfinishedSingles.Name = "checkBoxFillUnfinishedSingles";
-            this.checkBoxFillUnfinishedSingles.Size = new System.Drawing.Size(111, 17);
-            this.checkBoxFillUnfinishedSingles.TabIndex = 7;
-            this.checkBoxFillUnfinishedSingles.Text = "Fill unfinished sets";
-            this.checkBoxFillUnfinishedSingles.UseVisualStyleBackColor = true;
+            this.checkBoxFillUnfinished.AutoSize = true;
+            this.checkBoxFillUnfinished.Location = new System.Drawing.Point(709, 231);
+            this.checkBoxFillUnfinished.Name = "checkBoxFillUnfinished";
+            this.checkBoxFillUnfinished.Size = new System.Drawing.Size(111, 17);
+            this.checkBoxFillUnfinished.TabIndex = 7;
+            this.checkBoxFillUnfinished.Text = "Fill unfinished sets";
+            this.checkBoxFillUnfinished.UseVisualStyleBackColor = true;
             // 
             // tabControl1
             // 
@@ -278,162 +268,48 @@
             this.tabControl1.Location = new System.Drawing.Point(709, 12);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(229, 349);
+            this.tabControl1.Size = new System.Drawing.Size(229, 89);
             this.tabControl1.TabIndex = 0;
             // 
             // tabPageSingles
             // 
             this.tabPageSingles.Controls.Add(this.textBoxURLSingles);
-            this.tabPageSingles.Controls.Add(this.numericUpDownAdvanceSingles);
-            this.tabPageSingles.Controls.Add(this.buttonSingles);
-            this.tabPageSingles.Controls.Add(this.radioButtonRRSingles);
-            this.tabPageSingles.Controls.Add(this.radioButtonBracketSingles);
-            this.tabPageSingles.Controls.Add(this.buttonRegexReplace);
-            this.tabPageSingles.Controls.Add(this.buttonFill);
-            this.tabPageSingles.Controls.Add(this.checkBoxFillUnfinishedSingles);
-            this.tabPageSingles.Controls.Add(this.checkBoxLosersSingles);
-            this.tabPageSingles.Controls.Add(this.buttonPhaseSingles);
-            this.tabPageSingles.Controls.Add(this.checkBoxWinnersSingles);
-            this.tabPageSingles.Controls.Add(this.label5);
             this.tabPageSingles.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.tabPageSingles.Location = new System.Drawing.Point(4, 34);
             this.tabPageSingles.Name = "tabPageSingles";
-            this.tabPageSingles.Size = new System.Drawing.Size(221, 311);
+            this.tabPageSingles.Size = new System.Drawing.Size(221, 51);
             this.tabPageSingles.TabIndex = 0;
             this.tabPageSingles.Text = "Singles";
             this.tabPageSingles.UseVisualStyleBackColor = true;
             // 
+            // tabPageDoubles
+            // 
+            this.tabPageDoubles.Controls.Add(this.textBoxURLDoubles);
+            this.tabPageDoubles.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.tabPageDoubles.Location = new System.Drawing.Point(4, 34);
+            this.tabPageDoubles.Name = "tabPageDoubles";
+            this.tabPageDoubles.Size = new System.Drawing.Size(221, 51);
+            this.tabPageDoubles.TabIndex = 0;
+            this.tabPageDoubles.Text = "Doubles";
+            this.tabPageDoubles.UseVisualStyleBackColor = true;
+            // 
+            // textBoxURLDoubles
+            // 
+            this.textBoxURLDoubles.Location = new System.Drawing.Point(3, 16);
+            this.textBoxURLDoubles.Name = "textBoxURLDoubles";
+            this.textBoxURLDoubles.Size = new System.Drawing.Size(215, 20);
+            this.textBoxURLDoubles.TabIndex = 2;
+            this.textBoxURLDoubles.Enter += new System.EventHandler(this.textBoxURL_Enter);
+            // 
             // buttonRegexReplace
             // 
-            this.buttonRegexReplace.Location = new System.Drawing.Point(84, 276);
+            this.buttonRegexReplace.Location = new System.Drawing.Point(828, 315);
             this.buttonRegexReplace.Name = "buttonRegexReplace";
             this.buttonRegexReplace.Size = new System.Drawing.Size(106, 23);
             this.buttonRegexReplace.TabIndex = 2;
             this.buttonRegexReplace.Text = "Regex Replace";
             this.buttonRegexReplace.UseVisualStyleBackColor = true;
             this.buttonRegexReplace.Click += new System.EventHandler(this.buttonRegexReplace_Click);
-            // 
-            // tabPageDoubles
-            // 
-            this.tabPageDoubles.Controls.Add(this.numericUpDownAdvanceDoubles);
-            this.tabPageDoubles.Controls.Add(this.radioButtonRRDoubles);
-            this.tabPageDoubles.Controls.Add(this.radioButtonBracketDoubles);
-            this.tabPageDoubles.Controls.Add(this.buttonPhaseDoubles);
-            this.tabPageDoubles.Controls.Add(this.label6);
-            this.tabPageDoubles.Controls.Add(this.checkBoxFillUnfinishedDoubles);
-            this.tabPageDoubles.Controls.Add(this.checkBoxLosersDoubles);
-            this.tabPageDoubles.Controls.Add(this.checkBoxWinnersDoubles);
-            this.tabPageDoubles.Controls.Add(this.buttonDoubles);
-            this.tabPageDoubles.Controls.Add(this.textBoxURLDoubles);
-            this.tabPageDoubles.Controls.Add(this.buttonFillDoubles);
-            this.tabPageDoubles.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tabPageDoubles.Location = new System.Drawing.Point(4, 34);
-            this.tabPageDoubles.Name = "tabPageDoubles";
-            this.tabPageDoubles.Size = new System.Drawing.Size(221, 311);
-            this.tabPageDoubles.TabIndex = 0;
-            this.tabPageDoubles.Text = "Doubles";
-            this.tabPageDoubles.UseVisualStyleBackColor = true;
-            // 
-            // numericUpDownAdvanceDoubles
-            // 
-            this.numericUpDownAdvanceDoubles.Location = new System.Drawing.Point(115, 105);
-            this.numericUpDownAdvanceDoubles.Name = "numericUpDownAdvanceDoubles";
-            this.numericUpDownAdvanceDoubles.Size = new System.Drawing.Size(32, 20);
-            this.numericUpDownAdvanceDoubles.TabIndex = 21;
-            this.numericUpDownAdvanceDoubles.Value = new decimal(new int[] {
-            2,
-            0,
-            0,
-            0});
-            // 
-            // radioButtonRRDoubles
-            // 
-            this.radioButtonRRDoubles.AutoSize = true;
-            this.radioButtonRRDoubles.Location = new System.Drawing.Point(115, 82);
-            this.radioButtonRRDoubles.Name = "radioButtonRRDoubles";
-            this.radioButtonRRDoubles.Size = new System.Drawing.Size(88, 17);
-            this.radioButtonRRDoubles.TabIndex = 20;
-            this.radioButtonRRDoubles.Text = "Round Robin";
-            this.radioButtonRRDoubles.UseVisualStyleBackColor = true;
-            // 
-            // radioButtonBracketDoubles
-            // 
-            this.radioButtonBracketDoubles.AutoSize = true;
-            this.radioButtonBracketDoubles.Checked = true;
-            this.radioButtonBracketDoubles.Location = new System.Drawing.Point(115, 59);
-            this.radioButtonBracketDoubles.Name = "radioButtonBracketDoubles";
-            this.radioButtonBracketDoubles.Size = new System.Drawing.Size(91, 17);
-            this.radioButtonBracketDoubles.TabIndex = 19;
-            this.radioButtonBracketDoubles.TabStop = true;
-            this.radioButtonBracketDoubles.Text = "Bracket Pools";
-            this.radioButtonBracketDoubles.UseVisualStyleBackColor = true;
-            // 
-            // buttonPhaseDoubles
-            // 
-            this.buttonPhaseDoubles.Location = new System.Drawing.Point(115, 29);
-            this.buttonPhaseDoubles.Name = "buttonPhaseDoubles";
-            this.buttonPhaseDoubles.Size = new System.Drawing.Size(75, 23);
-            this.buttonPhaseDoubles.TabIndex = 17;
-            this.buttonPhaseDoubles.Text = "Get Phase";
-            this.buttonPhaseDoubles.UseVisualStyleBackColor = true;
-            this.buttonPhaseDoubles.Click += new System.EventHandler(this.buttonPhaseDoubles_Click);
-            // 
-            // label6
-            // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(155, 107);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(50, 13);
-            this.label6.TabIndex = 18;
-            this.label6.Text = "Advance";
-            // 
-            // checkBoxFillUnfinishedDoubles
-            // 
-            this.checkBoxFillUnfinishedDoubles.AutoSize = true;
-            this.checkBoxFillUnfinishedDoubles.Location = new System.Drawing.Point(3, 253);
-            this.checkBoxFillUnfinishedDoubles.Name = "checkBoxFillUnfinishedDoubles";
-            this.checkBoxFillUnfinishedDoubles.Size = new System.Drawing.Size(111, 17);
-            this.checkBoxFillUnfinishedDoubles.TabIndex = 14;
-            this.checkBoxFillUnfinishedDoubles.Text = "Fill unfinished sets";
-            this.checkBoxFillUnfinishedDoubles.UseVisualStyleBackColor = true;
-            // 
-            // checkBoxLosersDoubles
-            // 
-            this.checkBoxLosersDoubles.AutoSize = true;
-            this.checkBoxLosersDoubles.Location = new System.Drawing.Point(3, 230);
-            this.checkBoxLosersDoubles.Name = "checkBoxLosersDoubles";
-            this.checkBoxLosersDoubles.Size = new System.Drawing.Size(57, 17);
-            this.checkBoxLosersDoubles.TabIndex = 15;
-            this.checkBoxLosersDoubles.Text = "Losers";
-            this.checkBoxLosersDoubles.UseVisualStyleBackColor = true;
-            // 
-            // checkBoxWinnersDoubles
-            // 
-            this.checkBoxWinnersDoubles.AutoSize = true;
-            this.checkBoxWinnersDoubles.Location = new System.Drawing.Point(3, 207);
-            this.checkBoxWinnersDoubles.Name = "checkBoxWinnersDoubles";
-            this.checkBoxWinnersDoubles.Size = new System.Drawing.Size(65, 17);
-            this.checkBoxWinnersDoubles.TabIndex = 16;
-            this.checkBoxWinnersDoubles.Text = "Winners";
-            this.checkBoxWinnersDoubles.UseVisualStyleBackColor = true;
-            // 
-            // buttonDoubles
-            // 
-            this.buttonDoubles.Location = new System.Drawing.Point(3, 29);
-            this.buttonDoubles.Name = "buttonDoubles";
-            this.buttonDoubles.Size = new System.Drawing.Size(75, 23);
-            this.buttonDoubles.TabIndex = 3;
-            this.buttonDoubles.Text = "Get Doubles";
-            this.buttonDoubles.UseVisualStyleBackColor = true;
-            this.buttonDoubles.Click += new System.EventHandler(this.buttonDoubles_Click);
-            // 
-            // textBoxURLDoubles
-            // 
-            this.textBoxURLDoubles.Location = new System.Drawing.Point(3, 3);
-            this.textBoxURLDoubles.Name = "textBoxURLDoubles";
-            this.textBoxURLDoubles.Size = new System.Drawing.Size(187, 20);
-            this.textBoxURLDoubles.TabIndex = 2;
-            this.textBoxURLDoubles.Enter += new System.EventHandler(this.textBoxURL_Enter);
             // 
             // numericUpDownWinnersStart
             // 
@@ -601,7 +477,7 @@
             // checkBoxGuessFinal
             // 
             this.checkBoxGuessFinal.AutoSize = true;
-            this.checkBoxGuessFinal.Location = new System.Drawing.Point(580, 151);
+            this.checkBoxGuessFinal.Location = new System.Drawing.Point(709, 254);
             this.checkBoxGuessFinal.Name = "checkBoxGuessFinal";
             this.checkBoxGuessFinal.Size = new System.Drawing.Size(121, 17);
             this.checkBoxGuessFinal.TabIndex = 14;
@@ -651,11 +527,23 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(948, 690);
             this.Controls.Add(this.richTextBoxExRegexReplace);
+            this.Controls.Add(this.numericUpDownAdvance);
             this.Controls.Add(this.richTextBoxExRegexFind);
+            this.Controls.Add(this.radioButtonRR);
+            this.Controls.Add(this.radioButtonBracket);
+            this.Controls.Add(this.buttonGetBracket);
+            this.Controls.Add(this.label5);
             this.Controls.Add(this.progressBar);
+            this.Controls.Add(this.buttonGetPhase);
             this.Controls.Add(this.checkBoxGuessFinal);
             this.Controls.Add(this.checkBoxLockLosers);
+            this.Controls.Add(this.checkBoxFillUnfinished);
+            this.Controls.Add(this.buttonRegexReplace);
+            this.Controls.Add(this.checkBoxLosers);
             this.Controls.Add(this.checkBoxLockWinners);
+            this.Controls.Add(this.buttonFill);
+            this.Controls.Add(this.buttonFillDoubles);
+            this.Controls.Add(this.checkBoxWinners);
             this.Controls.Add(this.richTextBoxExLpWinnersBracket);
             this.Controls.Add(this.richTextBoxExLpLosersBracket);
             this.Controls.Add(this.numericUpDownLosersStart);
@@ -681,13 +569,12 @@
             this.Controls.Add(this.numericUpDownWinnersEnd);
             this.Name = "Form1";
             this.Text = "Smash.gg to Liquipedia";
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAdvanceSingles)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAdvance)).EndInit();
             this.tabControl1.ResumeLayout(false);
             this.tabPageSingles.ResumeLayout(false);
             this.tabPageSingles.PerformLayout();
             this.tabPageDoubles.ResumeLayout(false);
             this.tabPageDoubles.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAdvanceDoubles)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownWinnersStart)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownWinnersEnd)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownWinnersOffset)).EndInit();
@@ -703,12 +590,12 @@
 
         private System.Windows.Forms.RichTextBox richTextBoxEntrants;
         private System.Windows.Forms.TextBox textBoxURLSingles;
-        private System.Windows.Forms.Button buttonSingles;
-        private System.Windows.Forms.Button buttonPhaseSingles;
-        private System.Windows.Forms.RadioButton radioButtonBracketSingles;
-        private System.Windows.Forms.RadioButton radioButtonRRSingles;
+        private System.Windows.Forms.Button buttonGetBracket;
+        private System.Windows.Forms.Button buttonGetPhase;
+        private System.Windows.Forms.RadioButton radioButtonBracket;
+        private System.Windows.Forms.RadioButton radioButtonRR;
         private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.NumericUpDown numericUpDownAdvanceSingles;
+        private System.Windows.Forms.NumericUpDown numericUpDownAdvance;
         private System.Windows.Forms.RichTextBox richTextBoxWinners;
         private System.Windows.Forms.RichTextBox richTextBoxLosers;
         private System.Windows.Forms.RichTextBox richTextBoxLpOutput;
@@ -716,9 +603,9 @@
         private System.Windows.Forms.Button buttonFillDoubles;
         private System.Windows.Forms.RichTextBox richTextBoxLog;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.CheckBox checkBoxWinnersSingles;
-        private System.Windows.Forms.CheckBox checkBoxLosersSingles;
-        private System.Windows.Forms.CheckBox checkBoxFillUnfinishedSingles;
+        private System.Windows.Forms.CheckBox checkBoxWinners;
+        private System.Windows.Forms.CheckBox checkBoxLosers;
+        private System.Windows.Forms.CheckBox checkBoxFillUnfinished;
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.TabPage tabPageSingles;
         private System.Windows.Forms.NumericUpDown numericUpDownWinnersStart;
@@ -728,10 +615,6 @@
         private System.Windows.Forms.NumericUpDown numericUpDownWinnersOffset;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TabPage tabPageDoubles;
-        private System.Windows.Forms.CheckBox checkBoxFillUnfinishedDoubles;
-        private System.Windows.Forms.CheckBox checkBoxLosersDoubles;
-        private System.Windows.Forms.CheckBox checkBoxWinnersDoubles;
-        private System.Windows.Forms.Button buttonDoubles;
         private System.Windows.Forms.TextBox textBoxURLDoubles;
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.Label label10;
@@ -745,11 +628,6 @@
         private RichTextBoxEx richTextBoxExLpWinnersBracket;
         private System.Windows.Forms.CheckBox checkBoxLockWinners;
         private System.Windows.Forms.CheckBox checkBoxLockLosers;
-        private System.Windows.Forms.NumericUpDown numericUpDownAdvanceDoubles;
-        private System.Windows.Forms.RadioButton radioButtonRRDoubles;
-        private System.Windows.Forms.RadioButton radioButtonBracketDoubles;
-        private System.Windows.Forms.Button buttonPhaseDoubles;
-        private System.Windows.Forms.Label label6;
         private System.Windows.Forms.ProgressBar progressBar;
         private System.Windows.Forms.CheckBox checkBoxGuessFinal;
         private RichTextBoxEx richTextBoxExRegexFind;

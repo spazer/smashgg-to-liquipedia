@@ -83,7 +83,7 @@ namespace smashgg_api
                                                         "|r3m1t1p1= |r3m1t1p1flag=\r\n" +
                                                         "|r3m1t1p2= |r3m1t1p2flag= |r3m1t1score= |r3m2t1score=\r\n" +
                                                         "|r3m1t2p1= |r3m1t2p1flag=\r\n" +
-                                                        "|r3m1t2p2= |r3m1t2p2flag= |r3m1t2score= |r3m2t1score=\r\n" +
+                                                        "|r3m1t2p2= |r3m1t2p2flag= |r3m1t2score= |r3m2t2score=\r\n" +
                                                         "|r3m1win=\r\n" +
                                                         "}}";
 
@@ -147,16 +147,35 @@ namespace smashgg_api
 
         #region Buttons
         /// <summary>
-        /// Retrieve and process smash.gg json for the singles bracket
+        /// Indicates that user wishes to retrieve a bracket
         /// </summary>
         /// <param name="sender">N/A</param>
         /// <param name="e">N/A</param>
-        private void buttonSingles_Click(object sender, EventArgs e)
+        private void buttonGetBracket_Click(object sender, EventArgs e)
+        {
+            LockControls();
+
+            if(tabControl1.SelectedTab.Text == "Singles")
+            {
+                SinglesBracket();
+            }
+            else
+            {
+                DoublesBracket();
+            }
+            
+            UnlockControls();
+        }
+
+        /// <summary>
+        /// Retrieve and process smash.gg json for the singles bracket
+        /// </summary>
+        private void SinglesBracket()
         {
             // Clear data
-            clearData();
-            checkBoxWinnersSingles.Checked = false;
-            checkBoxLosersSingles.Checked = false;
+            ClearData();
+            checkBoxWinners.Checked = false;
+            checkBoxLosers.Checked = false;
 
             string json = string.Empty;
 
@@ -192,12 +211,12 @@ namespace smashgg_api
 
             // Fill entrant and set lists
             smashgg parser = new smashgg();
-            if(!parser.GetEntrants(bracketJson.SelectToken(SmashggStrings.Entities + "." + SmashggStrings.Entrants), ref entrantList))
+            if (!parser.GetEntrants(bracketJson.SelectToken(SmashggStrings.Entities + "." + SmashggStrings.Entrants), ref entrantList))
             {
                 richTextBoxLog.Text += "No entrants detected.\r\n";
                 return;
             }
-            if(!parser.GetSets(bracketJson.SelectToken(SmashggStrings.Entities + "." + SmashggStrings.Sets), ref setList))
+            if (!parser.GetSets(bracketJson.SelectToken(SmashggStrings.Entities + "." + SmashggStrings.Sets), ref setList))
             {
                 richTextBoxLog.Text += "No sets detected.\r\n";
                 return;
@@ -230,7 +249,7 @@ namespace smashgg_api
                 }
             }
 
-            updateNumericUpDownControls(EventType.Singles);
+            UpdateNumericUpDownControls(EventType.Singles);
 
             int p1padding = 0;
             int wpadding = 0;
@@ -275,7 +294,7 @@ namespace smashgg_api
             {
                 foreach (Set set in roundList.ElementAt(i).Value)
                 {
-                    if (checkBoxFillUnfinishedSingles.Checked == false && set.state == 1) continue;
+                    if (checkBoxFillUnfinished.Checked == false && set.state == 1) continue;
 
                     if (set.displayRound > 0)
                     {
@@ -290,195 +309,14 @@ namespace smashgg_api
         }
 
         /// <summary>
-        /// Acquire, process, and output all data from the singles phase specified in the URL
-        /// </summary>
-        /// <param name="sender">N/A</param>
-        /// <param name="e">N/A</param>
-        private void buttonPhaseSingles_Click(object sender, EventArgs e)
-        {
-            // Clear data
-            clearData();
-            checkBoxWinnersSingles.Checked = false;
-            checkBoxLosersSingles.Checked = false;
-
-            UpdateTournamentStructure();
-            int phaseNumber;
-
-            UrlNumberType parseResult = parseURL(textBoxURLSingles.Text, UrlNumberType.Phase, out phaseNumber);
-            if (parseResult == UrlNumberType.Phase_Group || parseResult == UrlNumberType.None) return;
-
-            // Find the matching phase in the tournament structure
-            string json = string.Empty;
-            smashgg parser = new smashgg();
-            foreach (Phase phase in phaseList)
-            {
-                if (phase.phaseId == phaseNumber && phase.id.Count > 1)
-                {
-                    // Sort the list by wave and number
-                    // Assume that if the first element has a wave and number, the rest do too
-                    if (phase.id[0].waveNumberDetected)
-                    {
-                        phase.id = phase.id.OrderBy(c => c.Wave).ThenBy(c => c.Number).ToList();
-                    }
-                    else
-                    {
-                        phase.id = phase.id.OrderBy(c => c.DisplayIdentifier).ToList();
-                    }
-
-                    // Setup progress bar
-                    progressBar.Minimum = 0;
-                    progressBar.Maximum = phase.id.Count();
-                    progressBar.Value = 1;
-                    progressBar.Step = 1;
-
-                    // Retrieve pages for each group
-                    string lastWave = string.Empty;
-                    for (int j = 0; j < phase.id.Count; j++) 
-                    {
-                        // Increment the progress bar
-                        progressBar.PerformStep();
-
-                        Dictionary<int, PoolRecord> poolData = new Dictionary<int, PoolRecord>();
-
-                        if (radioButtonBracketSingles.Checked)
-                        {
-                            if (!GeneratePoolData(phase.id[j].id, parser, PoolType.Bracket, ref poolData)) continue;
-                        }
-                        else
-                        {
-                            if (!GeneratePoolData(phase.id[j].id, parser, PoolType.RoundRobin, ref poolData)) continue;
-                        }
-
-                        // Output to textbox
-                        // Wave headers
-                        if (phase.id[0].waveNumberDetected)
-                        {
-                            if (lastWave != phase.id[j].Wave)
-                            {
-                                richTextBoxLpOutput.Text += "==Wave " + phase.id[j].Wave + "==\r\n";
-                                richTextBoxLpOutput.Text += LpStrings.BoxStart + "\r\n";
-
-                                lastWave = phase.id[j].Wave;
-                            }
-                        }
-                        else if (j == 0)    // Start a box at the first element
-                        {
-                            richTextBoxLpOutput.Text += LpStrings.BoxStart + "\r\n";
-                        }
-
-                        // Pool headers
-                        if (phase.id[0].waveNumberDetected)
-                        {
-                            richTextBoxLpOutput.Text += LpStrings.SortStart + "===" + phase.id[j].Wave + phase.id[j].Number.ToString() + "===" + LpStrings.SortEnd + "\r\n";
-                            richTextBoxLpOutput.Text += LpStrings.GroupStart + "Bracket " + phase.id[j].Wave + phase.id[j].Number.ToString() + LpStrings.GroupStartWidth + "\r\n";
-                        }
-                        else
-                        {
-                            richTextBoxLpOutput.Text += LpStrings.SortStart + "===" + phase.id[j].Wave + phase.id[j].DisplayIdentifier.ToString() + "===" + LpStrings.SortEnd + "\r\n";
-                            richTextBoxLpOutput.Text += LpStrings.GroupStart + "Bracket " + phase.id[j].DisplayIdentifier.ToString() + LpStrings.GroupStartWidth + "\r\n";
-                        }
-
-                        // Pool slots
-                        int lastRank = 0;
-                        int lastWin = 0;
-                        int lastLoss = 0;
-                        int advance = (int)numericUpDownAdvanceSingles.Value;
-                        for (int i = 0; i < poolData.Count; i++)
-                        {
-                            // Skip bye
-                            if (poolData.ElementAt(i).Key == PLAYER_BYE)
-                            {
-                                continue;
-                            }
-
-                            Player currentPlayer = entrantList[poolData.ElementAt(i).Key].Players[0];
-                            richTextBoxLpOutput.Text += LpStrings.SlotStart + currentPlayer.name +
-                                                          LpStrings.SlotFlag + currentPlayer.country +
-                                                          LpStrings.SlotMWin + poolData[poolData.ElementAt(i).Key].matchesWin +
-                                                          LpStrings.SlotMLoss + poolData[poolData.ElementAt(i).Key].matchesLoss;
-                            if (radioButtonRRSingles.Checked == true)
-                            {
-                                if (poolData[poolData.ElementAt(i).Key].matchesWin == lastWin && poolData[poolData.ElementAt(i).Key].matchesLoss == lastLoss)
-                                {
-                                    richTextBoxLpOutput.Text += LpStrings.SlotPlace + lastRank;
-                                }
-                                else
-                                {
-                                    richTextBoxLpOutput.Text += LpStrings.SlotPlace + (i + 1);
-                                    lastRank = i + 1;
-                                    lastWin = poolData[poolData.ElementAt(i).Key].matchesWin;
-                                    lastLoss = poolData[poolData.ElementAt(i).Key].matchesLoss;
-                                }
-                            }
-                            else if (poolData[poolData.ElementAt(i).Key].rank != -99)
-                            {
-                                richTextBoxLpOutput.Text += LpStrings.SlotPlace + poolData[poolData.ElementAt(i).Key].rank;
-                            }
-                            else
-                            {
-                                richTextBoxLpOutput.Text += LpStrings.SlotPlace;
-                            }
-
-                            if (advance > 0)
-                            {
-                                richTextBoxLpOutput.Text += LpStrings.SlotBg + "up";
-                                advance--;
-                            }
-                            else
-                            {
-                                richTextBoxLpOutput.Text += LpStrings.SlotBg + "down";
-                            }
-
-                            richTextBoxLpOutput.Text += LpStrings.SlotEnd + "\r\n";
-                        }
-
-                        // Pool footers
-                        richTextBoxLpOutput.Text += LpStrings.GroupEnd + "\r\n";
-                        if (phase.id[0].waveNumberDetected)     // Waves exist
-                        {
-                            if (j + 1 >= phase.id.Count)
-                            {
-                                richTextBoxLpOutput.Text += LpStrings.BoxEnd + "\r\n\r\n";
-                            }
-                            else if (phase.id[j + 1].Wave != lastWave)
-                            {
-                                richTextBoxLpOutput.Text += LpStrings.BoxEnd + "\r\n\r\n";
-                            }
-                            else
-                            {
-                                richTextBoxLpOutput.Text += LpStrings.BoxBreak + "\r\n\r\n";
-                            }
-                        }
-                        else        // Waves don't exist
-                        {
-                            if (j == phase.id.Count - 1) // End box at the group end
-                            {
-                                richTextBoxLpOutput.Text += LpStrings.BoxEnd + "\r\n\r\n";
-                            }
-                            else
-                            {
-                                richTextBoxLpOutput.Text += LpStrings.BoxBreak + "\r\n\r\n";
-                            }
-                        }
-                    }
-
-                    // Clear the progress bar
-                    progressBar.Value = 0;
-                }
-            }
-        }
-
-        /// <summary>
         /// Acquire, process, and output all data from the doubles bracket specified in the URL
         /// </summary>
-        /// <param name="sender">N/A</param>
-        /// <param name="e">N/A</param>
-        private void buttonDoubles_Click(object sender, EventArgs e)
+        private void DoublesBracket()
         {
             // Clear data
-            clearData();
-            checkBoxWinnersDoubles.Checked = false;
-            checkBoxLosersDoubles.Checked = false;
+            ClearData();
+            checkBoxWinners.Checked = false;
+            checkBoxLosers.Checked = false;
 
             string json = string.Empty;
 
@@ -553,7 +391,7 @@ namespace smashgg_api
                 }
             }
 
-            updateNumericUpDownControls(EventType.Doubles);
+            UpdateNumericUpDownControls(EventType.Doubles);
 
             // Set padding for textbox output
             int t1padding = 0;
@@ -561,7 +399,7 @@ namespace smashgg_api
             int lpadding = 0;
 
             // Add player name lengths together and take the biggest total. This will be the padding value
-            foreach(Entrant entrant in entrantList.Values)
+            foreach (Entrant entrant in entrantList.Values)
             {
                 int sum = 0;
                 foreach (Player player in entrant.Players)
@@ -601,7 +439,7 @@ namespace smashgg_api
             {
                 foreach (Set set in roundList.ElementAt(i).Value)
                 {
-                    if (checkBoxFillUnfinishedDoubles.Checked == false && set.state == 1) continue;
+                    if (checkBoxFillUnfinished.Checked == false && set.state == 1) continue;
 
                     if (set.displayRound > 0)
                     {
@@ -616,16 +454,191 @@ namespace smashgg_api
         }
 
         /// <summary>
-        /// Acquire, process, and output all data from the doubles phase specified in the URL
+        /// Acquire, process, and output all data from the singles phase specified in the URL
         /// </summary>
-        /// <param name="sender">N/A</param>
-        /// <param name="e">N/A</param>
-        private void buttonPhaseDoubles_Click(object sender, EventArgs e)
+        private void SinglesPhase()
         {
             // Clear data
-            clearData();
-            checkBoxWinnersDoubles.Checked = false;
-            checkBoxLosersDoubles.Checked = false;
+            ClearData();
+            checkBoxWinners.Checked = false;
+            checkBoxLosers.Checked = false;
+
+            UpdateTournamentStructure();
+            int phaseNumber;
+
+            UrlNumberType parseResult = parseURL(textBoxURLSingles.Text, UrlNumberType.Phase, out phaseNumber);
+            if (parseResult == UrlNumberType.Phase_Group || parseResult == UrlNumberType.None) return;
+
+            // Find the matching phase in the tournament structure
+            string json = string.Empty;
+            smashgg parser = new smashgg();
+            foreach (Phase phase in phaseList)
+            {
+                if (phase.phaseId == phaseNumber && phase.id.Count > 1)
+                {
+                    // Sort the list by wave and number
+                    // Assume that if the first element has a wave and number, the rest do too
+                    if (phase.id[0].waveNumberDetected)
+                    {
+                        phase.id = phase.id.OrderBy(c => c.Wave).ThenBy(c => c.Number).ToList();
+                    }
+                    else
+                    {
+                        phase.id = phase.id.OrderBy(c => c.DisplayIdentifier).ToList();
+                    }
+
+                    // Setup progress bar
+                    progressBar.Minimum = 0;
+                    progressBar.Maximum = phase.id.Count();
+                    progressBar.Value = 1;
+                    progressBar.Step = 1;
+
+                    // Retrieve pages for each group
+                    string lastWave = string.Empty;
+                    for (int j = 0; j < phase.id.Count; j++)
+                    {
+                        // Increment the progress bar
+                        progressBar.PerformStep();
+
+                        Dictionary<int, PoolRecord> poolData = new Dictionary<int, PoolRecord>();
+
+                        if (radioButtonBracket.Checked)
+                        {
+                            if (!GeneratePoolData(phase.id[j].id, parser, PoolType.Bracket, ref poolData)) continue;
+                        }
+                        else
+                        {
+                            if (!GeneratePoolData(phase.id[j].id, parser, PoolType.RoundRobin, ref poolData)) continue;
+                        }
+
+                        // Output to textbox
+                        // Wave headers
+                        if (phase.id[0].waveNumberDetected)
+                        {
+                            if (lastWave != phase.id[j].Wave)
+                            {
+                                richTextBoxLpOutput.Text += "==Wave " + phase.id[j].Wave + "==\r\n";
+                                richTextBoxLpOutput.Text += LpStrings.BoxStart + "\r\n";
+
+                                lastWave = phase.id[j].Wave;
+                            }
+                        }
+                        else if (j == 0)    // Start a box at the first element
+                        {
+                            richTextBoxLpOutput.Text += LpStrings.BoxStart + "\r\n";
+                        }
+
+                        // Pool headers
+                        if (phase.id[0].waveNumberDetected)
+                        {
+                            richTextBoxLpOutput.Text += LpStrings.SortStart + "===" + phase.id[j].Wave + phase.id[j].Number.ToString() + "===" + LpStrings.SortEnd + "\r\n";
+                            richTextBoxLpOutput.Text += LpStrings.GroupStart + "Bracket " + phase.id[j].Wave + phase.id[j].Number.ToString() + LpStrings.GroupStartWidth + "\r\n";
+                        }
+                        else
+                        {
+                            richTextBoxLpOutput.Text += LpStrings.SortStart + "===" + phase.id[j].Wave + phase.id[j].DisplayIdentifier.ToString() + "===" + LpStrings.SortEnd + "\r\n";
+                            richTextBoxLpOutput.Text += LpStrings.GroupStart + "Bracket " + phase.id[j].DisplayIdentifier.ToString() + LpStrings.GroupStartWidth + "\r\n";
+                        }
+
+                        // Pool slots
+                        int lastRank = 0;
+                        int lastWin = 0;
+                        int lastLoss = 0;
+                        int advance = (int)numericUpDownAdvance.Value;
+                        for (int i = 0; i < poolData.Count; i++)
+                        {
+                            // Skip bye
+                            if (poolData.ElementAt(i).Key == PLAYER_BYE)
+                            {
+                                continue;
+                            }
+
+                            Player currentPlayer = entrantList[poolData.ElementAt(i).Key].Players[0];
+                            richTextBoxLpOutput.Text += LpStrings.SlotStart + currentPlayer.name +
+                                                          LpStrings.SlotFlag + currentPlayer.country +
+                                                          LpStrings.SlotMWin + poolData[poolData.ElementAt(i).Key].matchesWin +
+                                                          LpStrings.SlotMLoss + poolData[poolData.ElementAt(i).Key].matchesLoss;
+                            if (radioButtonRR.Checked == true)
+                            {
+                                if (poolData[poolData.ElementAt(i).Key].matchesWin == lastWin && poolData[poolData.ElementAt(i).Key].matchesLoss == lastLoss)
+                                {
+                                    richTextBoxLpOutput.Text += LpStrings.SlotPlace + lastRank;
+                                }
+                                else
+                                {
+                                    richTextBoxLpOutput.Text += LpStrings.SlotPlace + (i + 1);
+                                    lastRank = i + 1;
+                                    lastWin = poolData[poolData.ElementAt(i).Key].matchesWin;
+                                    lastLoss = poolData[poolData.ElementAt(i).Key].matchesLoss;
+                                }
+                            }
+                            else if (poolData[poolData.ElementAt(i).Key].rank != -99)
+                            {
+                                richTextBoxLpOutput.Text += LpStrings.SlotPlace + poolData[poolData.ElementAt(i).Key].rank;
+                            }
+                            else
+                            {
+                                richTextBoxLpOutput.Text += LpStrings.SlotPlace;
+                            }
+
+                            if (advance > 0)
+                            {
+                                richTextBoxLpOutput.Text += LpStrings.SlotBg + "up";
+                                advance--;
+                            }
+                            else
+                            {
+                                richTextBoxLpOutput.Text += LpStrings.SlotBg + "down";
+                            }
+
+                            richTextBoxLpOutput.Text += LpStrings.SlotEnd + "\r\n";
+                        }
+
+                        // Pool footers
+                        richTextBoxLpOutput.Text += LpStrings.GroupEnd + "\r\n";
+                        if (phase.id[0].waveNumberDetected)     // Waves exist
+                        {
+                            if (j + 1 >= phase.id.Count)
+                            {
+                                richTextBoxLpOutput.Text += LpStrings.BoxEnd + "\r\n\r\n";
+                            }
+                            else if (phase.id[j + 1].Wave != lastWave)
+                            {
+                                richTextBoxLpOutput.Text += LpStrings.BoxEnd + "\r\n\r\n";
+                            }
+                            else
+                            {
+                                richTextBoxLpOutput.Text += LpStrings.BoxBreak + "\r\n\r\n";
+                            }
+                        }
+                        else        // Waves don't exist
+                        {
+                            if (j == phase.id.Count - 1) // End box at the group end
+                            {
+                                richTextBoxLpOutput.Text += LpStrings.BoxEnd + "\r\n\r\n";
+                            }
+                            else
+                            {
+                                richTextBoxLpOutput.Text += LpStrings.BoxBreak + "\r\n\r\n";
+                            }
+                        }
+                    }
+
+                    // Clear the progress bar
+                    progressBar.Value = 0;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Acquire, process, and output all data from the doubles phase specified in the URL
+        /// </summary>
+        private void DoublesPhase()
+        {
+            // Clear data
+            ClearData();
+            checkBoxWinners.Checked = false;
+            checkBoxLosers.Checked = false;
 
             UpdateTournamentStructure();
             int phaseNumber;
@@ -664,7 +677,7 @@ namespace smashgg_api
 
                         Dictionary<int, PoolRecord> poolData = new Dictionary<int, PoolRecord>();
 
-                        if (radioButtonBracketDoubles.Checked)
+                        if (radioButtonBracket.Checked)
                         {
                             if (!GeneratePoolData(phase.id[j].id, parser, PoolType.Bracket, ref poolData)) continue;
                         }
@@ -707,7 +720,7 @@ namespace smashgg_api
                         int lastMatchWin = 0;
                         int lastMatchLoss = 0;
                         double lastWinrate = 0.0;
-                        int advance = (int)numericUpDownAdvanceDoubles.Value;
+                        int advance = (int)numericUpDownAdvance.Value;
                         for (int i = 0; i < poolData.Count; i++)
                         {
                             // Skip bye
@@ -717,7 +730,7 @@ namespace smashgg_api
                             }
 
                             // Output players
-                            richTextBoxLpOutput.Text += LpStrings.DoublesSlotStart + 
+                            richTextBoxLpOutput.Text += LpStrings.DoublesSlotStart +
                                                         LpStrings.DoublesSlotP1 + entrantList[poolData.ElementAt(i).Key].Players[0].name +
                                                         LpStrings.DoublesSlotP1Flag + entrantList[poolData.ElementAt(i).Key].Players[0].country +
                                                         LpStrings.DoublesSlotP2 + entrantList[poolData.ElementAt(i).Key].Players[1].name +
@@ -725,7 +738,7 @@ namespace smashgg_api
                                                         LpStrings.SlotMWin + poolData[poolData.ElementAt(i).Key].matchesWin +
                                                         LpStrings.SlotMLoss + poolData[poolData.ElementAt(i).Key].matchesLoss;
 
-                            if (radioButtonRRDoubles.Checked == true)
+                            if (radioButtonRR.Checked == true)
                             {
                                 if (poolData[poolData.ElementAt(i).Key].matchesWin == lastMatchWin && poolData[poolData.ElementAt(i).Key].matchesLoss == lastMatchLoss)
                                 {
@@ -810,6 +823,27 @@ namespace smashgg_api
         }
 
         /// <summary>
+        /// Indicates that user wishes to retrieve a phase
+        /// </summary>
+        /// <param name="sender">N/A</param>
+        /// <param name="e">N/A</param>
+        private void buttonGetPhase_Click(object sender, EventArgs e)
+        {
+            LockControls();
+
+            if (tabControl1.SelectedTab.Text == "Singles")
+            {
+                SinglesPhase();
+            }
+            else
+            {
+                DoublesPhase();
+            }
+
+            UnlockControls();
+        }
+
+        /// <summary>
         /// Aggregates set data into data per player in a pool
         /// </summary>
         /// <param name="phase_group">Phase group number</param>
@@ -820,7 +854,7 @@ namespace smashgg_api
         private bool GeneratePoolData(int phase_group, smashgg parser, PoolType poolType, ref Dictionary<int, PoolRecord> record)
         {
             // Clear data
-            clearData();
+            ClearData();
 
             // Get json for group
             string json;
@@ -989,11 +1023,11 @@ namespace smashgg_api
             }
 
             // If the corresponding checkbox is not checked, skip that side of the bracket
-            if (checkBoxWinnersSingles.Checked)
+            if (checkBoxWinners.Checked)
             {
                 fillBracketSingles((int)numericUpDownWinnersStart.Value, (int)numericUpDownWinnersEnd.Value, (int)numericUpDownWinnersOffset.Value, ref output);
             }
-            if (checkBoxLosersSingles.Checked)
+            if (checkBoxLosers.Checked)
             {
                 fillBracketSingles(-(int)numericUpDownLosersStart.Value, -(int)numericUpDownLosersEnd.Value, (int)numericUpDownLosersOffset.Value, ref output);
             }
@@ -1084,11 +1118,11 @@ namespace smashgg_api
             }
 
             // If the corresponding checkbox is not checked, skip that side of the bracket
-            if (checkBoxWinnersDoubles.Checked)
+            if (checkBoxWinners.Checked)
             {
                 fillBracketDoubles((int)numericUpDownWinnersStart.Value, (int)numericUpDownWinnersEnd.Value, (int)numericUpDownWinnersOffset.Value, ref output);
             }
-            if (checkBoxLosersDoubles.Checked)
+            if (checkBoxLosers.Checked)
             {
                 fillBracketDoubles(-(int)numericUpDownLosersStart.Value, -(int)numericUpDownLosersEnd.Value, (int)numericUpDownLosersOffset.Value, ref output);
             }
@@ -1103,7 +1137,10 @@ namespace smashgg_api
                     {
                         if (gf.Value.Count > 1)
                         {
-                            finalBracketOutput = deFinalDoublesBracketTemplateReset;
+                            if (gf.Value[1].state == 3)
+                            {
+                                finalBracketOutput = deFinalDoublesBracketTemplateReset;
+                            }
                         }
 
                         // Fill in R3
@@ -1301,7 +1338,7 @@ namespace smashgg_api
                     outputRound = Math.Abs(i) + offset;
 
                     // Skip unfinished sets unless otherwise specified
-                    if (checkBoxFillUnfinishedSingles.Checked == false && currentSet.state == 1)
+                    if (checkBoxFillUnfinished.Checked == false && currentSet.state == 1)
                     {
                         continue;
                     }
@@ -1412,7 +1449,10 @@ namespace smashgg_api
                         }
                         else if (currentSet.isGF && currentSet.match == 1 && roundList[i].Count > 1)
                         {
-                            continue;
+                            if (currentSet.winner == currentSet.entrantID1)
+                            {
+                                FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + 1 + LpStrings.Win, "1");
+                            }
                         }
                         else
                         {
@@ -1468,7 +1508,7 @@ namespace smashgg_api
                     outputRound = Math.Abs(i) + offset;
 
                     // Skip unfinished sets unless otherwise specified
-                    if (checkBoxFillUnfinishedDoubles.Checked == false && currentSet.state == 1)
+                    if (checkBoxFillUnfinished.Checked == false && currentSet.state == 1)
                     {
                         continue;
                     }
@@ -1566,7 +1606,10 @@ namespace smashgg_api
                         }
                         else if (currentSet.isGF && currentSet.match == 1 && roundList[i].Count > 1)
                         {
-                            continue;
+                            if (currentSet.winner == currentSet.entrantID1)
+                            {
+                                FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + 1 + LpStrings.Win, "1");
+                            }
                         }
                         else
                         {
@@ -1831,43 +1874,36 @@ namespace smashgg_api
         /// <param name="e"></param>
         private void checkBoxLock_CheckedChanged(object sender, EventArgs e)
         {
-            CheckBox changedCheckBox = (CheckBox)sender;
-            if (changedCheckBox == checkBoxLockWinners)
+            if (checkBoxLockWinners.Checked)
             {
-                if (changedCheckBox.Checked == true)
-                {
-                    numericUpDownWinnersStart.Enabled = false;
-                    numericUpDownWinnersEnd.Enabled = false;
-                    numericUpDownWinnersOffset.Enabled = false;
-                }
-                else
-                {
-                    numericUpDownWinnersStart.Enabled = true;
-                    numericUpDownWinnersEnd.Enabled = true;
-                    numericUpDownWinnersOffset.Enabled = true;
-                }
+                numericUpDownWinnersStart.Enabled = false;
+                numericUpDownWinnersEnd.Enabled = false;
+                numericUpDownWinnersOffset.Enabled = false;
             }
-            else if (changedCheckBox == checkBoxLockLosers)
+            else
             {
-                if (changedCheckBox.Checked == true)
-                {
-                    numericUpDownLosersStart.Enabled = false;
-                    numericUpDownLosersEnd.Enabled = false;
-                    numericUpDownLosersOffset.Enabled = false;
-                }
-                else
-                {
-                    numericUpDownLosersStart.Enabled = true;
-                    numericUpDownLosersEnd.Enabled = true;
-                    numericUpDownLosersOffset.Enabled = true;
-                }
+                numericUpDownWinnersStart.Enabled = true;
+                numericUpDownWinnersEnd.Enabled = true;
+                numericUpDownWinnersOffset.Enabled = true;
+            }
+            if (checkBoxLockLosers.Checked)
+            {
+                numericUpDownLosersStart.Enabled = false;
+                numericUpDownLosersEnd.Enabled = false;
+                numericUpDownLosersOffset.Enabled = false;
+            }
+            else
+            {
+                numericUpDownLosersStart.Enabled = true;
+                numericUpDownLosersEnd.Enabled = true;
+                numericUpDownLosersOffset.Enabled = true;
             }
         }
 
         /// <summary>
         /// Clear all textboxes, entrantList, setList, and roundList. tournamentStructure, tournament, and phaseList are untouched.
         /// </summary>
-        private void clearData()
+        private void ClearData()
         {
             richTextBoxLog.Clear();
             richTextBoxEntrants.Clear();
@@ -1881,7 +1917,7 @@ namespace smashgg_api
         /// <summary>
         /// Update the numericUpDown controls
         /// </summary>
-        private void updateNumericUpDownControls(EventType eventType)
+        private void UpdateNumericUpDownControls(EventType eventType)
         {
             // Clear winners side numericUpDown controls unless it's locked
             if (!checkBoxLockWinners.Checked)
@@ -1908,11 +1944,11 @@ namespace smashgg_api
                 {
                     if (eventType == EventType.Singles)
                     {
-                        checkBoxWinnersSingles.Checked = true;
+                        checkBoxWinners.Checked = true;
                     }
                     else
                     {
-                        checkBoxWinnersDoubles.Checked = true;
+                        checkBoxWinners.Checked = true;
                     }
 
                     if (checkBoxLockWinners.Checked) continue;
@@ -1941,11 +1977,11 @@ namespace smashgg_api
                 {
                     if (eventType == EventType.Singles)
                     {
-                        checkBoxLosersSingles.Checked = true;
+                        checkBoxLosers.Checked = true;
                     }
                     else
                     {
-                        checkBoxLosersDoubles.Checked = true;
+                        checkBoxLosers.Checked = true;
                     }
 
                     if (checkBoxLockLosers.Checked) continue;
@@ -2013,6 +2049,87 @@ namespace smashgg_api
             {
                 box.SelectAll();
             });
+        }
+
+        private void LockControls()
+        {
+            tabControl1.Enabled = false;
+            textBoxURLDoubles.Enabled = false;
+            textBoxURLSingles.Enabled = false;
+
+            buttonFill.Enabled = false;
+            buttonFillDoubles.Enabled = false;
+            buttonGetPhase.Enabled = false;
+            buttonRegexReplace.Enabled = false;
+            buttonGetBracket.Enabled = false;
+
+            checkBoxFillUnfinished.Enabled = false;
+            checkBoxGuessFinal.Enabled = false;
+            checkBoxLockLosers.Enabled = false;
+            checkBoxLockWinners.Enabled = false;
+            checkBoxLosers.Enabled = false;
+            checkBoxWinners.Enabled = false;
+
+            numericUpDownAdvance.Enabled = false;
+            numericUpDownAdvance.Enabled = false;
+            numericUpDownLosersEnd.Enabled = false;
+            numericUpDownLosersOffset.Enabled = false;
+            numericUpDownLosersStart.Enabled = false;
+            numericUpDownWinnersEnd.Enabled = false;
+            numericUpDownWinnersOffset.Enabled = false;
+            numericUpDownWinnersStart.Enabled = false;
+
+            richTextBoxEntrants.Enabled = false;
+            richTextBoxExLpLosersBracket.Enabled = false;
+            richTextBoxExLpWinnersBracket.Enabled = false;
+            richTextBoxExRegexFind.Enabled = false;
+            richTextBoxExRegexReplace.Enabled = false;
+            richTextBoxLog.Enabled = false;
+            richTextBoxWinners.Enabled = false;
+            richTextBoxLosers.Enabled = false;
+            richTextBoxLpOutput.Enabled = false;
+        }
+
+        private void UnlockControls()
+        {
+            tabControl1.Enabled = true;
+            textBoxURLDoubles.Enabled = true;
+            textBoxURLSingles.Enabled = true;
+
+            buttonFill.Enabled = true;
+            buttonFillDoubles.Enabled = true;
+            buttonGetPhase.Enabled = true;
+            buttonRegexReplace.Enabled = true;
+            buttonGetBracket.Enabled = true;
+
+            checkBoxFillUnfinished.Enabled = true;
+            checkBoxGuessFinal.Enabled = true;
+            checkBoxLockLosers.Enabled = true;
+            checkBoxLockWinners.Enabled = true;
+            checkBoxLosers.Enabled = true;
+            checkBoxWinners.Enabled = true;
+
+            numericUpDownAdvance.Enabled = true;
+            numericUpDownAdvance.Enabled = true;
+            numericUpDownLosersEnd.Enabled = true;
+            numericUpDownLosersOffset.Enabled = true;
+            numericUpDownLosersStart.Enabled = true;
+            numericUpDownWinnersEnd.Enabled = true;
+            numericUpDownWinnersOffset.Enabled = true;
+            numericUpDownWinnersStart.Enabled = true;
+
+            richTextBoxEntrants.Enabled = true;
+            richTextBoxExLpLosersBracket.Enabled = true;
+            richTextBoxExLpWinnersBracket.Enabled = true;
+            richTextBoxExRegexFind.Enabled = true;
+            richTextBoxExRegexReplace.Enabled = true;
+            richTextBoxLog.Enabled = true;
+            richTextBoxWinners.Enabled = true;
+            richTextBoxLosers.Enabled = true;
+            richTextBoxLpOutput.Enabled = true;
+
+            // Re-lock numericUpDown controls if needed
+            checkBoxLock_CheckedChanged(new object(), new EventArgs());
         }
     }
 }
