@@ -35,7 +35,7 @@
             this.radioButtonBracket = new System.Windows.Forms.RadioButton();
             this.radioButtonRR = new System.Windows.Forms.RadioButton();
             this.label5 = new System.Windows.Forms.Label();
-            this.numericUpDownAdvance = new System.Windows.Forms.NumericUpDown();
+            this.numericUpDownAdvanceWinners = new System.Windows.Forms.NumericUpDown();
             this.richTextBoxWinners = new System.Windows.Forms.RichTextBox();
             this.richTextBoxLosers = new System.Windows.Forms.RichTextBox();
             this.richTextBoxLpOutput = new System.Windows.Forms.RichTextBox();
@@ -73,7 +73,9 @@
             this.richTextBoxExRegexFind = new RichTextBoxEx();
             this.richTextBoxExLpWinnersBracket = new RichTextBoxEx();
             this.richTextBoxExLpLosersBracket = new RichTextBoxEx();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAdvance)).BeginInit();
+            this.numericUpDownAdvanceLosers = new System.Windows.Forms.NumericUpDown();
+            this.label6 = new System.Windows.Forms.Label();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAdvanceWinners)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabPageSingles.SuspendLayout();
             this.tabPageDoubles.SuspendLayout();
@@ -83,6 +85,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownLosersStart)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownLosersOffset)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownLosersEnd)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAdvanceLosers)).BeginInit();
             this.SuspendLayout();
             // 
             // richTextBoxEntrants
@@ -147,20 +150,19 @@
             // 
             // label5
             // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(887, 184);
+            this.label5.Location = new System.Drawing.Point(885, 177);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(50, 13);
+            this.label5.Size = new System.Drawing.Size(50, 28);
             this.label5.TabIndex = 5;
-            this.label5.Text = "Advance";
+            this.label5.Text = "Advance Winners";
             // 
-            // numericUpDownAdvance
+            // numericUpDownAdvanceWinners
             // 
-            this.numericUpDownAdvance.Location = new System.Drawing.Point(847, 182);
-            this.numericUpDownAdvance.Name = "numericUpDownAdvance";
-            this.numericUpDownAdvance.Size = new System.Drawing.Size(32, 20);
-            this.numericUpDownAdvance.TabIndex = 10;
-            this.numericUpDownAdvance.Value = new decimal(new int[] {
+            this.numericUpDownAdvanceWinners.Location = new System.Drawing.Point(847, 182);
+            this.numericUpDownAdvanceWinners.Name = "numericUpDownAdvanceWinners";
+            this.numericUpDownAdvanceWinners.Size = new System.Drawing.Size(32, 20);
+            this.numericUpDownAdvanceWinners.TabIndex = 10;
+            this.numericUpDownAdvanceWinners.Value = new decimal(new int[] {
             2,
             0,
             0,
@@ -521,17 +523,39 @@
             this.richTextBoxExLpLosersBracket.TabIndex = 13;
             this.richTextBoxExLpLosersBracket.Text = "";
             // 
+            // numericUpDownAdvanceLosers
+            // 
+            this.numericUpDownAdvanceLosers.Location = new System.Drawing.Point(847, 215);
+            this.numericUpDownAdvanceLosers.Name = "numericUpDownAdvanceLosers";
+            this.numericUpDownAdvanceLosers.Size = new System.Drawing.Size(32, 20);
+            this.numericUpDownAdvanceLosers.TabIndex = 10;
+            this.numericUpDownAdvanceLosers.Value = new decimal(new int[] {
+            2,
+            0,
+            0,
+            0});
+            // 
+            // label6
+            // 
+            this.label6.Location = new System.Drawing.Point(885, 210);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(50, 27);
+            this.label6.TabIndex = 5;
+            this.label6.Text = "Advance Losers";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(948, 690);
             this.Controls.Add(this.richTextBoxExRegexReplace);
-            this.Controls.Add(this.numericUpDownAdvance);
+            this.Controls.Add(this.numericUpDownAdvanceLosers);
+            this.Controls.Add(this.numericUpDownAdvanceWinners);
             this.Controls.Add(this.richTextBoxExRegexFind);
             this.Controls.Add(this.radioButtonRR);
             this.Controls.Add(this.radioButtonBracket);
             this.Controls.Add(this.buttonGetBracket);
+            this.Controls.Add(this.label6);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.progressBar);
             this.Controls.Add(this.buttonGetPhase);
@@ -569,7 +593,7 @@
             this.Controls.Add(this.numericUpDownWinnersEnd);
             this.Name = "Form1";
             this.Text = "Smash.gg to Liquipedia";
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAdvance)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAdvanceWinners)).EndInit();
             this.tabControl1.ResumeLayout(false);
             this.tabPageSingles.ResumeLayout(false);
             this.tabPageSingles.PerformLayout();
@@ -581,6 +605,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownLosersStart)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownLosersOffset)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownLosersEnd)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAdvanceLosers)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -595,7 +620,7 @@
         private System.Windows.Forms.RadioButton radioButtonBracket;
         private System.Windows.Forms.RadioButton radioButtonRR;
         private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.NumericUpDown numericUpDownAdvance;
+        private System.Windows.Forms.NumericUpDown numericUpDownAdvanceWinners;
         private System.Windows.Forms.RichTextBox richTextBoxWinners;
         private System.Windows.Forms.RichTextBox richTextBoxLosers;
         private System.Windows.Forms.RichTextBox richTextBoxLpOutput;
@@ -633,6 +658,8 @@
         private RichTextBoxEx richTextBoxExRegexFind;
         private RichTextBoxEx richTextBoxExRegexReplace;
         private System.Windows.Forms.Button buttonRegexReplace;
+        private System.Windows.Forms.NumericUpDown numericUpDownAdvanceLosers;
+        private System.Windows.Forms.Label label6;
     }
 }
 
