@@ -191,12 +191,13 @@ namespace smashgg_api
         {
             if (!token[param].IsNullOrEmpty())
             {
-                return token[param].Value<int>();
+                if (token[param].Type == JTokenType.Integer)
+                {
+                    return token[param].Value<int>();
+                }
             }
-            else
-            {
-                return -99;
-            }
+
+            return -99;
         }
         #endregion
 

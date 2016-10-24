@@ -119,7 +119,7 @@ namespace smashgg_api
         #endregion
 
         enum UrlNumberType { Phase, Phase_Group, None }
-        enum EventType { Singles, Doubles }
+        enum EventType { Singles, Doubles, None }
         enum PoolType { Bracket, RoundRobin }
         enum BracketSide { Winners, Losers }
 
@@ -130,6 +130,7 @@ namespace smashgg_api
 
         JObject tournamentStructure;
         string tournament = string.Empty;
+        EventType retreivedDataType = EventType.None;
 
         public Form1()
         {
@@ -158,10 +159,12 @@ namespace smashgg_api
             if(tabControl1.SelectedTab.Text == "Singles")
             {
                 ProcessBracket(EventType.Singles);
+                retreivedDataType = EventType.Singles;
             }
             else
             {
                 ProcessBracket(EventType.Doubles);
+                retreivedDataType = EventType.Doubles;
             }
             
             UnlockControls();
@@ -179,10 +182,12 @@ namespace smashgg_api
             if (tabControl1.SelectedTab.Text == "Singles")
             {
                 ProcessPhase(EventType.Singles);
+                retreivedDataType = EventType.Singles;
             }
             else
             {
                 ProcessPhase(EventType.Doubles);
+                retreivedDataType = EventType.Doubles;
             }
 
             UnlockControls();
@@ -197,6 +202,12 @@ namespace smashgg_api
         {
             string output = string.Empty;
             string finalBracketOutput = string.Empty;
+
+            if (retreivedDataType == EventType.Doubles)
+            {
+                richTextBoxLog.Text += "Retrieved data is doubles data\r\n";
+                return;
+            }
 
             if (richTextBoxExLpWinnersBracket.Text != FormStrings.CuetextLpWinners)
             {
@@ -290,6 +301,12 @@ namespace smashgg_api
         /// <param name="e">N/A</param>
         private void buttonFillDoubles_Click(object sender, EventArgs e)
         {
+            if (retreivedDataType == EventType.Singles)
+            {
+                richTextBoxLog.Text += "Retrieved data is singles data\r\n";
+                return;
+            }
+
             string output = string.Empty;
             string finalBracketOutput = string.Empty;
 
@@ -621,6 +638,7 @@ namespace smashgg_api
 
                     // Retrieve pages for each group
                     string lastWave = string.Empty;
+                    List<string> waveHeaders = new List<string>();
                     for (int j = 0; j < phase.id.Count; j++)
                     {
                         // Increment the progress bar
@@ -639,11 +657,11 @@ namespace smashgg_api
 
                         if (eventType == EventType.Singles)
                         {
-                            OutputSinglesPhase(phase, poolData, lastWave, j);
+                            OutputSinglesPhase(phase, poolData, ref lastWave, j);
                         }
                         else
                         {
-                            OutputDoublesPhase(phase, poolData, lastWave, j);
+                            OutputDoublesPhase(phase, poolData, ref lastWave, j);
                         }
                     }
                 }
@@ -653,7 +671,11 @@ namespace smashgg_api
         /// <summary>
         /// Acquire, process, and output all data from the singles phase specified in the URL
         /// </summary>
-        private void OutputSinglesPhase(Phase phase, Dictionary<int, PoolRecord> poolData, string lastWave, int phaseElement)
+        /// <param name="phase">Tournament phase to output</param>
+        /// <param name="poolData">Pool records for each entrant</param>
+        /// <param name="lastWave">Final wave in the pool</param>
+        /// <param name="phaseElement">Pool in the phase to output</param>
+        private void OutputSinglesPhase(Phase phase, Dictionary<int, PoolRecord> poolData, ref string lastWave, int phaseElement)
         {
             // Output to textbox
             // Wave headers
@@ -775,7 +797,7 @@ namespace smashgg_api
         /// <param name="poolData">Records of each entrant in the pool</param>
         /// <param name="lastWave">Identifier of last wave</param>
         /// <param name="phaseElement">Element within the phase</param>
-        private void OutputDoublesPhase(Phase phase, Dictionary<int, PoolRecord> poolData, string lastWave, int phaseElement)
+        private void OutputDoublesPhase(Phase phase, Dictionary<int, PoolRecord> poolData, ref string lastWave, int phaseElement)
         {
             // Output to textbox
             // Wave headers
@@ -1537,20 +1559,43 @@ namespace smashgg_api
                         }
                         else
                         {
-                            if (currentSet.entrant1wins != -99 && currentSet.entrant2wins != -99)
+                            // smash.gg switches P1 and P2 in the event of a bracket reset
+                            if (currentSet.isGF && currentSet.match == 2)
                             {
-                                FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + currentSet.match + LpStrings.T1 + LpStrings.Score, currentSet.entrant1wins.ToString());
-                                FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + currentSet.match + LpStrings.T2 + LpStrings.Score, currentSet.entrant2wins.ToString());
+                                if (currentSet.entrant1wins != -99 && currentSet.entrant2wins != -99)
+                                {
+                                    FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + currentSet.match + LpStrings.T2 + LpStrings.Score, currentSet.entrant1wins.ToString());
+                                    FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + currentSet.match + LpStrings.T1 + LpStrings.Score, currentSet.entrant2wins.ToString());
+                                }
+                                else
+                                {
+                                    if (currentSet.winner == currentSet.entrantID1)
+                                    {
+                                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + currentSet.match + LpStrings.T2 + LpStrings.Score, "{{win}}");
+                                    }
+                                    else if (currentSet.winner == currentSet.entrantID2)
+                                    {
+                                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + currentSet.match + LpStrings.T1 + LpStrings.Score, "{{win}}");
+                                    }
+                                }
                             }
                             else
                             {
-                                if (currentSet.winner == currentSet.entrantID1)
+                                if (currentSet.entrant1wins != -99 && currentSet.entrant2wins != -99)
                                 {
-                                    FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + currentSet.match + LpStrings.T1 + LpStrings.Score, "{{win}}");
+                                    FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + currentSet.match + LpStrings.T1 + LpStrings.Score, currentSet.entrant1wins.ToString());
+                                    FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + currentSet.match + LpStrings.T2 + LpStrings.Score, currentSet.entrant2wins.ToString());
                                 }
-                                else if (currentSet.winner == currentSet.entrantID2)
+                                else
                                 {
-                                    FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + currentSet.match + LpStrings.T2 + LpStrings.Score, "{{win}}");
+                                    if (currentSet.winner == currentSet.entrantID1)
+                                    {
+                                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + currentSet.match + LpStrings.T1 + LpStrings.Score, "{{win}}");
+                                    }
+                                    else if (currentSet.winner == currentSet.entrantID2)
+                                    {
+                                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + currentSet.match + LpStrings.T2 + LpStrings.Score, "{{win}}");
+                                    }
                                 }
                             }
                         }
