@@ -8,12 +8,13 @@ namespace smashgg_api
 {
     class PoolRecord
     {
-        public int matchesWin;
-        public int matchesLoss;
+        private int matchesWin;
+        private int matchesLoss;
         private int gamesWin;
         private int gamesLoss;
         public int rank;
         private double gameWinrate;
+        private double matchWinrate;
         public bool isinGroup;
 
         public PoolRecord()
@@ -23,29 +24,30 @@ namespace smashgg_api
             gamesWin = 0;
             gamesLoss = 0;
             rank = 0;
-            gameWinrate = 0;
+            matchWinrate = -1;
+            gameWinrate = -1;
             isinGroup = false;
         }
 
-        public void AddWins(int count)
+        public void AddGameWins(int count)
         {
             if (count != -99)
             {
                 gamesWin += count;
-                CalculateRatio();
+                CalculateGameRatio();
             }
         }
 
-        public void AddLosses(int count)
+        public void AddGameLosses(int count)
         {
             if (count != -99)
             {
                 gamesLoss += count;
-                CalculateRatio();
+                CalculateGameRatio();
             }
         }
 
-        private void CalculateRatio()
+        private void CalculateGameRatio()
         {
             if (gamesWin + gamesLoss != 0)
             {
@@ -53,13 +55,58 @@ namespace smashgg_api
             }
             else
             {
-                gameWinrate = 0;
+                gameWinrate = -1;
+            }
+        }
+
+        public void AddMatchWins(int count)
+        {
+            if (count != -99)
+            {
+                matchesWin += count;
+                CalculateMatchRatio();
+            }
+        }
+
+        public void AddMatchLosses(int count)
+        {
+            if (count != -99)
+            {
+                matchesLoss += count;
+                CalculateMatchRatio();
+            }
+        }
+
+        private void CalculateMatchRatio()
+        {
+            if (matchesWin + matchesLoss != 0)
+            {
+                matchWinrate = (double)matchesWin / (double)(matchesWin + matchesLoss) * 100;
+            }
+            else
+            {
+                matchWinrate = -1;
             }
         }
 
         public double GameWinrate
         {
             get { return gameWinrate; }
+        }
+
+        public double MatchWinrate
+        {
+            get { return matchWinrate; }
+        }
+
+        public int MatchesWin
+        {
+            get { return matchesWin; }
+        }
+
+        public int MatchesLoss
+        {
+            get { return matchesLoss; }
         }
     }
 }

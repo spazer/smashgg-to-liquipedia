@@ -710,7 +710,8 @@ namespace smashgg_api
             int lastRank = 0;
             int lastWin = 0;
             int lastLoss = 0;
-            int advance = (int)numericUpDownAdvanceWinners.Value;
+            int advanceWinners = (int)numericUpDownAdvanceWinners.Value;
+            int advanceLosers = (int)numericUpDownAdvanceLosers.Value;
             for (int i = 0; i < poolData.Count; i++)
             {
                 // Skip bye
@@ -722,11 +723,11 @@ namespace smashgg_api
                 Player currentPlayer = entrantList[poolData.ElementAt(i).Key].Players[0];
                 richTextBoxLpOutput.Text += LpStrings.SlotStart + currentPlayer.name +
                                                 LpStrings.SlotFlag + currentPlayer.country +
-                                                LpStrings.SlotMWin + poolData[poolData.ElementAt(i).Key].matchesWin +
-                                                LpStrings.SlotMLoss + poolData[poolData.ElementAt(i).Key].matchesLoss;
+                                                LpStrings.SlotMWin + poolData[poolData.ElementAt(i).Key].MatchesWin +
+                                                LpStrings.SlotMLoss + poolData[poolData.ElementAt(i).Key].MatchesLoss;
                 if (radioButtonRR.Checked == true)
                 {
-                    if (poolData[poolData.ElementAt(i).Key].matchesWin == lastWin && poolData[poolData.ElementAt(i).Key].matchesLoss == lastLoss)
+                    if (poolData[poolData.ElementAt(i).Key].MatchesWin == lastWin && poolData[poolData.ElementAt(i).Key].MatchesLoss == lastLoss)
                     {
                         richTextBoxLpOutput.Text += LpStrings.SlotPlace + lastRank;
                     }
@@ -734,8 +735,8 @@ namespace smashgg_api
                     {
                         richTextBoxLpOutput.Text += LpStrings.SlotPlace + (i + 1);
                         lastRank = i + 1;
-                        lastWin = poolData[poolData.ElementAt(i).Key].matchesWin;
-                        lastLoss = poolData[poolData.ElementAt(i).Key].matchesLoss;
+                        lastWin = poolData[poolData.ElementAt(i).Key].MatchesWin;
+                        lastLoss = poolData[poolData.ElementAt(i).Key].MatchesLoss;
                     }
                 }
                 else if (poolData[poolData.ElementAt(i).Key].rank != -99)
@@ -747,10 +748,16 @@ namespace smashgg_api
                     richTextBoxLpOutput.Text += LpStrings.SlotPlace;
                 }
 
-                if (advance > 0)
+                // Set background colors to represent the people who made it out of pools in winners/losers
+                if (advanceWinners > 0)
                 {
                     richTextBoxLpOutput.Text += LpStrings.SlotBg + "up";
-                    advance--;
+                    advanceWinners--;
+                }
+                else if (advanceLosers > 0)
+                {
+                    richTextBoxLpOutput.Text += LpStrings.SlotBg + "stay";
+                    advanceLosers--;
                 }
                 else
                 {
@@ -848,12 +855,12 @@ namespace smashgg_api
                                             LpStrings.DoublesSlotP1Flag + entrantList[poolData.ElementAt(i).Key].Players[0].country +
                                             LpStrings.DoublesSlotP2 + entrantList[poolData.ElementAt(i).Key].Players[1].name +
                                             LpStrings.DoublesSlotP2Flag + entrantList[poolData.ElementAt(i).Key].Players[1].country +
-                                            LpStrings.SlotMWin + poolData[poolData.ElementAt(i).Key].matchesWin +
-                                            LpStrings.SlotMLoss + poolData[poolData.ElementAt(i).Key].matchesLoss;
+                                            LpStrings.SlotMWin + poolData[poolData.ElementAt(i).Key].MatchesWin +
+                                            LpStrings.SlotMLoss + poolData[poolData.ElementAt(i).Key].MatchesLoss;
 
                 if (radioButtonRR.Checked == true)
                 {
-                    if (poolData[poolData.ElementAt(i).Key].matchesWin == lastMatchWin && poolData[poolData.ElementAt(i).Key].matchesLoss == lastMatchLoss)
+                    if (poolData[poolData.ElementAt(i).Key].MatchesWin == lastMatchWin && poolData[poolData.ElementAt(i).Key].MatchesLoss == lastMatchLoss)
                     {
                         if (poolData[poolData.ElementAt(i).Key].GameWinrate == lastWinrate)
                         {
@@ -863,8 +870,8 @@ namespace smashgg_api
                         {
                             richTextBoxLpOutput.Text += LpStrings.SlotPlace + (i + 1);
                             lastRank = i + 1;
-                            lastMatchWin = poolData[poolData.ElementAt(i).Key].matchesWin;
-                            lastMatchLoss = poolData[poolData.ElementAt(i).Key].matchesLoss;
+                            lastMatchWin = poolData[poolData.ElementAt(i).Key].MatchesWin;
+                            lastMatchLoss = poolData[poolData.ElementAt(i).Key].MatchesLoss;
                             lastWinrate = poolData[poolData.ElementAt(i).Key].GameWinrate;
                         }
                     }
@@ -872,8 +879,8 @@ namespace smashgg_api
                     {
                         richTextBoxLpOutput.Text += LpStrings.SlotPlace + (i + 1);
                         lastRank = i + 1;
-                        lastMatchWin = poolData[poolData.ElementAt(i).Key].matchesWin;
-                        lastMatchLoss = poolData[poolData.ElementAt(i).Key].matchesLoss;
+                        lastMatchWin = poolData[poolData.ElementAt(i).Key].MatchesWin;
+                        lastMatchLoss = poolData[poolData.ElementAt(i).Key].MatchesLoss;
                         lastWinrate = poolData[poolData.ElementAt(i).Key].GameWinrate;
                     }
                 }
@@ -973,17 +980,18 @@ namespace smashgg_api
                 {
                     if (set.entrantID2 == PLAYER_BYE) continue;
 
-                    record[set.entrantID1].matchesWin++;
-                    record[set.entrantID2].matchesLoss++;
+                    record[set.entrantID1].AddMatchWins(1);
+                    record[set.entrantID2].AddMatchLosses(1);
 
                     if (set.entrant2wins != -1) // Ignore W-L for DQs for now
                     {
-                        record[set.entrantID1].AddWins(set.entrant1wins);
-                        record[set.entrantID2].AddWins(set.entrant2wins);
-                        record[set.entrantID1].AddLosses(set.entrant2wins);
-                        record[set.entrantID2].AddLosses(set.entrant1wins);
+                        record[set.entrantID1].AddGameWins(set.entrant1wins);
+                        record[set.entrantID2].AddGameWins(set.entrant2wins);
+                        record[set.entrantID1].AddGameLosses(set.entrant2wins);
+                        record[set.entrantID2].AddGameLosses(set.entrant1wins);
                     }
 
+                    // DE Brackets will set ranks for players
                     if (poolType == PoolType.Bracket)
                     {
                         if (record[set.entrantID1].rank == 0 || set.wPlacement < record[set.entrantID1].rank)
@@ -1007,15 +1015,15 @@ namespace smashgg_api
                 {
                     if (set.entrantID1 == PLAYER_BYE) continue;
 
-                    record[set.entrantID2].matchesWin++;
-                    record[set.entrantID1].matchesLoss++;
+                    record[set.entrantID2].AddMatchWins(1);
+                    record[set.entrantID1].AddMatchLosses(1);
 
                     if (set.entrant1wins != -1)
                     {
-                        record[set.entrantID1].AddWins(set.entrant1wins);
-                        record[set.entrantID2].AddWins(set.entrant2wins);
-                        record[set.entrantID1].AddLosses(set.entrant2wins);
-                        record[set.entrantID2].AddLosses(set.entrant1wins);
+                        record[set.entrantID1].AddGameWins(set.entrant1wins);
+                        record[set.entrantID2].AddGameWins(set.entrant2wins);
+                        record[set.entrantID1].AddGameLosses(set.entrant2wins);
+                        record[set.entrantID2].AddGameLosses(set.entrant1wins);
                     }
 
                     if (record[set.entrantID1].rank == 0 || set.lPlacement < record[set.entrantID1].rank)
@@ -1047,7 +1055,7 @@ namespace smashgg_api
             }
 
             // Sort the entrants by their rank and W-L records
-            record = record.OrderBy(x => x.Value.rank).ThenBy(x => x.Value.matchesLoss).ThenByDescending(x => x.Value.matchesWin).ThenByDescending(x => x.Value.GameWinrate).ToDictionary(x => x.Key, x => x.Value);
+            record = record.OrderBy(x => x.Value.rank).ThenByDescending(x => x.Value.MatchWinrate).ThenBy(x => x.Value.MatchesLoss).ThenByDescending(x => x.Value.MatchesWin).ThenByDescending(x => x.Value.GameWinrate).ToDictionary(x => x.Key, x => x.Value);
 
             // Rank round robin entrants
             if (poolType == PoolType.RoundRobin)
@@ -1059,9 +1067,9 @@ namespace smashgg_api
 
                 for (int i = 0; i < record.Count; i++)
                 {
-                    if (record.ElementAt(i).Value.matchesWin == lastMatchWin && record.ElementAt(i).Value.matchesLoss == lastMatchLoss)
+                    if (record.ElementAt(i).Value.MatchesWin == lastMatchWin && record.ElementAt(i).Value.MatchesLoss == lastMatchLoss)
                     {
-                        if (record.ElementAt(i).Value.GameWinrate == lastWinrate)
+                        if (record.ElementAt(i).Value.GameWinrate == lastWinrate)   // Equal winrates means you share the same rank
                         {
                             record.ElementAt(i).Value.rank = lastRank;
                         }
@@ -1069,8 +1077,8 @@ namespace smashgg_api
                         {
                             record.ElementAt(i).Value.rank = i + 1;
                             lastRank = i + 1;
-                            lastMatchWin = record.ElementAt(i).Value.matchesWin;
-                            lastMatchLoss = record.ElementAt(i).Value.matchesLoss;
+                            lastMatchWin = record.ElementAt(i).Value.MatchesWin;
+                            lastMatchLoss = record.ElementAt(i).Value.MatchesLoss;
                             lastWinrate = record.ElementAt(i).Value.GameWinrate;
                         }
                     }
@@ -1078,8 +1086,8 @@ namespace smashgg_api
                     {
                         record.ElementAt(i).Value.rank = i + 1;
                         lastRank = i + 1;
-                        lastMatchWin = record.ElementAt(i).Value.matchesWin;
-                        lastMatchLoss = record.ElementAt(i).Value.matchesLoss;
+                        lastMatchWin = record.ElementAt(i).Value.MatchesWin;
+                        lastMatchLoss = record.ElementAt(i).Value.MatchesLoss;
                         lastWinrate = record.ElementAt(i).Value.GameWinrate;
                     }
                 } 
