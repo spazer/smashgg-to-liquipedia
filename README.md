@@ -1,4 +1,4 @@
-# smashgg-api
+# smashgg-to-liquipedia
 Queries the smash.gg api for data to put in Liquipedia pages
 
 ## Getting the data
