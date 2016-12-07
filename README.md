@@ -32,4 +32,4 @@ You can check/uncheck the Winners/Losers checkboxes to make the program ignore o
 
 Fill Unfinished Sets is only meant to be used when there is no data for a bracket. Typically this only happens when a tournament is ongoing.
 
-**Note:** Don't use this program for DEFinalBracket or DEFinalDoublesBracket. Because of how smash.gg rounds differ from Liquipedia's, it's more trouble than it's worth.
+Guess Final Bracket attempts to fill in a final bracket based on available information.
