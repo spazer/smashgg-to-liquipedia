@@ -13,7 +13,7 @@ using System.Runtime.InteropServices;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace smashgg_api
+namespace smashgg_to_liquipedia
 {
     public partial class Form1 : Form
     {

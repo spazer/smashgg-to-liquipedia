@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 
-namespace smashgg_api
+namespace smashgg_to_liquipedia
 {
     public static class JsonExtensions
     {

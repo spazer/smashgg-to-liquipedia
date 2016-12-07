@@ -7,8 +7,8 @@
     <ProjectGuid>{09CFBF0E-D285-461E-9FE5-549C314A84E3}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>smashgg_api</RootNamespace>
-    <AssemblyName>smashgg api</AssemblyName>
+    <RootNamespace>smashgg_to_liquipedia</RootNamespace>
+    <AssemblyName>smashgg-to-liquipedia</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -77,9 +77,9 @@
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
     <Compile Include="LpStrings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
       <DependentUpon>LpStrings.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
     </Compile>
     <Compile Include="PhaseGroup.cs" />
     <Compile Include="JsonExtensions.cs" />
@@ -93,12 +93,12 @@
     </Compile>
     <Compile Include="Set.cs" />
     <Compile Include="smashgg.cs" />
-    <Compile Include="SmashggStrings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>SmashggStrings.resx</DependentUpon>
-    </Compile>
     <Compile Include="Entrant.cs" />
+    <Compile Include="SmashggStrings.Designer.cs">
+      <DependentUpon>SmashggStrings.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
     <EmbeddedResource Include="FormStrings.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>FormStrings.Designer.cs</LastGenOutput>
@@ -118,6 +118,7 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
     <EmbeddedResource Include="SmashggStrings.resx">
       <Generator>ResXFileCodeGenerator</Generator>

@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace smashgg_api {
+namespace smashgg_to_liquipedia {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace smashgg_api {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("smashgg_api.FormStrings", typeof(FormStrings).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("smashgg_to_liquipedia.FormStrings", typeof(FormStrings).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

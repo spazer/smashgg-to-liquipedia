@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 
-namespace smashgg_api
+namespace smashgg_to_liquipedia
 {
     class smashgg
     {
@@ -57,7 +57,7 @@ namespace smashgg_api
                 int id = GetIntParameter(entrant, SmashggStrings.ID);
 
                 // Get participant IDs
-                SortedList<int, Player> pIds = new SortedList<int, smashgg_api.Player>();
+                SortedList<int, Player> pIds = new SortedList<int, Player>();
                 foreach (int participant in entrant[SmashggStrings.ParticipantIds])
                 {
                     Player newPlayer = new Player();

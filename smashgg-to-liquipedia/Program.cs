@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace smashgg_api
+namespace smashgg_to_liquipedia
 {
     static class Program
     {

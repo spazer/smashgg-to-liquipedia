@@ -1,4 +1,4 @@
-﻿namespace smashgg_api
+﻿namespace smashgg_to_liquipedia
 {
     partial class Form1
     {

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace smashgg_api
+namespace smashgg_to_liquipedia
 {
     class Entrant
     {
