@@ -504,6 +504,10 @@ namespace smashgg_to_liquipedia
                         roundList[currentSet.displayRound].Clear();
                         roundList[currentSet.displayRound].Add(currentSet);
                     }
+                    else if (Math.Abs(roundList[currentSet.displayRound][0].originalRound) > Math.Abs(currentSet.originalRound))
+                    {
+                        continue;
+                    }
                     else
                     {
                         roundList[currentSet.displayRound].Add(currentSet);
@@ -565,6 +569,22 @@ namespace smashgg_to_liquipedia
             // Output entrants to textbox
             outputEntrantsToTextBox(entrantPadding);
 
+            // Sort rounds and sets
+            roundList = roundList.OrderBy(x => Math.Abs(x.Key)).ToDictionary(x => x.Key, x => x.Value);
+            for (int i = 0; i < roundList.Count; i++)
+            {
+                List<Set> tempList = roundList[roundList.ElementAt(i).Key];
+
+                tempList = tempList.OrderBy(x => x.id).ToList();
+
+                for (int j = 0; j < tempList.Count; j++)
+                {
+                    tempList[j].match = j + 1;
+                }
+
+                roundList[roundList.ElementAt(i).Key] = tempList;
+            }
+            
             // Output sets to textbox
             for (int i = 0; i < roundList.Count; i++)
             {
