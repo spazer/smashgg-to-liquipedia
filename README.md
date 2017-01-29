@@ -2,7 +2,7 @@
 Queries the smash.gg api for data to put in Liquipedia pages
 
 ## Getting the data
-1. Pick the singles or doubles tab (Doubles pools is not supported yet)
+1. Pick the singles or doubles tab
 2. Copy paste a valid smash.gg URL into the URL textbox.
   * **Singles bracket example:** https://smash.gg/tournament/the-big-house-6/events/melee-singles/brackets/76016
   * **Singles pools example:** https://smash.gg/tournament/the-big-house-6/events/melee-singles/brackets/76014
@@ -17,8 +17,8 @@ Liquipedia code is automatically generated. You can ignore the rest of the butto
 
 ## Filling in a Singles or Doubles Bracket
 1. Copy a blank template for the desired bracket to be filled out. Winners and losers brackets should be done *seperately*.
-  * **Singles example:** http://wiki.teamliquid.net/smash/Template:32DEWBracketA
-  * **Doubles example:** http://wiki.teamliquid.net/smash/Template:32DELBracketA
+  * **Winners example:** http://wiki.teamliquid.net/smash/Template:32DEWBracketA
+  * **Losers example:** http://wiki.teamliquid.net/smash/Template:32DELBracketA
 2. Paste these templates into the two indicated textboxes.
 3. The two textboxes in the middle show the Winners and Losers matches respectively. The numbers on the left denote the *round*.
 4. Set the **Start** and **End** numbers if desired. Everything between the start and end rounds will be into the templates.
@@ -30,6 +30,6 @@ Liquipedia code is automatically generated. You can ignore the rest of the butto
 
 You can check/uncheck the Winners/Losers checkboxes to make the program ignore one or the other when filling out brackets. You usually won't need this.
 
-Fill Unfinished Sets is only meant to be used when there is no data for a bracket. Typically this only happens when a tournament is ongoing.
+Fill Unfinished Sets is only meant to be used when there is no data for a bracket. Typically this only happens when a tournament is ongoing. This option tends to be a little buggy, as it assumes that any player not matched against another player has received a bye.
 
 Guess Final Bracket attempts to fill in a final bracket based on available information.
