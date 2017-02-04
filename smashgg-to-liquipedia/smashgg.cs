@@ -74,6 +74,7 @@ namespace smashgg_to_liquipedia
 
                     // Get player tag
                     pIds[participant.Key].name = playerInfo[SmashggStrings.Gamertag].Value<string>();
+                    pIds[participant.Key].name = pIds[participant.Key].name.Replace("|", "{{!}}");
 
                     // Get player country. Leave empty if null
                     if (!playerInfo[SmashggStrings.Country].IsNullOrEmpty())
