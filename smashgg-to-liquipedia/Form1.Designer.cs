@@ -94,7 +94,7 @@
             this.richTextBoxEntrants.Location = new System.Drawing.Point(12, 15);
             this.richTextBoxEntrants.Name = "richTextBoxEntrants";
             this.richTextBoxEntrants.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
-            this.richTextBoxEntrants.Size = new System.Drawing.Size(691, 130);
+            this.richTextBoxEntrants.Size = new System.Drawing.Size(691, 86);
             this.richTextBoxEntrants.TabIndex = 0;
             this.richTextBoxEntrants.Text = "";
             // 
@@ -171,7 +171,7 @@
             // richTextBoxWinners
             // 
             this.richTextBoxWinners.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.richTextBoxWinners.Location = new System.Drawing.Point(12, 210);
+            this.richTextBoxWinners.Location = new System.Drawing.Point(12, 145);
             this.richTextBoxWinners.Name = "richTextBoxWinners";
             this.richTextBoxWinners.Size = new System.Drawing.Size(342, 151);
             this.richTextBoxWinners.TabIndex = 0;
@@ -180,7 +180,7 @@
             // richTextBoxLosers
             // 
             this.richTextBoxLosers.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.richTextBoxLosers.Location = new System.Drawing.Point(361, 210);
+            this.richTextBoxLosers.Location = new System.Drawing.Point(361, 145);
             this.richTextBoxLosers.Name = "richTextBoxLosers";
             this.richTextBoxLosers.Size = new System.Drawing.Size(342, 151);
             this.richTextBoxLosers.TabIndex = 0;
@@ -189,9 +189,9 @@
             // richTextBoxLpOutput
             // 
             this.richTextBoxLpOutput.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.richTextBoxLpOutput.Location = new System.Drawing.Point(12, 524);
+            this.richTextBoxLpOutput.Location = new System.Drawing.Point(12, 459);
             this.richTextBoxLpOutput.Name = "richTextBoxLpOutput";
-            this.richTextBoxLpOutput.Size = new System.Drawing.Size(691, 154);
+            this.richTextBoxLpOutput.Size = new System.Drawing.Size(691, 99);
             this.richTextBoxLpOutput.TabIndex = 0;
             this.richTextBoxLpOutput.Text = "";
             // 
@@ -219,7 +219,7 @@
             // 
             this.richTextBoxLog.Location = new System.Drawing.Point(709, 368);
             this.richTextBoxLog.Name = "richTextBoxLog";
-            this.richTextBoxLog.Size = new System.Drawing.Size(225, 281);
+            this.richTextBoxLog.Size = new System.Drawing.Size(225, 161);
             this.richTextBoxLog.TabIndex = 4;
             this.richTextBoxLog.Text = "";
             // 
@@ -315,7 +315,7 @@
             // 
             // numericUpDownWinnersStart
             // 
-            this.numericUpDownWinnersStart.Location = new System.Drawing.Point(64, 187);
+            this.numericUpDownWinnersStart.Location = new System.Drawing.Point(64, 122);
             this.numericUpDownWinnersStart.Name = "numericUpDownWinnersStart";
             this.numericUpDownWinnersStart.Size = new System.Drawing.Size(38, 20);
             this.numericUpDownWinnersStart.TabIndex = 3;
@@ -323,7 +323,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(149, 170);
+            this.label4.Location = new System.Drawing.Point(149, 105);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(35, 13);
             this.label4.TabIndex = 6;
@@ -331,7 +331,7 @@
             // 
             // numericUpDownWinnersEnd
             // 
-            this.numericUpDownWinnersEnd.Location = new System.Drawing.Point(108, 187);
+            this.numericUpDownWinnersEnd.Location = new System.Drawing.Point(108, 122);
             this.numericUpDownWinnersEnd.Name = "numericUpDownWinnersEnd";
             this.numericUpDownWinnersEnd.Size = new System.Drawing.Size(38, 20);
             this.numericUpDownWinnersEnd.TabIndex = 3;
@@ -339,7 +339,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(105, 170);
+            this.label3.Location = new System.Drawing.Point(105, 105);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(26, 13);
             this.label3.TabIndex = 6;
@@ -347,7 +347,7 @@
             // 
             // numericUpDownWinnersOffset
             // 
-            this.numericUpDownWinnersOffset.Location = new System.Drawing.Point(152, 187);
+            this.numericUpDownWinnersOffset.Location = new System.Drawing.Point(152, 122);
             this.numericUpDownWinnersOffset.Maximum = new decimal(new int[] {
             20,
             0,
@@ -365,7 +365,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(61, 170);
+            this.label2.Location = new System.Drawing.Point(61, 105);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(29, 13);
             this.label2.TabIndex = 6;
@@ -374,7 +374,7 @@
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(12, 194);
+            this.label9.Location = new System.Drawing.Point(12, 129);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(46, 13);
             this.label9.TabIndex = 6;
@@ -383,7 +383,7 @@
             // label10
             // 
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(358, 194);
+            this.label10.Location = new System.Drawing.Point(358, 129);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(38, 13);
             this.label10.TabIndex = 6;
@@ -391,7 +391,7 @@
             // 
             // numericUpDownLosersStart
             // 
-            this.numericUpDownLosersStart.Location = new System.Drawing.Point(402, 187);
+            this.numericUpDownLosersStart.Location = new System.Drawing.Point(402, 122);
             this.numericUpDownLosersStart.Name = "numericUpDownLosersStart";
             this.numericUpDownLosersStart.Size = new System.Drawing.Size(38, 20);
             this.numericUpDownLosersStart.TabIndex = 7;
@@ -399,7 +399,7 @@
             // label11
             // 
             this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(399, 170);
+            this.label11.Location = new System.Drawing.Point(399, 105);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(29, 13);
             this.label11.TabIndex = 10;
@@ -407,7 +407,7 @@
             // 
             // numericUpDownLosersOffset
             // 
-            this.numericUpDownLosersOffset.Location = new System.Drawing.Point(490, 187);
+            this.numericUpDownLosersOffset.Location = new System.Drawing.Point(490, 122);
             this.numericUpDownLosersOffset.Maximum = new decimal(new int[] {
             20,
             0,
@@ -425,7 +425,7 @@
             // label12
             // 
             this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(443, 170);
+            this.label12.Location = new System.Drawing.Point(443, 105);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(26, 13);
             this.label12.TabIndex = 11;
@@ -434,7 +434,7 @@
             // label13
             // 
             this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(487, 170);
+            this.label13.Location = new System.Drawing.Point(487, 105);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(35, 13);
             this.label13.TabIndex = 12;
@@ -442,7 +442,7 @@
             // 
             // numericUpDownLosersEnd
             // 
-            this.numericUpDownLosersEnd.Location = new System.Drawing.Point(446, 187);
+            this.numericUpDownLosersEnd.Location = new System.Drawing.Point(446, 122);
             this.numericUpDownLosersEnd.Name = "numericUpDownLosersEnd";
             this.numericUpDownLosersEnd.Size = new System.Drawing.Size(38, 20);
             this.numericUpDownLosersEnd.TabIndex = 9;
@@ -450,7 +450,7 @@
             // checkBoxLockWinners
             // 
             this.checkBoxLockWinners.AutoSize = true;
-            this.checkBoxLockWinners.Location = new System.Drawing.Point(196, 188);
+            this.checkBoxLockWinners.Location = new System.Drawing.Point(196, 123);
             this.checkBoxLockWinners.Name = "checkBoxLockWinners";
             this.checkBoxLockWinners.Size = new System.Drawing.Size(50, 17);
             this.checkBoxLockWinners.TabIndex = 14;
@@ -461,7 +461,7 @@
             // checkBoxLockLosers
             // 
             this.checkBoxLockLosers.AutoSize = true;
-            this.checkBoxLockLosers.Location = new System.Drawing.Point(534, 188);
+            this.checkBoxLockLosers.Location = new System.Drawing.Point(534, 123);
             this.checkBoxLockLosers.Name = "checkBoxLockLosers";
             this.checkBoxLockLosers.Size = new System.Drawing.Size(50, 17);
             this.checkBoxLockLosers.TabIndex = 14;
@@ -471,7 +471,7 @@
             // 
             // progressBar
             // 
-            this.progressBar.Location = new System.Drawing.Point(709, 655);
+            this.progressBar.Location = new System.Drawing.Point(709, 535);
             this.progressBar.Name = "progressBar";
             this.progressBar.Size = new System.Drawing.Size(225, 23);
             this.progressBar.TabIndex = 15;
@@ -490,7 +490,7 @@
             // richTextBoxExRegexReplace
             // 
             this.richTextBoxExRegexReplace.Cue = null;
-            this.richTextBoxExRegexReplace.Location = new System.Drawing.Point(361, 472);
+            this.richTextBoxExRegexReplace.Location = new System.Drawing.Point(361, 407);
             this.richTextBoxExRegexReplace.Name = "richTextBoxExRegexReplace";
             this.richTextBoxExRegexReplace.Size = new System.Drawing.Size(342, 46);
             this.richTextBoxExRegexReplace.TabIndex = 16;
@@ -499,7 +499,7 @@
             // richTextBoxExRegexFind
             // 
             this.richTextBoxExRegexFind.Cue = null;
-            this.richTextBoxExRegexFind.Location = new System.Drawing.Point(12, 472);
+            this.richTextBoxExRegexFind.Location = new System.Drawing.Point(12, 407);
             this.richTextBoxExRegexFind.Name = "richTextBoxExRegexFind";
             this.richTextBoxExRegexFind.Size = new System.Drawing.Size(342, 46);
             this.richTextBoxExRegexFind.TabIndex = 16;
@@ -508,7 +508,7 @@
             // richTextBoxExLpWinnersBracket
             // 
             this.richTextBoxExLpWinnersBracket.Cue = null;
-            this.richTextBoxExLpWinnersBracket.Location = new System.Drawing.Point(13, 367);
+            this.richTextBoxExLpWinnersBracket.Location = new System.Drawing.Point(13, 302);
             this.richTextBoxExLpWinnersBracket.Name = "richTextBoxExLpWinnersBracket";
             this.richTextBoxExLpWinnersBracket.Size = new System.Drawing.Size(341, 89);
             this.richTextBoxExLpWinnersBracket.TabIndex = 13;
@@ -517,7 +517,7 @@
             // richTextBoxExLpLosersBracket
             // 
             this.richTextBoxExLpLosersBracket.Cue = null;
-            this.richTextBoxExLpLosersBracket.Location = new System.Drawing.Point(360, 368);
+            this.richTextBoxExLpLosersBracket.Location = new System.Drawing.Point(360, 303);
             this.richTextBoxExLpLosersBracket.Name = "richTextBoxExLpLosersBracket";
             this.richTextBoxExLpLosersBracket.Size = new System.Drawing.Size(341, 88);
             this.richTextBoxExLpLosersBracket.TabIndex = 13;
@@ -547,7 +547,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(948, 690);
+            this.ClientSize = new System.Drawing.Size(948, 566);
             this.Controls.Add(this.richTextBoxExRegexReplace);
             this.Controls.Add(this.numericUpDownAdvanceLosers);
             this.Controls.Add(this.numericUpDownAdvanceWinners);
