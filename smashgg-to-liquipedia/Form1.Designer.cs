@@ -75,6 +75,7 @@
             this.richTextBoxExLpLosersBracket = new RichTextBoxEx();
             this.numericUpDownAdvanceLosers = new System.Windows.Forms.NumericUpDown();
             this.label6 = new System.Windows.Forms.Label();
+            this.checkBoxSMW = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAdvanceWinners)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabPageSingles.SuspendLayout();
@@ -543,6 +544,17 @@
             this.label6.TabIndex = 5;
             this.label6.Text = "Advance Losers";
             // 
+            // checkBoxSMW
+            // 
+            this.checkBoxSMW.AutoSize = true;
+            this.checkBoxSMW.Location = new System.Drawing.Point(827, 254);
+            this.checkBoxSMW.Name = "checkBoxSMW";
+            this.checkBoxSMW.Size = new System.Drawing.Size(53, 17);
+            this.checkBoxSMW.TabIndex = 14;
+            this.checkBoxSMW.Text = "SMW";
+            this.checkBoxSMW.UseVisualStyleBackColor = true;
+            this.checkBoxSMW.CheckedChanged += new System.EventHandler(this.checkBoxLock_CheckedChanged);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -559,6 +571,7 @@
             this.Controls.Add(this.label5);
             this.Controls.Add(this.progressBar);
             this.Controls.Add(this.buttonGetPhase);
+            this.Controls.Add(this.checkBoxSMW);
             this.Controls.Add(this.checkBoxGuessFinal);
             this.Controls.Add(this.checkBoxLockLosers);
             this.Controls.Add(this.checkBoxFillUnfinished);
@@ -592,7 +605,7 @@
             this.Controls.Add(this.label4);
             this.Controls.Add(this.numericUpDownWinnersEnd);
             this.Name = "Form1";
-            this.Text = "Smash.gg to Liquipedia";
+            this.Text = "Smash.gg to Liquipedia v2.2.2";
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAdvanceWinners)).EndInit();
             this.tabControl1.ResumeLayout(false);
             this.tabPageSingles.ResumeLayout(false);
@@ -660,6 +673,7 @@
         private System.Windows.Forms.Button buttonRegexReplace;
         private System.Windows.Forms.NumericUpDown numericUpDownAdvanceLosers;
         private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.CheckBox checkBoxSMW;
     }
 }
 

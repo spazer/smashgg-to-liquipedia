@@ -38,24 +38,30 @@ namespace smashgg_to_liquipedia
                                                     "|r3m1win=\r\n" +
                                                     "}}";
 
-        static string deFinalBracketTemplate =  "{{DEFinalBracket\r\n" +
-                                                "<!-- FROM WINNERS -->\r\n" +
-                                                "|r1m1p1= |r1m1p1flag= |r1m1p1score=\r\n" +
-                                                "|r1m1p2= |r1m1p2flag= |r1m1p2score=\r\n" +
-                                                "|r1m1win=\r\n\r\n" +
-                                                "<!-- FROM LOSERS -->\r\n" +
-                                                "|l1m1p1= |l1m1p1flag= |l1m1p1score=\r\n" +
-                                                "|l1m1p2= |l1m1p2flag= |l1m1p2score=\r\n" +
-                                                "|l1m1win=\r\n\r\n" +
-                                                "<!-- LOSERS FINALS -->\r\n" +
-                                                "|l2m1p1= |l2m1p1flag= |l2m1p1score=\r\n" +
-                                                "|l2m1p2= |l2m1p2flag= |l2m1p2score=\r\n" +
-                                                "|l2m1win=\r\n\r\n" +
-                                                "<!-- GRAND FINALS -->\r\n" +
-                                                "|r3m1p1= |r3m1p1flag= |r3m1p1score=\r\n" +
-                                                "|r3m1p2= |r3m1p2flag= |r3m1p2score=\r\n" +
-                                                "|r3m1win=\r\n" +
-                                                "}}";
+        static string deFinalSmwBracketTemplateReset = "{{DEFinalSmwBracket\r\n" +
+                                                    "|tourneylink =\r\n" +
+                                                    "|tourneyname =\r\n" +
+                                                    "|l1placement = 4\r\n" +
+                                                    "|r2placement = 3\r\n" +
+                                                    "|r3loserplacement = 2\r\n" +
+                                                    "|r3winnerplacement = 1\r\n\r\n" +
+                                                    "<!-- FROM WINNERS -->\r\n" +
+                                                    "|r1m1p1= |r1m1p1flag= |r1m1p1score=\r\n" +
+                                                    "|r1m1p2= |r1m1p2flag= |r1m1p2score=\r\n" +
+                                                    "|r1m1win=\r\n\r\n" +
+                                                    "<!-- FROM LOSERS -->\r\n" +
+                                                    "|l1m1p1= |l1m1p1flag= |l1m1p1score=\r\n" +
+                                                    "|l1m1p2= |l1m1p2flag= |l1m1p2score=\r\n" +
+                                                    "|l1m1win=\r\n\r\n" +
+                                                    "<!-- LOSERS FINALS -->\r\n" +
+                                                    "|l2m1p1= |l2m1p1flag= |l2m1p1score=\r\n" +
+                                                    "|l2m1p2= |l2m1p2flag= |l2m1p2score=\r\n" +
+                                                    "|l2m1win=\r\n\r\n" +
+                                                    "<!-- GRAND FINALS -->\r\n" +
+                                                    "|r3m1p1= |r3m1p1flag= |r3m1p1score= |r3m2p1score=\r\n" +
+                                                    "|r3m1p2= |r3m1p2flag= |r3m1p2score= |r3m2p2score=\r\n" +
+                                                    "|r3m1win=\r\n" +
+                                                    "}}";
 
         static string deFinalDoublesBracketTemplateReset = "{{DEFinalDoublesBracket\r\n" +
                                                         "<!-- FROM WINNERS -->\r\n" +
@@ -87,35 +93,41 @@ namespace smashgg_to_liquipedia
                                                         "|r3m1win=\r\n" +
                                                         "}}";
 
-        static string deFinalDoublesBracketTemplate = "{{DEFinalDoublesBracket\r\n" +
-                                                            "<!-- FROM WINNERS -->\r\n" +
-                                                            "|r1m1t1p1= |r1m1t1p1flag=\r\n" +
-                                                            "|r1m1t1p2= |r1m1t1p2flag= |r1m1t1score=\r\n" +
-                                                            "|r1m1t2p1= |r1m1t2p1flag=\r\n" +
-                                                            "|r1m1t2p2= |r1m1t2p2flag= |r1m1t2score=\r\n" +
-                                                            "|r1m1win=\r\n" +
-                                                            "\r\n" +
-                                                            "<!-- FROM LOSERS -->\r\n" +
-                                                            "|l1m1t1p1= |l1m1t1p1flag=\r\n" +
-                                                            "|l1m1t1p2= |l1m1t1p2flag= |l1m1t1score=\r\n" +
-                                                            "|l1m1t2p1= |l1m1t2p1flag=\r\n" +
-                                                            "|l1m1t2p2= |l1m1t2p2flag= |l1m1t2score=\r\n" +
-                                                            "|l1m1win=\r\n" +
-                                                            "\r\n" +
-                                                            "<!-- LOSERS FINALS -->\r\n" +
-                                                            "|l2m1t1p1= |l2m1t1p1flag=\r\n" +
-                                                            "|l2m1t1p2= |l2m1t1p2flag= |l2m1t1score=\r\n" +
-                                                            "|l2m1t2p1= |l2m1t2p1flag=\r\n" +
-                                                            "|l2m1t2p2= |l2m1t2p2flag= |l2m1t2score=\r\n" +
-                                                            "|l2m1win=\r\n" +
-                                                            "\r\n" +
-                                                            "<!-- GRAND FINALS -->\r\n" +
-                                                            "|r3m1t1p1= |r3m1t1p1flag=\r\n" +
-                                                            "|r3m1t1p2= |r3m1t1p2flag= |r3m1t1score=\r\n" +
-                                                            "|r3m1t2p1= |r3m1t2p1flag=\r\n" +
-                                                            "|r3m1t2p2= |r3m1t2p2flag= |r3m1t2score=\r\n" +
-                                                            "|r3m1win=\r\n" +
-                                                            "}}";
+        static string deFinalDoublesSmwBracketTemplateReset = "{{DEFinalDoublesSmwBracket\r\n" +
+                                                        "|tourneylink =\r\n" +
+                                                        "|tourneyname =\r\n" +
+                                                        "|l1placement = 4\r\n" +
+                                                        "|r2placement = 3\r\n" +
+                                                        "|r3loserplacement = 2\r\n" +
+                                                        "|r3winnerplacement = 1\r\n\r\n" + 
+                                                        "<!-- FROM WINNERS -->\r\n" +
+                                                        "|r1m1t1p1= |r1m1t1p1flag=\r\n" +
+                                                        "|r1m1t1p2= |r1m1t1p2flag= |r1m1t1score=\r\n" +
+                                                        "|r1m1t2p1= |r1m1t2p1flag=\r\n" +
+                                                        "|r1m1t2p2= |r1m1t2p2flag= |r1m1t2score=\r\n" +
+                                                        "|r1m1win=\r\n" +
+                                                        "\r\n" +
+                                                        "<!-- FROM LOSERS -->\r\n" +
+                                                        "|l1m1t1p1= |l1m1t1p1flag=\r\n" +
+                                                        "|l1m1t1p2= |l1m1t1p2flag= |l1m1t1score=\r\n" +
+                                                        "|l1m1t2p1= |l1m1t2p1flag=\r\n" +
+                                                        "|l1m1t2p2= |l1m1t2p2flag= |l1m1t2score=\r\n" +
+                                                        "|l1m1win=\r\n" +
+                                                        "\r\n" +
+                                                        "<!-- LOSERS FINALS -->\r\n" +
+                                                        "|l2m1t1p1= |l2m1t1p1flag=\r\n" +
+                                                        "|l2m1t1p2= |l2m1t1p2flag= |l2m1t1score=\r\n" +
+                                                        "|l2m1t2p1= |l2m1t2p1flag=\r\n" +
+                                                        "|l2m1t2p2= |l2m1t2p2flag= |l2m1t2score=\r\n" +
+                                                        "|l2m1win=\r\n" +
+                                                        "\r\n" +
+                                                        "<!-- GRAND FINALS -->\r\n" +
+                                                        "|r3m1t1p1= |r3m1t1p1flag=\r\n" +
+                                                        "|r3m1t1p2= |r3m1t1p2flag= |r3m1t1score= |r3m2t1score=\r\n" +
+                                                        "|r3m1t2p1= |r3m1t2p1flag=\r\n" +
+                                                        "|r3m1t2p2= |r3m1t2p2flag= |r3m1t2score= |r3m2t2score=\r\n" +
+                                                        "|r3m1win=\r\n" +
+                                                        "}}";
         #endregion
 
         enum UrlNumberType { Phase, Phase_Group, None }
@@ -209,14 +221,20 @@ namespace smashgg_to_liquipedia
                 return;
             }
 
-            if (richTextBoxExLpWinnersBracket.Text != FormStrings.CuetextLpWinners)
+            if (checkBoxWinners.Checked == true)
             {
-                output += "==Winners Bracket==\r\n" + richTextBoxExLpWinnersBracket.Text + "\r\n";
+                if (richTextBoxExLpWinnersBracket.Text != FormStrings.CuetextLpWinners)
+                {
+                    output += "==Winners Bracket==\r\n" + richTextBoxExLpWinnersBracket.Text + "\r\n";
+                }
             }
 
-            if (richTextBoxExLpLosersBracket.Text != FormStrings.CuetextLpLosers)
+            if (checkBoxLosers.Checked == true)
             {
-                output += "==Losers Bracket==\r\n" + richTextBoxExLpLosersBracket.Text + "\r\n";
+                if (richTextBoxExLpLosersBracket.Text != FormStrings.CuetextLpLosers)
+                {
+                    output += "==Losers Bracket==\r\n" + richTextBoxExLpLosersBracket.Text + "\r\n";
+                }
             }
 
             // If the corresponding checkbox is not checked, skip that side of the bracket
@@ -230,18 +248,21 @@ namespace smashgg_to_liquipedia
             }
             if (checkBoxGuessFinal.Checked)
             {
-                finalBracketOutput = deFinalBracketTemplate;
+                // Set the final bracket type depending on whether SMW is checked or not
+                if (checkBoxSMW.Checked == true)
+                {
+                    finalBracketOutput = deFinalSmwBracketTemplateReset;
+                }
+                else
+                {
+                    finalBracketOutput = deFinalBracketTemplateReset;
+                }
 
                 foreach (KeyValuePair<int, List<Set>> gf in roundList)
                 {
                     // Get grand finals
                     if (gf.Value[0].isGF == true)
                     {
-                        if (gf.Value.Count > 1)
-                        {
-                            finalBracketOutput = deFinalBracketTemplateReset;
-                        }
-
                         // Fill in R3
                         fillBracketSingles(gf.Key, gf.Key, 3 - gf.Key, ref finalBracketOutput);
 
@@ -310,14 +331,20 @@ namespace smashgg_to_liquipedia
             string output = string.Empty;
             string finalBracketOutput = string.Empty;
 
-            if (richTextBoxExLpWinnersBracket.Text != FormStrings.CuetextLpWinners)
+            if (checkBoxWinners.Checked == true)
             {
-                output += "==Winners Bracket==\r\n" + richTextBoxExLpWinnersBracket.Text + "\r\n";
+                if (richTextBoxExLpWinnersBracket.Text != FormStrings.CuetextLpWinners)
+                {
+                    output += "==Winners Bracket==\r\n" + richTextBoxExLpWinnersBracket.Text + "\r\n";
+                }
             }
 
-            if (richTextBoxExLpLosersBracket.Text != FormStrings.CuetextLpLosers)
+            if (checkBoxLosers.Checked == true)
             {
-                output += "==Losers Bracket==\r\n" + richTextBoxExLpLosersBracket.Text + "\r\n";
+                if (richTextBoxExLpLosersBracket.Text != FormStrings.CuetextLpLosers)
+                {
+                    output += "==Losers Bracket==\r\n" + richTextBoxExLpLosersBracket.Text + "\r\n";
+                }
             }
 
             // If the corresponding checkbox is not checked, skip that side of the bracket
@@ -331,21 +358,21 @@ namespace smashgg_to_liquipedia
             }
             if (checkBoxGuessFinal.Checked)
             {
-                finalBracketOutput = deFinalDoublesBracketTemplate;
+                // Set the final bracket type depending on whether SMW is checked or not
+                if (checkBoxSMW.Checked == true)
+                {
+                    finalBracketOutput = deFinalDoublesSmwBracketTemplateReset;
+                }
+                else
+                {
+                    finalBracketOutput = deFinalDoublesBracketTemplateReset;
+                }
 
                 foreach (KeyValuePair<int, List<Set>> gf in roundList)
                 {
                     // Get grand finals
                     if (gf.Value[0].isGF == true)
                     {
-                        if (gf.Value.Count > 1)
-                        {
-                            if (gf.Value[1].state == 3)
-                            {
-                                finalBracketOutput = deFinalDoublesBracketTemplateReset;
-                            }
-                        }
-
                         // Fill in R3
                         fillBracketDoubles(gf.Key, gf.Key, 3 - gf.Key, ref finalBracketOutput);
 
@@ -860,7 +887,8 @@ namespace smashgg_to_liquipedia
             int lastMatchWin = 0;
             int lastMatchLoss = 0;
             double lastWinrate = 0.0;
-            int advance = (int)numericUpDownAdvanceWinners.Value;
+            int advanceWinners = (int)numericUpDownAdvanceWinners.Value;
+            int advanceLosers = (int)numericUpDownAdvanceLosers.Value;
             for (int i = 0; i < poolData.Count; i++)
             {
                 // Skip bye
@@ -913,10 +941,15 @@ namespace smashgg_to_liquipedia
                     richTextBoxLpOutput.Text += LpStrings.SlotPlace;
                 }
 
-                if (advance > 0)
+                if (advanceWinners > 0)
                 {
                     richTextBoxLpOutput.Text += LpStrings.SlotBg + "up";
-                    advance--;
+                    advanceWinners--;
+                }
+                else if (advanceLosers > 0)
+                {
+                    richTextBoxLpOutput.Text += LpStrings.SlotBg + "stay";
+                    advanceLosers--;
                 }
                 else
                 {
