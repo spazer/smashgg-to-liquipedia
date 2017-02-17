@@ -76,6 +76,8 @@
             this.numericUpDownAdvanceLosers = new System.Windows.Forms.NumericUpDown();
             this.label6 = new System.Windows.Forms.Label();
             this.checkBoxSMW = new System.Windows.Forms.CheckBox();
+            this.buttonPrizePool = new System.Windows.Forms.Button();
+            this.numericUpDownPrizePool = new System.Windows.Forms.NumericUpDown();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAdvanceWinners)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabPageSingles.SuspendLayout();
@@ -87,6 +89,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownLosersOffset)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownLosersEnd)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAdvanceLosers)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPrizePool)).BeginInit();
             this.SuspendLayout();
             // 
             // richTextBoxEntrants
@@ -306,9 +309,9 @@
             // 
             // buttonRegexReplace
             // 
-            this.buttonRegexReplace.Location = new System.Drawing.Point(828, 315);
+            this.buttonRegexReplace.Location = new System.Drawing.Point(810, 315);
             this.buttonRegexReplace.Name = "buttonRegexReplace";
-            this.buttonRegexReplace.Size = new System.Drawing.Size(106, 23);
+            this.buttonRegexReplace.Size = new System.Drawing.Size(94, 23);
             this.buttonRegexReplace.TabIndex = 2;
             this.buttonRegexReplace.Text = "Regex Replace";
             this.buttonRegexReplace.UseVisualStyleBackColor = true;
@@ -555,11 +558,35 @@
             this.checkBoxSMW.UseVisualStyleBackColor = true;
             this.checkBoxSMW.CheckedChanged += new System.EventHandler(this.checkBoxLock_CheckedChanged);
             // 
+            // buttonPrizePool
+            // 
+            this.buttonPrizePool.Location = new System.Drawing.Point(810, 286);
+            this.buttonPrizePool.Name = "buttonPrizePool";
+            this.buttonPrizePool.Size = new System.Drawing.Size(94, 23);
+            this.buttonPrizePool.TabIndex = 17;
+            this.buttonPrizePool.Text = "Prize Pool Table";
+            this.buttonPrizePool.UseVisualStyleBackColor = true;
+            this.buttonPrizePool.Click += new System.EventHandler(this.buttonPrizePool_Click);
+            // 
+            // numericUpDownPrizePool
+            // 
+            this.numericUpDownPrizePool.Location = new System.Drawing.Point(910, 287);
+            this.numericUpDownPrizePool.Name = "numericUpDownPrizePool";
+            this.numericUpDownPrizePool.Size = new System.Drawing.Size(32, 20);
+            this.numericUpDownPrizePool.TabIndex = 18;
+            this.numericUpDownPrizePool.Value = new decimal(new int[] {
+            8,
+            0,
+            0,
+            0});
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(948, 566);
+            this.Controls.Add(this.numericUpDownPrizePool);
+            this.Controls.Add(this.buttonPrizePool);
             this.Controls.Add(this.richTextBoxExRegexReplace);
             this.Controls.Add(this.numericUpDownAdvanceLosers);
             this.Controls.Add(this.numericUpDownAdvanceWinners);
@@ -605,7 +632,7 @@
             this.Controls.Add(this.label4);
             this.Controls.Add(this.numericUpDownWinnersEnd);
             this.Name = "Form1";
-            this.Text = "Smash.gg to Liquipedia v2.2.2";
+            this.Text = "Smash.gg to Liquipedia v2.3.0";
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAdvanceWinners)).EndInit();
             this.tabControl1.ResumeLayout(false);
             this.tabPageSingles.ResumeLayout(false);
@@ -619,6 +646,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownLosersOffset)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownLosersEnd)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAdvanceLosers)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPrizePool)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -674,6 +702,8 @@
         private System.Windows.Forms.NumericUpDown numericUpDownAdvanceLosers;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.CheckBox checkBoxSMW;
+        private System.Windows.Forms.Button buttonPrizePool;
+        private System.Windows.Forms.NumericUpDown numericUpDownPrizePool;
     }
 }
 

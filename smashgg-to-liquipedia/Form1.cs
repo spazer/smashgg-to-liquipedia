@@ -39,12 +39,12 @@ namespace smashgg_to_liquipedia
                                                     "}}";
 
         static string deFinalSmwBracketTemplateReset = "{{DEFinalSmwBracket\r\n" +
-                                                    "|tourneylink =\r\n" +
-                                                    "|tourneyname =\r\n" +
-                                                    "|l1placement = 4\r\n" +
-                                                    "|r2placement = 3\r\n" +
-                                                    "|r3loserplacement = 2\r\n" +
-                                                    "|r3winnerplacement = 1\r\n\r\n" +
+                                                    "|tourneylink=\r\n" +
+                                                    "|tourneyname=\r\n" +
+                                                    "|l1placement=4\r\n" +
+                                                    "|r2placement=3\r\n" +
+                                                    "|r3loserplacement=2\r\n" +
+                                                    "|r3winnerplacement=1\r\n\r\n" +
                                                     "<!-- FROM WINNERS -->\r\n" +
                                                     "|r1m1p1= |r1m1p1flag= |r1m1p1score=\r\n" +
                                                     "|r1m1p2= |r1m1p2flag= |r1m1p2score=\r\n" +
@@ -94,12 +94,12 @@ namespace smashgg_to_liquipedia
                                                         "}}";
 
         static string deFinalDoublesSmwBracketTemplateReset = "{{DEFinalDoublesSmwBracket\r\n" +
-                                                        "|tourneylink =\r\n" +
-                                                        "|tourneyname =\r\n" +
-                                                        "|l1placement = 4\r\n" +
-                                                        "|r2placement = 3\r\n" +
-                                                        "|r3loserplacement = 2\r\n" +
-                                                        "|r3winnerplacement = 1\r\n\r\n" + 
+                                                        "|tourneylink=\r\n" +
+                                                        "|tourneyname=\r\n" +
+                                                        "|l1placement=4\r\n" +
+                                                        "|r2placement=3\r\n" +
+                                                        "|r3loserplacement=2\r\n" +
+                                                        "|r3winnerplacement=1\r\n\r\n" + 
                                                         "<!-- FROM WINNERS -->\r\n" +
                                                         "|r1m1t1p1= |r1m1t1p1flag=\r\n" +
                                                         "|r1m1t1p2= |r1m1t1p2flag= |r1m1t1score=\r\n" +
@@ -142,7 +142,7 @@ namespace smashgg_to_liquipedia
 
         JObject tournamentStructure;
         string tournament = string.Empty;
-        EventType retreivedDataType = EventType.None;
+        EventType retrievedDataType = EventType.None;
 
         public Form1()
         {
@@ -171,12 +171,12 @@ namespace smashgg_to_liquipedia
             if(tabControl1.SelectedTab.Text == "Singles")
             {
                 ProcessBracket(EventType.Singles);
-                retreivedDataType = EventType.Singles;
+                retrievedDataType = EventType.Singles;
             }
             else
             {
                 ProcessBracket(EventType.Doubles);
-                retreivedDataType = EventType.Doubles;
+                retrievedDataType = EventType.Doubles;
             }
             
             UnlockControls();
@@ -194,12 +194,12 @@ namespace smashgg_to_liquipedia
             if (tabControl1.SelectedTab.Text == "Singles")
             {
                 ProcessPhase(EventType.Singles);
-                retreivedDataType = EventType.Singles;
+                retrievedDataType = EventType.Singles;
             }
             else
             {
                 ProcessPhase(EventType.Doubles);
-                retreivedDataType = EventType.Doubles;
+                retrievedDataType = EventType.Doubles;
             }
 
             UnlockControls();
@@ -215,7 +215,7 @@ namespace smashgg_to_liquipedia
             string output = string.Empty;
             string finalBracketOutput = string.Empty;
 
-            if (retreivedDataType == EventType.Doubles)
+            if (retrievedDataType == EventType.Doubles)
             {
                 richTextBoxLog.Text += "Retrieved data is doubles data\r\n";
                 return;
@@ -322,7 +322,7 @@ namespace smashgg_to_liquipedia
         /// <param name="e">N/A</param>
         private void buttonFillDoubles_Click(object sender, EventArgs e)
         {
-            if (retreivedDataType == EventType.Singles)
+            if (retrievedDataType == EventType.Singles)
             {
                 richTextBoxLog.Text += "Retrieved data is singles data\r\n";
                 return;
@@ -450,6 +450,124 @@ namespace smashgg_to_liquipedia
                     richTextBoxLog.Text += "No regex match found.\r\n";
                 }
             }
+        }
+
+        /// <summary>
+        /// Creates a prize pool template based on retrieved info
+        /// </summary>
+        /// <param name="sender">N/A</param>
+        /// <param name="e">N/A</param>
+        private void buttonPrizePool_Click(object sender, EventArgs e)
+        {
+            richTextBoxLog.Text += "Filling prize pool...\r\n";
+
+            // Set the number of entrants that the prize pool will have. Check to make sure there are enough entrants to fill the prize pool.
+            int maxEntries = (int)numericUpDownPrizePool.Value;
+            if (maxEntries > entrantList.Count)
+            {
+                richTextBoxLog.Text += "Cannot fill prize pool - not enough entrants\r\n";
+            }
+
+            // Simple error checking
+            if (!(retrievedDataType == EventType.Singles) || !(retrievedDataType == EventType.Singles)) return;
+            if (entrantList.Count <= 0) return;
+            if (setList.Count <= 0) return;
+
+            Dictionary<int, PoolRecord> record = new Dictionary<int, PoolRecord>();
+
+            // Create a record for each player
+            foreach (KeyValuePair<int, Entrant> entrant in entrantList)
+            {
+                record.Add(entrant.Key, new PoolRecord());
+            }
+
+            // Add data to each record based on set information
+            foreach (KeyValuePair<int, List<Set>> round in roundList)
+            {
+                foreach (Set set in round.Value)
+                {
+                    record[set.entrantID1].isinGroup = true;
+                    record[set.entrantID2].isinGroup = true;
+
+                    // Find the winner of each match. Assume these are DE Brackets
+                    if (set.winner == set.entrantID1)
+                    {
+                        record[set.entrantID1].rank = set.wPlacement;
+                        record[set.entrantID2].rank = set.lPlacement;
+                    }
+                    else if (set.winner == set.entrantID2)
+                    {
+                        record[set.entrantID1].rank = set.lPlacement;
+                        record[set.entrantID2].rank = set.wPlacement;
+                    }
+                }
+            }
+
+
+
+            // Remove entrants without listed sets (smash.gg seems to list extraneous entrants sometimes)
+            for (int i = 0; i < record.Count; i++)
+            {
+                if (record.ElementAt(i).Value.isinGroup == false)
+                {
+                    record.Remove(record.ElementAt(i).Key);
+                    i--;
+                }
+            }
+
+            // Sort the entrants by their rank and W-L records
+            record = record.OrderBy(x => x.Value.rank).ThenByDescending(x => x.Value.MatchWinrate).ThenBy(x => x.Value.MatchesLoss).ThenByDescending(x => x.Value.MatchesWin).ThenByDescending(x => x.Value.GameWinrate).ToDictionary(x => x.Key, x => x.Value);
+
+            // Ouptut the prize pool header
+            if (retrievedDataType == EventType.Singles)
+            {
+                richTextBoxLpOutput.Text = "{{prize pool start}}\r\n";
+            }
+            else if (retrievedDataType == EventType.Doubles)
+            {
+                richTextBoxLpOutput.Text = "{{prize pool start doubles}}\r\n";
+            }
+
+            // Loop the bracket records to add entries to the prize pool
+            int nextRow = 0;
+            int startEntry = 0;
+            while (startEntry < maxEntries)
+            {
+                // Look ahead and see if there's entrants of equal rank
+                for (int j = startEntry + 1; j < maxEntries; j++)
+                {
+                    // When a match is found, j is the next entrant with a new rank
+                    if (record.ElementAt(startEntry).Value.rank != record.ElementAt(j).Value.rank)
+                    {
+                        nextRow = j;
+                        break;
+                    }
+
+                    // If the end of the entrant list is reached, everything needs to be output, so set nextRow to maxEntries
+                    else if (j == maxEntries - 1)
+                    {
+                        nextRow = maxEntries;
+                        break;
+                    }
+                }
+
+                // Ouptut all equal ranking entrants
+                OutputPrizePoolTable(record, startEntry, nextRow - startEntry);
+
+                // Skip all entrants that have been output
+                startEntry = nextRow;
+            }
+
+            if (retrievedDataType == EventType.Singles)
+            {
+                richTextBoxLpOutput.Text += "{{prize pool end}}\r\n";
+            }
+            else if (retrievedDataType == EventType.Doubles)
+            {
+                richTextBoxLpOutput.Text += "{{prize pool end doubles}}\r\n";
+            }
+
+            richTextBoxLog.Text += "Done.\r\n";
         }
         #endregion
 
@@ -1828,6 +1946,67 @@ namespace smashgg_to_liquipedia
                 lpText = lpText.Insert(start, value);
             }
         }
+
+        /// <summary>
+        /// Outputs a prize pool table based on available bracket info
+        /// </summary>
+        /// <param name="record">Records of the entrants in the bracket, sorted by rank</param>
+        /// <param name="startEntrant">The first entrant to output in this row</param>
+        /// <param name="rows">Number of rows to output</param>
+        private void OutputPrizePoolTable(Dictionary<int, PoolRecord> record, int startEntrant, int rows)
+        {
+            // Output the start of the prize pool slot
+            if (retrievedDataType == EventType.Singles)
+            {
+                richTextBoxLpOutput.Text += "{{prize pool slot|place=";
+            }
+            else if (retrievedDataType == EventType.Singles)
+            {
+                richTextBoxLpOutput.Text += "{{prize pool slot doubles|place=";
+            }
+
+            // Output the place
+            if (rows == 1)
+            {
+                richTextBoxLpOutput.Text += record.ElementAt(startEntrant).Value.rank;
+            }
+            else
+            {
+                richTextBoxLpOutput.Text += record.ElementAt(startEntrant).Value.rank + "-" + (record.ElementAt(startEntrant).Value.rank + rows - 1);
+            }
+
+            // Ouptut the parameter for prize money
+            richTextBoxLpOutput.Text += "|usdprize=\r\n";
+
+
+            if (retrievedDataType == EventType.Singles)
+            {
+                // Output the specified number of entrants
+                for (int i = 0; i < rows; i++)
+                {
+                    // Assume there is only 1 player output their info
+                    richTextBoxLpOutput.Text += "|" + entrantList[record.ElementAt(startEntrant + i).Key].Players[0].name +
+                                                "|flag" + (i + 1) + "=" + entrantList[record.ElementAt(startEntrant + i).Key].Players[0].country +
+                                                "|heads" + (i + 1) + "= |team" + (i + 1) + "=\r\n";
+                }
+            }
+            else if (retrievedDataType == EventType.Doubles)
+            {
+                // Output the specified number of entrants
+                for (int i = 0; i < rows; i++)
+                {
+                    // Assume there are 2 players, and output their info
+                    richTextBoxLpOutput.Text += "|" + entrantList[record.ElementAt(startEntrant + i).Key].Players[0].name +
+                                                "|flag" + (i + 1) + "p1=" + entrantList[record.ElementAt(startEntrant + i).Key].Players[0].country +
+                                                "|heads" + (i + 1) + "p1=" +
+                                                "|" + entrantList[record.ElementAt(startEntrant + i).Key].Players[1].name +
+                                                "|flag" + (i + 1) + "p2=" + entrantList[record.ElementAt(startEntrant + i).Key].Players[1].country +
+                                                "|heads" + (i + 1) + "p2=\r\n";
+                }
+            }
+
+            richTextBoxLpOutput.Text += "}}\r\n";
+        }
         #endregion
 
         #region Cue Banner
@@ -2016,6 +2195,7 @@ namespace smashgg_to_liquipedia
             buttonGetPhase.Enabled = false;
             buttonRegexReplace.Enabled = false;
             buttonGetBracket.Enabled = false;
+            buttonPrizePool.Enabled = false;
 
             checkBoxFillUnfinished.Enabled = false;
             checkBoxGuessFinal.Enabled = false;
@@ -2023,6 +2203,7 @@ namespace smashgg_to_liquipedia
             checkBoxLockWinners.Enabled = false;
             checkBoxLosers.Enabled = false;
             checkBoxWinners.Enabled = false;
+            checkBoxSMW.Enabled = false;
 
             numericUpDownAdvanceWinners.Enabled = false;
             numericUpDownAdvanceWinners.Enabled = false;
@@ -2032,6 +2213,7 @@ namespace smashgg_to_liquipedia
             numericUpDownWinnersEnd.Enabled = false;
             numericUpDownWinnersOffset.Enabled = false;
             numericUpDownWinnersStart.Enabled = false;
+            numericUpDownPrizePool.Enabled = false;
 
             richTextBoxEntrants.Enabled = false;
             richTextBoxExLpLosersBracket.Enabled = false;
@@ -2058,6 +2240,7 @@ namespace smashgg_to_liquipedia
             buttonGetPhase.Enabled = true;
             buttonRegexReplace.Enabled = true;
             buttonGetBracket.Enabled = true;
+            buttonPrizePool.Enabled = true;
 
             checkBoxFillUnfinished.Enabled = true;
             checkBoxGuessFinal.Enabled = true;
@@ -2065,6 +2248,7 @@ namespace smashgg_to_liquipedia
             checkBoxLockWinners.Enabled = true;
             checkBoxLosers.Enabled = true;
             checkBoxWinners.Enabled = true;
+            checkBoxSMW.Enabled = true;
 
             numericUpDownAdvanceWinners.Enabled = true;
             numericUpDownAdvanceWinners.Enabled = true;
@@ -2074,6 +2258,7 @@ namespace smashgg_to_liquipedia
             numericUpDownWinnersEnd.Enabled = true;
             numericUpDownWinnersOffset.Enabled = true;
             numericUpDownWinnersStart.Enabled = true;
+            numericUpDownPrizePool.Enabled = true;
 
             richTextBoxEntrants.Enabled = true;
             richTextBoxExLpLosersBracket.Enabled = true;
