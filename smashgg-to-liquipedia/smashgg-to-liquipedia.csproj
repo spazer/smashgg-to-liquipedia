@@ -92,6 +92,7 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Set.cs" />
+    <Compile Include="SetsByRound.cs" />
     <Compile Include="smashgg.cs" />
     <Compile Include="Entrant.cs" />
     <Compile Include="SmashggStrings.Designer.cs">

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
@@ -459,19 +460,88 @@ namespace smashgg_to_liquipedia
         /// <param name="e">N/A</param>
         private void buttonPrizePool_Click(object sender, EventArgs e)
         {
-            richTextBoxLog.Text += "Filling prize pool...\r\n";
+            // Create a copy of roundList since we will be altering it
+            List<SetsByRound> tempRoundList = new List<SetsByRound>();
+
+            foreach (KeyValuePair<int, List<Set>> round in roundList)
+            {
+                bool roundInserted = false;
+                
+                // Winners bracket matches go at the start from smallest to largest
+                if (round.Key > 0)
+                {
+                    // Iterate through the list and insert the current round before the next larger round
+                    for (int i = 0; i < tempRoundList.Count; i++)
+                    {
+                        if (round.Key < tempRoundList[i].round)
+                        {
+                            tempRoundList.Insert(i, new SetsByRound(round.Key, round.Value));
+                            roundInserted = true;
+                        }
+                    }
+
+                    // If the round is not inserted, add it to the end of the list
+                    if (!roundInserted)
+                    {
+                        tempRoundList.Add(new SetsByRound(round.Key, round.Value));
+                    }
+                }
+
+                // Losers bracket matches go at the end from smallest magnitude to largest magnitude
+                else if (round.Key < 0)
+                {
+                    // Iterate through the list and insert the current round before the next larger magnitude round
+                    for (int i = 0; i < tempRoundList.Count; i++)
+                    {
+                        // Skip winners bracket rounds
+                        if (tempRoundList[i].round > 0) continue;
+
+                        if (Math.Abs(round.Key) < Math.Abs(tempRoundList[i].round))
+                        {
+                            tempRoundList.Insert(i, new SetsByRound(round.Key, round.Value));
+                            roundInserted = true;
+                        }
+                    }
+
+                    // If the round is not inserted, add it to the end of the list
+                    if (!roundInserted)
+                    {
+                        tempRoundList.Add(new SetsByRound(round.Key, round.Value));
+                    }
+                }
+            }
+
+            // Move the grand finals set to the end of the list
+            // Don't move anything if the grand finals are already at the end
+            for (int i = 0; i < tempRoundList.Count - 1; i++)
+            {
+                // Only look at the first set in each round
+                if (tempRoundList[i].sets[0].isGF)
+                {
+                    tempRoundList.Add(new SetsByRound(tempRoundList[i].round, tempRoundList[i].sets));
+                    tempRoundList.RemoveAt(i);
+                    break;
+                }
+            }
+
+            //tempRoundList = tempRoundList.OrderBy(x => x.Key).ToDictionary(x => x.Key, x=> x.Value);
 
             // Set the number of entrants that the prize pool will have. Check to make sure there are enough entrants to fill the prize pool.
             int maxEntries = (int)numericUpDownPrizePool.Value;
             if (maxEntries > entrantList.Count)
             {
-                richTextBoxLog.Text += "Cannot fill prize pool - not enough entrants\r\n";
+                richTextBoxLog.Text += "Cannot fill prize pool - Not enough entrants\r\n";
             }
 
             // Simple error checking
-            if (!(retrievedDataType == EventType.Singles) || !(retrievedDataType == EventType.Singles)) return;
-            if (entrantList.Count <= 0) return;
-            if (setList.Count <= 0) return;
+            if (!(retrievedDataType == EventType.Singles) || !(retrievedDataType == EventType.Doubles))
+            {
+                richTextBoxLog.Text += "Cannot fill prize pool - First retrieve data from smash.gg\r\n";
+            }
+            if (tempRoundList.Count <= 0)
+            {
+                richTextBoxLog.Text += "Cannot fill prize pool - No sets detected\r\n";
+            };
 
             Dictionary<int, PoolRecord> record = new Dictionary<int, PoolRecord>();
 
@@ -482,9 +552,10 @@ namespace smashgg_to_liquipedia
             }
 
             // Add data to each record based on set information
-            foreach (KeyValuePair<int, List<Set>> round in roundList)
+            richTextBoxLog.Text += "Figuring out ranks for each entrant\r\n";
+            foreach (SetsByRound round in tempRoundList)
             {
-                foreach (Set set in round.Value)
+                foreach (Set set in round.sets)
                 {
                     record[set.entrantID1].isinGroup = true;
                     record[set.entrantID2].isinGroup = true;
@@ -503,8 +574,6 @@ namespace smashgg_to_liquipedia
                 }
             }
 
-
-
             // Remove entrants without listed sets (smash.gg seems to list extraneous entrants sometimes)
             for (int i = 0; i < record.Count; i++)
             {
@@ -516,7 +585,9 @@ namespace smashgg_to_liquipedia
             }
 
             // Sort the entrants by their rank and W-L records
-            record = record.OrderBy(x => x.Value.rank).ThenByDescending(x => x.Value.MatchWinrate).ThenBy(x => x.Value.MatchesLoss).ThenByDescending(x => x.Value.MatchesWin).ThenByDescending(x => x.Value.GameWinrate).ToDictionary(x => x.Key, x => x.Value);
+            record = record.OrderBy(x => x.Value.rank).ToDictionary(x => x.Key, x => x.Value);
+
+            richTextBoxLog.Text += "Outputting results\r\n";
 
             // Ouptut the prize pool header
             if (retrievedDataType == EventType.Singles)
@@ -1960,7 +2031,7 @@ namespace smashgg_to_liquipedia
             {
                 richTextBoxLpOutput.Text += "{{prize pool slot|place=";
             }
-            else if (retrievedDataType == EventType.Singles)
+            else if (retrievedDataType == EventType.Doubles)
             {
                 richTextBoxLpOutput.Text += "{{prize pool slot doubles|place=";
             }
