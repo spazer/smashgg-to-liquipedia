@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.richTextBoxEntrants = new System.Windows.Forms.RichTextBox();
             this.textBoxURLSingles = new System.Windows.Forms.TextBox();
             this.buttonGetBracket = new System.Windows.Forms.Button();
@@ -45,7 +46,7 @@
             this.label1 = new System.Windows.Forms.Label();
             this.checkBoxWinners = new System.Windows.Forms.CheckBox();
             this.checkBoxLosers = new System.Windows.Forms.CheckBox();
-            this.checkBoxFillUnfinished = new System.Windows.Forms.CheckBox();
+            this.checkBoxFillByes = new System.Windows.Forms.CheckBox();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPageSingles = new System.Windows.Forms.TabPage();
             this.tabPageDoubles = new System.Windows.Forms.TabPage();
@@ -78,6 +79,7 @@
             this.checkBoxSMW = new System.Windows.Forms.CheckBox();
             this.buttonPrizePool = new System.Windows.Forms.Button();
             this.numericUpDownPrizePool = new System.Windows.Forms.NumericUpDown();
+            this.checkBoxFillByeWins = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAdvanceWinners)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabPageSingles.SuspendLayout();
@@ -239,7 +241,7 @@
             // checkBoxWinners
             // 
             this.checkBoxWinners.AutoSize = true;
-            this.checkBoxWinners.Location = new System.Drawing.Point(709, 185);
+            this.checkBoxWinners.Location = new System.Drawing.Point(709, 146);
             this.checkBoxWinners.Name = "checkBoxWinners";
             this.checkBoxWinners.Size = new System.Drawing.Size(65, 17);
             this.checkBoxWinners.TabIndex = 7;
@@ -249,22 +251,22 @@
             // checkBoxLosers
             // 
             this.checkBoxLosers.AutoSize = true;
-            this.checkBoxLosers.Location = new System.Drawing.Point(709, 208);
+            this.checkBoxLosers.Location = new System.Drawing.Point(709, 169);
             this.checkBoxLosers.Name = "checkBoxLosers";
             this.checkBoxLosers.Size = new System.Drawing.Size(57, 17);
             this.checkBoxLosers.TabIndex = 7;
             this.checkBoxLosers.Text = "Losers";
             this.checkBoxLosers.UseVisualStyleBackColor = true;
             // 
-            // checkBoxFillUnfinished
+            // checkBoxFillByes
             // 
-            this.checkBoxFillUnfinished.AutoSize = true;
-            this.checkBoxFillUnfinished.Location = new System.Drawing.Point(709, 231);
-            this.checkBoxFillUnfinished.Name = "checkBoxFillUnfinished";
-            this.checkBoxFillUnfinished.Size = new System.Drawing.Size(111, 17);
-            this.checkBoxFillUnfinished.TabIndex = 7;
-            this.checkBoxFillUnfinished.Text = "Fill unfinished sets";
-            this.checkBoxFillUnfinished.UseVisualStyleBackColor = true;
+            this.checkBoxFillByes.AutoSize = true;
+            this.checkBoxFillByes.Location = new System.Drawing.Point(709, 208);
+            this.checkBoxFillByes.Name = "checkBoxFillByes";
+            this.checkBoxFillByes.Size = new System.Drawing.Size(63, 17);
+            this.checkBoxFillByes.TabIndex = 7;
+            this.checkBoxFillByes.Text = "Fill byes";
+            this.checkBoxFillByes.UseVisualStyleBackColor = true;
             // 
             // tabControl1
             // 
@@ -580,6 +582,16 @@
             0,
             0});
             // 
+            // checkBoxFillByeWins
+            // 
+            this.checkBoxFillByeWins.AutoSize = true;
+            this.checkBoxFillByeWins.Location = new System.Drawing.Point(709, 231);
+            this.checkBoxFillByeWins.Name = "checkBoxFillByeWins";
+            this.checkBoxFillByeWins.Size = new System.Drawing.Size(82, 17);
+            this.checkBoxFillByeWins.TabIndex = 7;
+            this.checkBoxFillByeWins.Text = "Fill bye wins";
+            this.checkBoxFillByeWins.UseVisualStyleBackColor = true;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -601,7 +613,8 @@
             this.Controls.Add(this.checkBoxSMW);
             this.Controls.Add(this.checkBoxGuessFinal);
             this.Controls.Add(this.checkBoxLockLosers);
-            this.Controls.Add(this.checkBoxFillUnfinished);
+            this.Controls.Add(this.checkBoxFillByeWins);
+            this.Controls.Add(this.checkBoxFillByes);
             this.Controls.Add(this.buttonRegexReplace);
             this.Controls.Add(this.checkBoxLosers);
             this.Controls.Add(this.checkBoxLockWinners);
@@ -631,8 +644,9 @@
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.numericUpDownWinnersEnd);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Form1";
-            this.Text = "Smash.gg to Liquipedia v2.3.0";
+            this.Text = "Smash.gg to Liquipedia v2.4.0";
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAdvanceWinners)).EndInit();
             this.tabControl1.ResumeLayout(false);
             this.tabPageSingles.ResumeLayout(false);
@@ -671,7 +685,7 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.CheckBox checkBoxWinners;
         private System.Windows.Forms.CheckBox checkBoxLosers;
-        private System.Windows.Forms.CheckBox checkBoxFillUnfinished;
+        private System.Windows.Forms.CheckBox checkBoxFillByes;
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.TabPage tabPageSingles;
         private System.Windows.Forms.NumericUpDown numericUpDownWinnersStart;
@@ -704,6 +718,7 @@
         private System.Windows.Forms.CheckBox checkBoxSMW;
         private System.Windows.Forms.Button buttonPrizePool;
         private System.Windows.Forms.NumericUpDown numericUpDownPrizePool;
+        private System.Windows.Forms.CheckBox checkBoxFillByeWins;
     }
 }
 
