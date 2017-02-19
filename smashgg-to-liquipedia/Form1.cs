@@ -575,9 +575,10 @@ namespace smashgg_to_liquipedia
             }
 
             // Remove entrants without listed sets (smash.gg seems to list extraneous entrants sometimes)
+            // Also remove the bye entry
             for (int i = 0; i < record.Count; i++)
             {
-                if (record.ElementAt(i).Value.isinGroup == false)
+                if (record.ElementAt(i).Value.isinGroup == false || record.ElementAt(i).Key == -1)
                 {
                     record.Remove(record.ElementAt(i).Key);
                     i--;
@@ -604,6 +605,8 @@ namespace smashgg_to_liquipedia
             int startEntry = 0;
             while (startEntry < maxEntries)
             {
+                bool rowSet = false;
+                
                 // Look ahead and see if there's entrants of equal rank
                 for (int j = startEntry + 1; j < maxEntries; j++)
                 {
@@ -611,6 +614,7 @@ namespace smashgg_to_liquipedia
                     if (record.ElementAt(startEntry).Value.rank != record.ElementAt(j).Value.rank)
                     {
                         nextRow = j;
+                        rowSet = true;
                         break;
                     }
 
@@ -618,8 +622,14 @@ namespace smashgg_to_liquipedia
                     else if (j == maxEntries - 1)
                     {
                         nextRow = maxEntries;
+                        rowSet = true;
                         break;
                     }
+                }
+
+                if (!rowSet)
+                {
+                    nextRow = maxEntries;
                 }
 
                 // Ouptut all equal ranking entrants
