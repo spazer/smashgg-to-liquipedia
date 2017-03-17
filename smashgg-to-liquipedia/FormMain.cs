@@ -23,6 +23,8 @@ namespace smashgg_to_liquipedia
         static string LOSERS_HEADER = "==Losers Bracket==";
         static string FINALS_SINGLES_HEADER = "==Final Singles Bracket==";
         static string FINALS_DOUBLES_HEADER = "==Final Doubles Bracket==";
+        static string SMASH_DB_URI = "http://wiki.teamliquid.net/smash/api.php?action=parse&page=Liquipedia:Players_Regex&prop=revid|wikitext&format=json";
+        static string FIGHTERS_DB_URI = "http://wiki.teamliquid.net/fighters/api.php?action=parse&page=Liquipedia:Players_Regex&prop=revid|wikitext&format=json";
 
         #region Bracket Template Contants
         static string deFinalBracketTemplateReset = "{{DEFinalBracket\r\n" +
@@ -155,6 +157,8 @@ namespace smashgg_to_liquipedia
         LiquipediaBracket lBracket;
         LiquipediaBracket fBracket;
 
+        PlayerDatabase playerdb;
+
         public FormMain()
         {
             InitializeComponent();
@@ -171,6 +175,16 @@ namespace smashgg_to_liquipedia
             wBracket = new LiquipediaBracket(WINNERS_HEADER, string.Empty);
             lBracket = new LiquipediaBracket(LOSERS_HEADER, string.Empty);
             fBracket = new LiquipediaBracket(FINALS_SINGLES_HEADER, deFinalBracketTemplateReset);
+
+            if (radioButtonSmash.Checked == true)
+            {
+                playerdb = new PlayerDatabase(PlayerDatabase.DbSource.Smash);
+            }
+            else if (radioButtonFighters.Checked == true)
+            {
+                playerdb = new PlayerDatabase(PlayerDatabase.DbSource.Fighters);
+            }
+            UpdateRevID();
         }
 
         #region Buttons
@@ -677,6 +691,109 @@ namespace smashgg_to_liquipedia
 
             richTextBoxLog.Text += "Done.\r\n";
         }
+
+        /// <summary>
+        /// Opens a window that allows the user to shift matches
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void buttonWinnerShift_Click(object sender, EventArgs e)
+        {
+            if ((int)numericUpDownWinnersStart.Value > (int)numericUpDownWinnersEnd.Value) return;
+            if ((int)numericUpDownWinnersStart.Value == 0 && (int)numericUpDownWinnersEnd.Value == 0) return;
+
+            FormMatchShift shiftWindow = new FormMatchShift((int)numericUpDownWinnersStart.Value, (int)numericUpDownWinnersEnd.Value, BracketSide.Winners, ref matchOffsetPerRound);
+            LockControls();
+            shiftWindow.ShowDialog();
+            UnlockControls();
+        }
+
+        /// <summary>
+        /// Opens a window that allows the user to shift matches
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void buttonloserShift_Click(object sender, EventArgs e)
+        {
+            if ((int)numericUpDownLosersStart.Value > (int)numericUpDownLosersEnd.Value) return;
+            if ((int)numericUpDownLosersStart.Value == 0 && (int)numericUpDownLosersEnd.Value == 0) return;
+
+            FormMatchShift shiftWindow = new FormMatchShift((int)numericUpDownLosersStart.Value, (int)numericUpDownLosersEnd.Value, BracketSide.Losers, ref matchOffsetPerRound);
+            LockControls();
+            shiftWindow.ShowDialog();
+            UnlockControls();
+        }
+
+        /// <summary>
+        /// Displays the headings that the program will use
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void buttonHeadings_Click(object sender, EventArgs e)
+        {
+            LockControls();
+            FormHeadings form = new FormHeadings(ref wBracket, ref lBracket, ref fBracket);
+            form.ShowDialog();
+            UnlockControls();
+        }
+
+        /// <summary>
+        /// Retrieves a regex AKA database from Liquipedia, and parses it
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void buttonAKA_Click(object sender, EventArgs e)
+        {
+            WebClient client = new WebClient();
+
+            // Decide on the URL to use
+            string json = string.Empty;
+            if (radioButtonSmash.Checked)
+            {
+                json = client.DownloadString(SMASH_DB_URI);
+            }
+            else if (radioButtonFighters.Checked)
+            {
+                json = client.DownloadString(FIGHTERS_DB_URI);
+            }
+            else
+            {
+                return;
+            }
+
+            // Save the json to file, then read the file
+            if (radioButtonSmash.Checked)
+            {
+                if (!playerdb.SaveDatabase(json, PlayerDatabase.DbSource.Smash))
+                {
+                    richTextBoxLog.Text = "Could not save Smash Database";
+                }
+
+                if (!playerdb.ReadDatabaseFromFile(PlayerDatabase.DbSource.Smash))
+                {
+                    richTextBoxLog.Text = "Could not retrieve Smash Database";
+                }
+            }
+            else if (radioButtonFighters.Checked)
+            {
+                if (!playerdb.SaveDatabase(json, PlayerDatabase.DbSource.Fighters))
+                {
+                    richTextBoxLog.Text = "Could not save Fighters Database";
+                }
+
+                if (!playerdb.ReadDatabaseFromFile(PlayerDatabase.DbSource.Fighters))
+                {
+                    richTextBoxLog.Text = "Could not retrieve Fighters Database";
+                }
+            }
+            else
+            {
+                return;
+            }
+
+            // Update the revision number
+            UpdateRevID();
+        }
         #endregion
 
         #region Data processing methods
@@ -734,7 +851,7 @@ namespace smashgg_to_liquipedia
 
             // Fill entrant and set lists
             smashgg parser = new smashgg();
-            if (!parser.GetEntrants(bracketJson.SelectToken(SmashggStrings.Entities + "." + SmashggStrings.Entrants), ref entrantList))
+            if (!parser.GetEntrants(bracketJson.SelectToken(SmashggStrings.Entities + "." + SmashggStrings.Entrants), ref entrantList, playerdb))
             {
                 richTextBoxLog.Text += "No entrants detected.\r\n";
                 return;
@@ -1245,7 +1362,7 @@ namespace smashgg_to_liquipedia
             JObject bracketJson = JsonConvert.DeserializeObject<JObject>(json);
 
             // Parse entrant and set data
-            parser.GetEntrants(bracketJson.SelectToken("entities.entrants"), ref entrantList);
+            parser.GetEntrants(bracketJson.SelectToken("entities.entrants"), ref entrantList, playerdb);
             parser.GetSets(bracketJson.SelectToken("entities.sets"), ref setList);
 
             // Create a record for each player
@@ -1953,7 +2070,15 @@ namespace smashgg_to_liquipedia
             {
                 if (entrant.Key == -1) continue;
 
-                richTextBoxEntrants.Text += entrant.Key.ToString().PadRight(8);
+                if (entrant.Value.Players.Count == 1)
+                {
+                    richTextBoxEntrants.Text += entrant.Value.Players[0].playerID.ToString().PadRight(7);
+                }
+                else if (entrant.Value.Players.Count == 2)
+                {
+                    richTextBoxEntrants.Text += entrant.Value.Players[0].playerID.ToString().PadRight(7) + "/" + entrant.Value.Players[1].playerID.ToString().PadRight(7);
+                }
+                else return;
 
                 int lastPlayerPadding = padding;
 
@@ -2428,36 +2553,7 @@ namespace smashgg_to_liquipedia
         }
         #endregion
 
-        private void buttonWinnerShift_Click(object sender, EventArgs e)
-        {
-            if ((int)numericUpDownWinnersStart.Value > (int)numericUpDownWinnersEnd.Value) return;
-            if ((int)numericUpDownWinnersStart.Value == 0 && (int)numericUpDownWinnersEnd.Value == 0) return;
-
-            FormMatchShift shiftWindow = new FormMatchShift((int)numericUpDownWinnersStart.Value, (int)numericUpDownWinnersEnd.Value, BracketSide.Winners, ref matchOffsetPerRound);
-            LockControls();
-            shiftWindow.ShowDialog();
-            UnlockControls();
-        }
-
-        private void buttonloserShift_Click(object sender, EventArgs e)
-        {
-            if ((int)numericUpDownLosersStart.Value > (int)numericUpDownLosersEnd.Value) return;
-            if ((int)numericUpDownLosersStart.Value == 0 && (int)numericUpDownLosersEnd.Value == 0) return;
-
-            FormMatchShift shiftWindow = new FormMatchShift((int)numericUpDownLosersStart.Value, (int)numericUpDownLosersEnd.Value, BracketSide.Losers, ref matchOffsetPerRound);
-            LockControls();
-            shiftWindow.ShowDialog();
-            UnlockControls();
-        }
-
-        private void buttonHeadings_Click(object sender, EventArgs e)
-        {
-            LockControls();
-            FormHeadings form = new FormHeadings(ref wBracket, ref lBracket, ref fBracket);
-            form.ShowDialog();
-            UnlockControls();
-        }
-
+        #region Header Selection Methods
         private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (tabControl1.SelectedTab.Text == "Singles")
@@ -2512,6 +2608,55 @@ namespace smashgg_to_liquipedia
                     fBracket.Bracket = deFinalDoublesBracketTemplateReset;
                 }
             }
+        }
+        #endregion
+
+        /// <summary>
+        /// Updates the revision number of the AKA database
+        /// </summary>
+        private void UpdateRevID()
+        {
+            if (playerdb == null) return;
+
+            int revID = playerdb.RevID;
+
+            if (revID == 0)
+            {
+                labelAkaDatabaseRev.Text = "Rev: none";
+            }
+            else
+            {
+                labelAkaDatabaseRev.Text = "Rev: " + revID.ToString();
+            }
+        }
+
+        /// <summary>
+        /// Switch the AKA database when the radio buttons are changed
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void radioButtonDatabase_CheckedChanged(object sender, EventArgs e)
+        {
+            if (radioButtonSmash.Checked)
+            {
+                if (!playerdb.ReadDatabaseFromFile(PlayerDatabase.DbSource.Smash))
+                {
+                    richTextBoxLog.Text = "Could not retrieve Smash Database\r\n";
+                }
+            }
+            else if (radioButtonFighters.Checked)
+            {
+                if (!playerdb.ReadDatabaseFromFile(PlayerDatabase.DbSource.Fighters))
+                {
+                    richTextBoxLog.Text = "Could not retrieve Fighters Database\r\n";
+                }
+            }
+            else
+            {
+                return;
+            }
+
+            UpdateRevID();
         }
     }
 }

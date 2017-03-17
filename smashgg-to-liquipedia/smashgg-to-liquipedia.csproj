@@ -101,6 +101,8 @@
     <Compile Include="JsonExtensions.cs" />
     <Compile Include="Phase.cs" />
     <Compile Include="Player.cs" />
+    <Compile Include="PlayerDatabase.cs" />
+    <Compile Include="PlayerInfo.cs" />
     <Compile Include="PoolRecord.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

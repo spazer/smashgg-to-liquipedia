@@ -42,17 +42,17 @@ namespace smashgg_to_liquipedia
         /// <param name="input">json of the entrants token</param>
         /// <param name="entrantList">List of entrants to be outputted to</param>
         /// <returns>Returns true if successful, false otherwise</returns>
-        public bool GetEntrants(JToken input, ref Dictionary<int, Entrant> entrantList)
+        public bool GetEntrants(JToken input, ref Dictionary<int, Entrant> entrantList, PlayerDatabase playerdb)
         {
             if (input == null) return false;
             
             // Add bye info
-            entrantList.Add(-1, new Entrant(new Player("Bye", string.Empty)));
+            entrantList.Add(-1, new Entrant(new Player(0, "Bye", string.Empty)));
 
             // Divide input into manageable chunks
             foreach (JToken entrant in input.Children())
             {
-                // Get player ID
+                // Get entrant ID
                 if (entrant[SmashggStrings.ID].IsNullOrEmpty()) { continue; }
                 int id = GetIntParameter(entrant, SmashggStrings.ID);
 
@@ -67,23 +67,38 @@ namespace smashgg_to_liquipedia
                 foreach (KeyValuePair<int, Player> participant in pIds) 
                 {
                     // Get player ID based off participant ID
-                    int playerId = entrant.SelectToken(SmashggStrings.PlayerIds + "." + participant.Key).Value<int>();
+                    participant.Value.playerID = entrant.SelectToken(SmashggStrings.PlayerIds + "." + participant.Key).Value<int>();
 
-                    // Select player token based off player ID
-                    JToken playerInfo = entrant.SelectToken("mutations.players" + "." + playerId);
-
-                    // Get player tag
-                    pIds[participant.Key].name = playerInfo[SmashggStrings.Gamertag].Value<string>();
-                    pIds[participant.Key].name = pIds[participant.Key].name.Replace("|", "{{!}}");
-
-                    // Get player country. Leave empty if null
-                    if (!playerInfo[SmashggStrings.Country].IsNullOrEmpty())
+                    // Check the AKA database to see if this player is in it. Fill information if they are found
+                    bool foundInDatabase = false;
+                    foreach (PlayerInfo info in playerdb.players)
                     {
-                        pIds[participant.Key].country = CountryAbbreviation(playerInfo[SmashggStrings.Country].Value<string>());
+                        if (participant.Value.playerID == info.smashggID)
+                        {
+                            participant.Value.name = info.name;
+                            participant.Value.country = info.flag;
+                            foundInDatabase = true;
+                            break;
+                        }
                     }
-                    else
+                    if (!foundInDatabase)
                     {
-                        pIds[participant.Key].country = string.Empty;
+                        // Select player token based off player ID
+                        JToken playerInfo = entrant.SelectToken("mutations.players" + "." + participant.Value.playerID);
+
+                        // Get player tag
+                        pIds[participant.Key].name = playerInfo[SmashggStrings.Gamertag].Value<string>();
+                        pIds[participant.Key].name = pIds[participant.Key].name.Replace("|", "{{!}}");
+
+                        // Get player country. Leave empty if null
+                        if (!playerInfo[SmashggStrings.Country].IsNullOrEmpty())
+                        {
+                            pIds[participant.Key].country = CountryAbbreviation(playerInfo[SmashggStrings.Country].Value<string>());
+                        }
+                        else
+                        {
+                            pIds[participant.Key].country = string.Empty;
+                        }
                     }
                 }
 

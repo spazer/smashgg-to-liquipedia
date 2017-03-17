@@ -79,6 +79,12 @@
             this.buttonWinnerShift = new System.Windows.Forms.Button();
             this.buttonLoserShift = new System.Windows.Forms.Button();
             this.buttonHeadings = new System.Windows.Forms.Button();
+            this.buttonAKA = new System.Windows.Forms.Button();
+            this.radioButtonSmash = new System.Windows.Forms.RadioButton();
+            this.radioButtonFighters = new System.Windows.Forms.RadioButton();
+            this.labelAkaDatabaseRev = new System.Windows.Forms.Label();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.panel2 = new System.Windows.Forms.Panel();
             this.richTextBoxExRegexReplace = new RichTextBoxEx();
             this.richTextBoxExRegexFind = new RichTextBoxEx();
             this.richTextBoxExLpWinnersBracket = new RichTextBoxEx();
@@ -95,6 +101,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownLosersEnd)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAdvanceLosers)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPrizePool)).BeginInit();
+            this.panel1.SuspendLayout();
+            this.panel2.SuspendLayout();
             this.SuspendLayout();
             // 
             // richTextBoxEntrants
@@ -103,7 +111,7 @@
             this.richTextBoxEntrants.Location = new System.Drawing.Point(12, 15);
             this.richTextBoxEntrants.Name = "richTextBoxEntrants";
             this.richTextBoxEntrants.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
-            this.richTextBoxEntrants.Size = new System.Drawing.Size(691, 86);
+            this.richTextBoxEntrants.Size = new System.Drawing.Size(533, 86);
             this.richTextBoxEntrants.TabIndex = 0;
             this.richTextBoxEntrants.Text = "";
             // 
@@ -138,19 +146,17 @@
             // radioButtonBracket
             // 
             this.radioButtonBracket.AutoSize = true;
-            this.radioButtonBracket.Checked = true;
-            this.radioButtonBracket.Location = new System.Drawing.Point(847, 136);
+            this.radioButtonBracket.Location = new System.Drawing.Point(17, 3);
             this.radioButtonBracket.Name = "radioButtonBracket";
             this.radioButtonBracket.Size = new System.Drawing.Size(91, 17);
             this.radioButtonBracket.TabIndex = 8;
-            this.radioButtonBracket.TabStop = true;
             this.radioButtonBracket.Text = "Bracket Pools";
             this.radioButtonBracket.UseVisualStyleBackColor = true;
             // 
             // radioButtonRR
             // 
             this.radioButtonRR.AutoSize = true;
-            this.radioButtonRR.Location = new System.Drawing.Point(847, 159);
+            this.radioButtonRR.Location = new System.Drawing.Point(17, 26);
             this.radioButtonRR.Name = "radioButtonRR";
             this.radioButtonRR.Size = new System.Drawing.Size(88, 17);
             this.radioButtonRR.TabIndex = 9;
@@ -159,7 +165,7 @@
             // 
             // label5
             // 
-            this.label5.Location = new System.Drawing.Point(885, 177);
+            this.label5.Location = new System.Drawing.Point(55, 44);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(50, 28);
             this.label5.TabIndex = 5;
@@ -167,7 +173,7 @@
             // 
             // numericUpDownAdvanceWinners
             // 
-            this.numericUpDownAdvanceWinners.Location = new System.Drawing.Point(847, 182);
+            this.numericUpDownAdvanceWinners.Location = new System.Drawing.Point(17, 49);
             this.numericUpDownAdvanceWinners.Name = "numericUpDownAdvanceWinners";
             this.numericUpDownAdvanceWinners.Size = new System.Drawing.Size(32, 20);
             this.numericUpDownAdvanceWinners.TabIndex = 10;
@@ -498,7 +504,7 @@
             // 
             // numericUpDownAdvanceLosers
             // 
-            this.numericUpDownAdvanceLosers.Location = new System.Drawing.Point(847, 215);
+            this.numericUpDownAdvanceLosers.Location = new System.Drawing.Point(17, 82);
             this.numericUpDownAdvanceLosers.Name = "numericUpDownAdvanceLosers";
             this.numericUpDownAdvanceLosers.Size = new System.Drawing.Size(32, 20);
             this.numericUpDownAdvanceLosers.TabIndex = 10;
@@ -510,7 +516,7 @@
             // 
             // label6
             // 
-            this.label6.Location = new System.Drawing.Point(885, 210);
+            this.label6.Location = new System.Drawing.Point(55, 77);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(50, 27);
             this.label6.TabIndex = 5;
@@ -589,6 +595,71 @@
             this.buttonHeadings.UseVisualStyleBackColor = true;
             this.buttonHeadings.Click += new System.EventHandler(this.buttonHeadings_Click);
             // 
+            // buttonAKA
+            // 
+            this.buttonAKA.Location = new System.Drawing.Point(626, 15);
+            this.buttonAKA.Name = "buttonAKA";
+            this.buttonAKA.Size = new System.Drawing.Size(75, 23);
+            this.buttonAKA.TabIndex = 2;
+            this.buttonAKA.Text = "Get AKA DB";
+            this.buttonAKA.UseVisualStyleBackColor = true;
+            this.buttonAKA.Click += new System.EventHandler(this.buttonAKA_Click);
+            // 
+            // radioButtonSmash
+            // 
+            this.radioButtonSmash.AutoSize = true;
+            this.radioButtonSmash.Checked = true;
+            this.radioButtonSmash.Location = new System.Drawing.Point(3, 3);
+            this.radioButtonSmash.Name = "radioButtonSmash";
+            this.radioButtonSmash.Size = new System.Drawing.Size(57, 17);
+            this.radioButtonSmash.TabIndex = 21;
+            this.radioButtonSmash.TabStop = true;
+            this.radioButtonSmash.Text = "Smash";
+            this.radioButtonSmash.UseVisualStyleBackColor = true;
+            this.radioButtonSmash.CheckedChanged += new System.EventHandler(this.radioButtonDatabase_CheckedChanged);
+            // 
+            // radioButtonFighters
+            // 
+            this.radioButtonFighters.AutoSize = true;
+            this.radioButtonFighters.Location = new System.Drawing.Point(3, 25);
+            this.radioButtonFighters.Name = "radioButtonFighters";
+            this.radioButtonFighters.Size = new System.Drawing.Size(62, 17);
+            this.radioButtonFighters.TabIndex = 21;
+            this.radioButtonFighters.Text = "Fighters";
+            this.radioButtonFighters.UseVisualStyleBackColor = true;
+            this.radioButtonFighters.CheckedChanged += new System.EventHandler(this.radioButtonDatabase_CheckedChanged);
+            // 
+            // labelAkaDatabaseRev
+            // 
+            this.labelAkaDatabaseRev.AutoSize = true;
+            this.labelAkaDatabaseRev.Location = new System.Drawing.Point(623, 41);
+            this.labelAkaDatabaseRev.Name = "labelAkaDatabaseRev";
+            this.labelAkaDatabaseRev.Size = new System.Drawing.Size(57, 13);
+            this.labelAkaDatabaseRev.TabIndex = 22;
+            this.labelAkaDatabaseRev.Text = "Rev: none";
+            // 
+            // panel1
+            // 
+            this.panel1.Controls.Add(this.radioButtonSmash);
+            this.panel1.Controls.Add(this.radioButtonFighters);
+            this.panel1.Location = new System.Drawing.Point(551, 15);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(69, 42);
+            this.panel1.TabIndex = 23;
+            // 
+            // panel2
+            // 
+            this.panel2.Controls.Add(this.numericUpDownAdvanceLosers);
+            this.panel2.Controls.Add(this.numericUpDownAdvanceWinners);
+            this.panel2.Controls.Add(this.radioButtonRR);
+            this.panel2.Controls.Add(this.radioButtonBracket);
+            this.panel2.Controls.Add(this.label6);
+            this.panel2.Controls.Add(this.label5);
+            this.panel2.Location = new System.Drawing.Point(830, 133);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(111, 115);
+            this.panel2.TabIndex = 24;
+            // 
             // richTextBoxExRegexReplace
             // 
             this.richTextBoxExRegexReplace.Cue = null;
@@ -630,19 +701,17 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(948, 566);
+            this.Controls.Add(this.panel2);
+            this.Controls.Add(this.panel1);
+            this.Controls.Add(this.labelAkaDatabaseRev);
             this.Controls.Add(this.buttonLoserShift);
             this.Controls.Add(this.buttonWinnerShift);
             this.Controls.Add(this.numericUpDownPrizePool);
             this.Controls.Add(this.buttonPrizePool);
             this.Controls.Add(this.richTextBoxExRegexReplace);
-            this.Controls.Add(this.numericUpDownAdvanceLosers);
-            this.Controls.Add(this.numericUpDownAdvanceWinners);
             this.Controls.Add(this.richTextBoxExRegexFind);
-            this.Controls.Add(this.radioButtonRR);
-            this.Controls.Add(this.radioButtonBracket);
+            this.Controls.Add(this.buttonAKA);
             this.Controls.Add(this.buttonGetBracket);
-            this.Controls.Add(this.label6);
-            this.Controls.Add(this.label5);
             this.Controls.Add(this.progressBar);
             this.Controls.Add(this.buttonGetPhase);
             this.Controls.Add(this.checkBoxSMW);
@@ -682,7 +751,7 @@
             this.Controls.Add(this.numericUpDownWinnersEnd);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "FormMain";
-            this.Text = "Smash.gg to Liquipedia v2.5.0";
+            this.Text = "Smash.gg to Liquipedia v2.6.0";
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAdvanceWinners)).EndInit();
             this.tabControl1.ResumeLayout(false);
             this.tabPageSingles.ResumeLayout(false);
@@ -697,6 +766,10 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownLosersEnd)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAdvanceLosers)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPrizePool)).EndInit();
+            this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
+            this.panel2.ResumeLayout(false);
+            this.panel2.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -758,6 +831,12 @@
         private System.Windows.Forms.Button buttonWinnerShift;
         private System.Windows.Forms.Button buttonLoserShift;
         private System.Windows.Forms.Button buttonHeadings;
+        private System.Windows.Forms.Button buttonAKA;
+        private System.Windows.Forms.RadioButton radioButtonSmash;
+        private System.Windows.Forms.RadioButton radioButtonFighters;
+        private System.Windows.Forms.Label labelAkaDatabaseRev;
+        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.Panel panel2;
     }
 }
 

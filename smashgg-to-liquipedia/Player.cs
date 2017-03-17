@@ -10,13 +10,15 @@ namespace smashgg_to_liquipedia
     {
         public string name;
         public string country;
+        public int playerID;
 
         // Blank constructor
         public Player() { }
 
         // Overloaded constructor
-        public Player(string inputName, string inputCountry)
+        public Player(int inputID, string inputName, string inputCountry)
         {
+            playerID = inputID;
             name = inputName;
             country = inputCountry;
         }
