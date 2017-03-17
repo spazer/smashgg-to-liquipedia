@@ -16,9 +16,14 @@ using Newtonsoft.Json.Linq;
 
 namespace smashgg_to_liquipedia
 {
-    public partial class Form1 : Form
+    public partial class FormMain : Form
     {
         static int PLAYER_BYE = -1;
+        static string WINNERS_HEADER = "==Winners Bracket==";
+        static string LOSERS_HEADER = "==Losers Bracket==";
+        static string FINALS_SINGLES_HEADER = "==Final Singles Bracket==";
+        static string FINALS_DOUBLES_HEADER = "==Final Doubles Bracket==";
+
         #region Bracket Template Contants
         static string deFinalBracketTemplateReset = "{{DEFinalBracket\r\n" +
                                                     "<!-- FROM WINNERS -->\r\n" +
@@ -134,18 +139,23 @@ namespace smashgg_to_liquipedia
         enum UrlNumberType { Phase, Phase_Group, None }
         enum EventType { Singles, Doubles, None }
         enum PoolType { Bracket, RoundRobin }
-        enum BracketSide { Winners, Losers }
+        public enum BracketSide { Winners, Losers }
 
         Dictionary<int, Entrant> entrantList = new Dictionary<int, Entrant>();
         List<Set> setList = new List<Set>();
         Dictionary<int, List<Set>> roundList = new Dictionary<int, List<Set>>();
         List<Phase> phaseList = new List<Phase>();
+        Dictionary<int, int> matchOffsetPerRound = new Dictionary<int, int>();
 
         JObject tournamentStructure;
         string tournament = string.Empty;
         EventType retrievedDataType = EventType.None;
 
-        public Form1()
+        LiquipediaBracket wBracket;
+        LiquipediaBracket lBracket;
+        LiquipediaBracket fBracket;
+
+        public FormMain()
         {
             InitializeComponent();
 
@@ -157,6 +167,10 @@ namespace smashgg_to_liquipedia
 
             richTextBoxExRegexFind.Cue = FormStrings.CuetextRegexFind;
             richTextBoxExRegexReplace.Cue = FormStrings.CuetextRegexReplace;
+
+            wBracket = new LiquipediaBracket(WINNERS_HEADER, string.Empty);
+            lBracket = new LiquipediaBracket(LOSERS_HEADER, string.Empty);
+            fBracket = new LiquipediaBracket(FINALS_SINGLES_HEADER, deFinalBracketTemplateReset);
         }
 
         #region Buttons
@@ -226,7 +240,14 @@ namespace smashgg_to_liquipedia
             {
                 if (richTextBoxExLpWinnersBracket.Text != FormStrings.CuetextLpWinners)
                 {
-                    output += "==Winners Bracket==\r\n" + richTextBoxExLpWinnersBracket.Text + "\r\n";
+                    if (wBracket.Header.Trim() != string.Empty)
+                    {
+                        output += wBracket.Header + "\r\n" + richTextBoxExLpWinnersBracket.Text + "\r\n";
+                    }
+                    else
+                    {
+                        output += richTextBoxExLpWinnersBracket.Text + "\r\n";
+                    }
                 }
             }
 
@@ -234,7 +255,14 @@ namespace smashgg_to_liquipedia
             {
                 if (richTextBoxExLpLosersBracket.Text != FormStrings.CuetextLpLosers)
                 {
-                    output += "==Losers Bracket==\r\n" + richTextBoxExLpLosersBracket.Text + "\r\n";
+                    if (lBracket.Header.Trim() != string.Empty)
+                    {
+                        output += lBracket.Header +"\r\n" + richTextBoxExLpLosersBracket.Text + "\r\n";
+                    }
+                    else
+                    {
+                        output += richTextBoxExLpLosersBracket.Text + "\r\n";
+                    }
                 }
             }
 
@@ -249,15 +277,7 @@ namespace smashgg_to_liquipedia
             }
             if (checkBoxGuessFinal.Checked)
             {
-                // Set the final bracket type depending on whether SMW is checked or not
-                if (checkBoxSMW.Checked == true)
-                {
-                    finalBracketOutput = deFinalSmwBracketTemplateReset;
-                }
-                else
-                {
-                    finalBracketOutput = deFinalBracketTemplateReset;
-                }
+                finalBracketOutput = fBracket.Bracket;
 
                 foreach (KeyValuePair<int, List<Set>> gf in roundList)
                 {
@@ -308,7 +328,14 @@ namespace smashgg_to_liquipedia
                 // Replace L2 with R2 because liquipedia markup is inconsistent
                 finalBracketOutput = finalBracketOutput.Replace("l2m", "r2m");
 
-                output += "==Final Singles Bracket==\r\n" + finalBracketOutput;
+                if (fBracket.Header.Trim() != string.Empty)
+                {
+                    output += fBracket.Header + "\r\n" + finalBracketOutput.Trim();
+                }
+                else
+                {
+                    output += finalBracketOutput.Trim();
+                }
             }
 
             richTextBoxLpOutput.Text = output;
@@ -827,6 +854,12 @@ namespace smashgg_to_liquipedia
                         outputSetToTextBox(ref richTextBoxLosers, set, lPadding);
                     }
                 }
+            }
+
+            // Generate default offsets of 0 for each round
+            for (int i = 0; i < roundList.Count; i++)
+            {
+                matchOffsetPerRound.Add(roundList.ElementAt(i).Key, 0);
             }
         }
 
@@ -1580,13 +1613,9 @@ namespace smashgg_to_liquipedia
                 {
                     Set currentSet = roundList[i][j];
 
+                    // Add offsets
                     outputRound = Math.Abs(i) + offset;
-
-                    // Skip unfinished sets unless otherwise specified
-                    //if (checkBoxFillByes.Checked == false && currentSet.state == 1)
-                    //{
-                    //    continue;
-                    //}
+                    int outputSet = currentSet.match + matchOffsetPerRound[i];
 
                     // Check for player byes
                     if (currentSet.entrantID1 == PLAYER_BYE && currentSet.entrantID2 == PLAYER_BYE)
@@ -1597,50 +1626,50 @@ namespace smashgg_to_liquipedia
                     else if (currentSet.entrantID1 == PLAYER_BYE)
                     {
                         // Fill in player 1 as a bye if fill byes is checked
-                        if (checkBoxFillByes.Checked == true) FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + currentSet.match + LpStrings.P1, "Bye");
+                        if (checkBoxFillByes.Checked == true) FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P1, "Bye");
 
                         // Give player 2 a checkmark
-                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + currentSet.match + LpStrings.P2, entrantList[currentSet.entrantID2].Players[0].name);
-                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + currentSet.match + LpStrings.P2 + LpStrings.Flag, entrantList[currentSet.entrantID2].Players[0].country);
+                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P2, entrantList[currentSet.entrantID2].Players[0].name);
+                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P2 + LpStrings.Flag, entrantList[currentSet.entrantID2].Players[0].country);
                         if (checkBoxFillByeWins.Checked == true)
                         {
-                            FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + currentSet.match + LpStrings.P2 + LpStrings.Score, LpStrings.Checkmark);
-                            FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + currentSet.match + LpStrings.Win, "2");
+                            FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P2 + LpStrings.Score, LpStrings.Checkmark);
+                            FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.Win, "2");
                         }
                     }
                     else if (currentSet.entrantID2 == PLAYER_BYE)
                     {
                         // Fill in player 2 as a bye
-                        if (checkBoxFillByes.Checked == true) FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + currentSet.match + LpStrings.P2, "Bye");
+                        if (checkBoxFillByes.Checked == true) FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P2, "Bye");
 
                         // Give player 1 a checkmark
-                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + currentSet.match + LpStrings.P1, entrantList[currentSet.entrantID1].Players[0].name);
-                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + currentSet.match + LpStrings.P1 + LpStrings.Flag, entrantList[currentSet.entrantID1].Players[0].country);
+                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P1, entrantList[currentSet.entrantID1].Players[0].name);
+                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P1 + LpStrings.Flag, entrantList[currentSet.entrantID1].Players[0].country);
 
                         if (checkBoxFillByeWins.Checked == true)
                         {
-                            FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + currentSet.match + LpStrings.P1 + LpStrings.Score, LpStrings.Checkmark);
-                            FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + currentSet.match + LpStrings.Win, "1");
+                            FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P1 + LpStrings.Score, LpStrings.Checkmark);
+                            FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.Win, "1");
                         }
                     }
                     else
                     {
                         // Fill in the set normally
-                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + currentSet.match + LpStrings.P1, entrantList[currentSet.entrantID1].Players[0].name);
-                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + currentSet.match + LpStrings.P1 + LpStrings.Flag, entrantList[currentSet.entrantID1].Players[0].country);
-                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + currentSet.match + LpStrings.P2, entrantList[currentSet.entrantID2].Players[0].name);
-                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + currentSet.match + LpStrings.P2 + LpStrings.Flag, entrantList[currentSet.entrantID2].Players[0].country);
+                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P1, entrantList[currentSet.entrantID1].Players[0].name);
+                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P1 + LpStrings.Flag, entrantList[currentSet.entrantID1].Players[0].country);
+                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P2, entrantList[currentSet.entrantID2].Players[0].name);
+                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P2 + LpStrings.Flag, entrantList[currentSet.entrantID2].Players[0].country);
 
                         // Check for DQs
                         if (currentSet.entrant1wins == -1)
                         {
-                            FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + currentSet.match + LpStrings.P1 + LpStrings.Score, "DQ");
-                            FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + currentSet.match + LpStrings.P2 + LpStrings.Score, LpStrings.Checkmark);
+                            FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P1 + LpStrings.Score, "DQ");
+                            FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P2 + LpStrings.Score, LpStrings.Checkmark);
                         }
                         else if (currentSet.entrant2wins == -1)
                         {
-                            FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + currentSet.match + LpStrings.P2 + LpStrings.Score, "DQ");
-                            FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + currentSet.match + LpStrings.P1 + LpStrings.Score, LpStrings.Checkmark);
+                            FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P2 + LpStrings.Score, "DQ");
+                            FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P1 + LpStrings.Score, LpStrings.Checkmark);
                         }
                         else
                         {
@@ -1649,18 +1678,18 @@ namespace smashgg_to_liquipedia
                             {
                                 if (currentSet.entrant1wins != -99 && currentSet.entrant2wins != -99)
                                 {
-                                    FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + currentSet.match + LpStrings.P2 + LpStrings.Score, currentSet.entrant1wins.ToString());
-                                    FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + currentSet.match + LpStrings.P1 + LpStrings.Score, currentSet.entrant2wins.ToString());
+                                    FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P2 + LpStrings.Score, currentSet.entrant1wins.ToString());
+                                    FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P1 + LpStrings.Score, currentSet.entrant2wins.ToString());
                                 }
                                 else
                                 {
                                     if (currentSet.winner == currentSet.entrantID1)
                                     {
-                                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + currentSet.match + LpStrings.P2 + LpStrings.Score, "{{win}}");
+                                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P2 + LpStrings.Score, "{{win}}");
                                     }
                                     else if (currentSet.winner == currentSet.entrantID2)
                                     {
-                                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + currentSet.match + LpStrings.P1 + LpStrings.Score, "{{win}}");
+                                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P1 + LpStrings.Score, "{{win}}");
                                     }
                                 }
                             }
@@ -1668,18 +1697,18 @@ namespace smashgg_to_liquipedia
                             {
                                 if (currentSet.entrant1wins != -99 && currentSet.entrant2wins != -99)
                                 {
-                                    FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + currentSet.match + LpStrings.P1 + LpStrings.Score, currentSet.entrant1wins.ToString());
-                                    FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + currentSet.match + LpStrings.P2 + LpStrings.Score, currentSet.entrant2wins.ToString());
+                                    FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P1 + LpStrings.Score, currentSet.entrant1wins.ToString());
+                                    FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P2 + LpStrings.Score, currentSet.entrant2wins.ToString());
                                 }
                                 else
                                 {
                                     if (currentSet.winner == currentSet.entrantID1)
                                     {
-                                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + currentSet.match + LpStrings.P1 + LpStrings.Score, "{{win}}");
+                                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P1 + LpStrings.Score, "{{win}}");
                                     }
                                     else if (currentSet.winner == currentSet.entrantID2)
                                     {
-                                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + currentSet.match + LpStrings.P2 + LpStrings.Score, "{{win}}");
+                                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P2 + LpStrings.Score, "{{win}}");
                                     }
                                 }
                             }
@@ -1708,11 +1737,11 @@ namespace smashgg_to_liquipedia
                         {
                             if (currentSet.winner == currentSet.entrantID1)
                             {
-                                FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + currentSet.match + LpStrings.Win, "1");
+                                FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.Win, "1");
                             }
                             else if (currentSet.winner == currentSet.entrantID2)
                             {
-                                FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + currentSet.match + LpStrings.Win, "2");
+                                FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.Win, "2");
                             }
                         }
                     }
@@ -1756,6 +1785,7 @@ namespace smashgg_to_liquipedia
 
                     // Offset the output round as specified
                     outputRound = Math.Abs(i) + offset;
+                    int outputSet = currentSet.match + matchOffsetPerRound[i];
 
                     // Skip unfinished sets unless otherwise specified
                     //if (checkBoxFillByes.Checked == false && currentSet.state == 1)
@@ -1774,20 +1804,20 @@ namespace smashgg_to_liquipedia
                         // Fill in team 1 as a bye
                         if (checkBoxFillByes.Checked == true)
                         {
-                            FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + currentSet.match + LpStrings.T1 + LpStrings.P1, "Bye");
-                            FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + currentSet.match + LpStrings.T1 + LpStrings.P2, "Bye");
+                            FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.T1 + LpStrings.P1, "Bye");
+                            FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.T1 + LpStrings.P2, "Bye");
                         }
 
                         // Give team 2 a checkmark
-                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + currentSet.match + LpStrings.T2 + LpStrings.P1, entrantList[currentSet.entrantID2].Players[0].name);
-                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + currentSet.match + LpStrings.T2 + LpStrings.P1 + LpStrings.Flag, entrantList[currentSet.entrantID2].Players[0].country);
-                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + currentSet.match + LpStrings.T2 + LpStrings.P2, entrantList[currentSet.entrantID2].Players[1].name);
-                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + currentSet.match + LpStrings.T2 + LpStrings.P2 + LpStrings.Flag, entrantList[currentSet.entrantID2].Players[1].country);
+                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.T2 + LpStrings.P1, entrantList[currentSet.entrantID2].Players[0].name);
+                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.T2 + LpStrings.P1 + LpStrings.Flag, entrantList[currentSet.entrantID2].Players[0].country);
+                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.T2 + LpStrings.P2, entrantList[currentSet.entrantID2].Players[1].name);
+                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.T2 + LpStrings.P2 + LpStrings.Flag, entrantList[currentSet.entrantID2].Players[1].country);
 
                         if (checkBoxFillByeWins.Checked == true)
                         {
-                            FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + currentSet.match + LpStrings.T2 + LpStrings.Score, LpStrings.Checkmark);
-                            FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + currentSet.match + LpStrings.Win, "2");
+                            FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.T2 + LpStrings.Score, LpStrings.Checkmark);
+                            FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.Win, "2");
                         }
                     }
                     else if (currentSet.entrantID2 == PLAYER_BYE)
@@ -1795,44 +1825,44 @@ namespace smashgg_to_liquipedia
                         // Fill in team 2 as a bye
                         if (checkBoxFillByes.Checked == true)
                         {
-                            FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + currentSet.match + LpStrings.T2 + LpStrings.P1, "Bye");
-                            FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + currentSet.match + LpStrings.T2 + LpStrings.P2, "Bye");
+                            FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.T2 + LpStrings.P1, "Bye");
+                            FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.T2 + LpStrings.P2, "Bye");
                         }
 
                         // Give team 1 a checkmark
-                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + currentSet.match + LpStrings.T1 + LpStrings.P1, entrantList[currentSet.entrantID1].Players[0].name);
-                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + currentSet.match + LpStrings.T1 + LpStrings.P1 + LpStrings.Flag, entrantList[currentSet.entrantID1].Players[0].country);
-                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + currentSet.match + LpStrings.T1 + LpStrings.P2, entrantList[currentSet.entrantID1].Players[1].name);
-                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + currentSet.match + LpStrings.T1 + LpStrings.P2 + LpStrings.Flag, entrantList[currentSet.entrantID1].Players[1].country);
+                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.T1 + LpStrings.P1, entrantList[currentSet.entrantID1].Players[0].name);
+                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.T1 + LpStrings.P1 + LpStrings.Flag, entrantList[currentSet.entrantID1].Players[0].country);
+                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.T1 + LpStrings.P2, entrantList[currentSet.entrantID1].Players[1].name);
+                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.T1 + LpStrings.P2 + LpStrings.Flag, entrantList[currentSet.entrantID1].Players[1].country);
 
                         if (checkBoxFillByeWins.Checked == true)
                         {
-                            FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + currentSet.match + LpStrings.T1 + LpStrings.Score, LpStrings.Checkmark);
-                            FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + currentSet.match + LpStrings.Win, "1");
+                            FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.T1 + LpStrings.Score, LpStrings.Checkmark);
+                            FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.Win, "1");
                         }
                     }
                     else
                     {
                         // Fill in the currentSet normally
-                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + currentSet.match + LpStrings.T1 + LpStrings.P1, entrantList[currentSet.entrantID1].Players[0].name);
-                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + currentSet.match + LpStrings.T1 + LpStrings.P1 + LpStrings.Flag, entrantList[currentSet.entrantID1].Players[0].country);
-                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + currentSet.match + LpStrings.T1 + LpStrings.P2, entrantList[currentSet.entrantID1].Players[1].name);
-                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + currentSet.match + LpStrings.T1 + LpStrings.P2 + LpStrings.Flag, entrantList[currentSet.entrantID1].Players[1].country);
-                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + currentSet.match + LpStrings.T2 + LpStrings.P1, entrantList[currentSet.entrantID2].Players[0].name);
-                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + currentSet.match + LpStrings.T2 + LpStrings.P1 + LpStrings.Flag, entrantList[currentSet.entrantID2].Players[0].country);
-                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + currentSet.match + LpStrings.T2 + LpStrings.P2, entrantList[currentSet.entrantID2].Players[1].name);
-                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + currentSet.match + LpStrings.T2 + LpStrings.P2 + LpStrings.Flag, entrantList[currentSet.entrantID2].Players[1].country);
+                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.T1 + LpStrings.P1, entrantList[currentSet.entrantID1].Players[0].name);
+                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.T1 + LpStrings.P1 + LpStrings.Flag, entrantList[currentSet.entrantID1].Players[0].country);
+                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.T1 + LpStrings.P2, entrantList[currentSet.entrantID1].Players[1].name);
+                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.T1 + LpStrings.P2 + LpStrings.Flag, entrantList[currentSet.entrantID1].Players[1].country);
+                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.T2 + LpStrings.P1, entrantList[currentSet.entrantID2].Players[0].name);
+                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.T2 + LpStrings.P1 + LpStrings.Flag, entrantList[currentSet.entrantID2].Players[0].country);
+                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.T2 + LpStrings.P2, entrantList[currentSet.entrantID2].Players[1].name);
+                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.T2 + LpStrings.P2 + LpStrings.Flag, entrantList[currentSet.entrantID2].Players[1].country);
 
                         // Check for DQs
                         if (currentSet.entrant1wins == -1)
                         {
-                            FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + currentSet.match + LpStrings.T1 + LpStrings.Score, "DQ");
-                            FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + currentSet.match + LpStrings.T2 + LpStrings.Score, LpStrings.Checkmark);
+                            FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.T1 + LpStrings.Score, "DQ");
+                            FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.T2 + LpStrings.Score, LpStrings.Checkmark);
                         }
                         else if (currentSet.entrant2wins == -1)
                         {
-                            FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + currentSet.match + LpStrings.T2 + LpStrings.Score, "DQ");
-                            FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + currentSet.match + LpStrings.T1 + LpStrings.Score, LpStrings.Checkmark);
+                            FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.T2 + LpStrings.Score, "DQ");
+                            FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.T1 + LpStrings.Score, LpStrings.Checkmark);
                         }
                         else
                         {
@@ -1841,18 +1871,18 @@ namespace smashgg_to_liquipedia
                             {
                                 if (currentSet.entrant1wins != -99 && currentSet.entrant2wins != -99)
                                 {
-                                    FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + currentSet.match + LpStrings.T2 + LpStrings.Score, currentSet.entrant1wins.ToString());
-                                    FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + currentSet.match + LpStrings.T1 + LpStrings.Score, currentSet.entrant2wins.ToString());
+                                    FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.T2 + LpStrings.Score, currentSet.entrant1wins.ToString());
+                                    FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.T1 + LpStrings.Score, currentSet.entrant2wins.ToString());
                                 }
                                 else
                                 {
                                     if (currentSet.winner == currentSet.entrantID1)
                                     {
-                                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + currentSet.match + LpStrings.T2 + LpStrings.Score, "{{win}}");
+                                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.T2 + LpStrings.Score, "{{win}}");
                                     }
                                     else if (currentSet.winner == currentSet.entrantID2)
                                     {
-                                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + currentSet.match + LpStrings.T1 + LpStrings.Score, "{{win}}");
+                                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.T1 + LpStrings.Score, "{{win}}");
                                     }
                                 }
                             }
@@ -1860,18 +1890,18 @@ namespace smashgg_to_liquipedia
                             {
                                 if (currentSet.entrant1wins != -99 && currentSet.entrant2wins != -99)
                                 {
-                                    FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + currentSet.match + LpStrings.T1 + LpStrings.Score, currentSet.entrant1wins.ToString());
-                                    FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + currentSet.match + LpStrings.T2 + LpStrings.Score, currentSet.entrant2wins.ToString());
+                                    FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.T1 + LpStrings.Score, currentSet.entrant1wins.ToString());
+                                    FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.T2 + LpStrings.Score, currentSet.entrant2wins.ToString());
                                 }
                                 else
                                 {
                                     if (currentSet.winner == currentSet.entrantID1)
                                     {
-                                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + currentSet.match + LpStrings.T1 + LpStrings.Score, "{{win}}");
+                                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.T1 + LpStrings.Score, "{{win}}");
                                     }
                                     else if (currentSet.winner == currentSet.entrantID2)
                                     {
-                                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + currentSet.match + LpStrings.T2 + LpStrings.Score, "{{win}}");
+                                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.T2 + LpStrings.Score, "{{win}}");
                                     }
                                 }
                             }
@@ -1900,11 +1930,11 @@ namespace smashgg_to_liquipedia
                         {
                             if (currentSet.winner == currentSet.entrantID1)
                             {
-                                FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + currentSet.match + LpStrings.Win, "1");
+                                FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.Win, "1");
                             }
                             else if (currentSet.winner == currentSet.entrantID2)
                             {
-                                FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + currentSet.match + LpStrings.Win, "2");
+                                FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.Win, "2");
                             }
                         }
                     }
@@ -2179,6 +2209,7 @@ namespace smashgg_to_liquipedia
             entrantList.Clear();
             setList.Clear();
             roundList.Clear();
+            matchOffsetPerRound.Clear();
         }
 
         /// <summary>
@@ -2195,7 +2226,7 @@ namespace smashgg_to_liquipedia
             }
 
             // Clear losers side numericUpDown controls unless it's locked
-            if (!checkBoxLockWinners.Checked)
+            if (!checkBoxLockLosers.Checked)
             {
                 numericUpDownLosersStart.Value = 0;
                 numericUpDownLosersEnd.Value = 0;
@@ -2306,6 +2337,9 @@ namespace smashgg_to_liquipedia
             buttonRegexReplace.Enabled = false;
             buttonGetBracket.Enabled = false;
             buttonPrizePool.Enabled = false;
+            buttonWinnerShift.Enabled = false;
+            buttonLoserShift.Enabled = false;
+            buttonHeadings.Enabled = false;
 
             checkBoxFillByes.Enabled = false;
             checkBoxGuessFinal.Enabled = false;
@@ -2314,9 +2348,12 @@ namespace smashgg_to_liquipedia
             checkBoxLosers.Enabled = false;
             checkBoxWinners.Enabled = false;
             checkBoxSMW.Enabled = false;
+            checkBoxFillByeWins.Enabled = false;
 
             numericUpDownAdvanceWinners.Enabled = false;
             numericUpDownAdvanceWinners.Enabled = false;
+            numericUpDownAdvanceLosers.Enabled = false;
+            numericUpDownAdvanceLosers.Enabled = false;
             numericUpDownLosersEnd.Enabled = false;
             numericUpDownLosersOffset.Enabled = false;
             numericUpDownLosersStart.Enabled = false;
@@ -2351,6 +2388,9 @@ namespace smashgg_to_liquipedia
             buttonRegexReplace.Enabled = true;
             buttonGetBracket.Enabled = true;
             buttonPrizePool.Enabled = true;
+            buttonWinnerShift.Enabled = true;
+            buttonLoserShift.Enabled = true;
+            buttonHeadings.Enabled = true;
 
             checkBoxFillByes.Enabled = true;
             checkBoxGuessFinal.Enabled = true;
@@ -2359,9 +2399,12 @@ namespace smashgg_to_liquipedia
             checkBoxLosers.Enabled = true;
             checkBoxWinners.Enabled = true;
             checkBoxSMW.Enabled = true;
+            checkBoxFillByeWins.Enabled = true;
 
             numericUpDownAdvanceWinners.Enabled = true;
             numericUpDownAdvanceWinners.Enabled = true;
+            numericUpDownAdvanceLosers.Enabled = true;
+            numericUpDownAdvanceLosers.Enabled = true;
             numericUpDownLosersEnd.Enabled = true;
             numericUpDownLosersOffset.Enabled = true;
             numericUpDownLosersStart.Enabled = true;
@@ -2384,5 +2427,91 @@ namespace smashgg_to_liquipedia
             checkBoxLock_CheckedChanged(new object(), new EventArgs());
         }
         #endregion
+
+        private void buttonWinnerShift_Click(object sender, EventArgs e)
+        {
+            if ((int)numericUpDownWinnersStart.Value > (int)numericUpDownWinnersEnd.Value) return;
+            if ((int)numericUpDownWinnersStart.Value == 0 && (int)numericUpDownWinnersEnd.Value == 0) return;
+
+            FormMatchShift shiftWindow = new FormMatchShift((int)numericUpDownWinnersStart.Value, (int)numericUpDownWinnersEnd.Value, BracketSide.Winners, ref matchOffsetPerRound);
+            LockControls();
+            shiftWindow.ShowDialog();
+            UnlockControls();
+        }
+
+        private void buttonloserShift_Click(object sender, EventArgs e)
+        {
+            if ((int)numericUpDownLosersStart.Value > (int)numericUpDownLosersEnd.Value) return;
+            if ((int)numericUpDownLosersStart.Value == 0 && (int)numericUpDownLosersEnd.Value == 0) return;
+
+            FormMatchShift shiftWindow = new FormMatchShift((int)numericUpDownLosersStart.Value, (int)numericUpDownLosersEnd.Value, BracketSide.Losers, ref matchOffsetPerRound);
+            LockControls();
+            shiftWindow.ShowDialog();
+            UnlockControls();
+        }
+
+        private void buttonHeadings_Click(object sender, EventArgs e)
+        {
+            LockControls();
+            FormHeadings form = new FormHeadings(ref wBracket, ref lBracket, ref fBracket);
+            form.ShowDialog();
+            UnlockControls();
+        }
+
+        private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (tabControl1.SelectedTab.Text == "Singles")
+            {
+                fBracket.Header = FINALS_SINGLES_HEADER;
+
+                if (checkBoxSMW.Checked)
+                {
+                    fBracket.Bracket = deFinalSmwBracketTemplateReset;
+                }
+                else
+                {
+                    fBracket.Bracket = deFinalBracketTemplateReset;
+                }
+            }
+            else if (tabControl1.SelectedTab.Text == "Doubles")
+            {
+                fBracket.Header = FINALS_DOUBLES_HEADER;
+
+                if (checkBoxSMW.Checked)
+                {
+                    fBracket.Bracket = deFinalDoublesSmwBracketTemplateReset;
+                }
+                else
+                {
+                    fBracket.Bracket = deFinalDoublesBracketTemplateReset;
+                }
+            }
+        }
+
+        private void checkBoxSMW_CheckedChanged(object sender, EventArgs e)
+        {
+            if (tabControl1.SelectedTab.Text == "Singles")
+            {
+                if (checkBoxSMW.Checked)
+                {
+                    fBracket.Bracket = deFinalSmwBracketTemplateReset;
+                }
+                else
+                {
+                    fBracket.Bracket = deFinalBracketTemplateReset;
+                }
+            }
+            else if (tabControl1.SelectedTab.Text == "Doubles")
+            {
+                if (checkBoxSMW.Checked)
+                {
+                    fBracket.Bracket = deFinalDoublesSmwBracketTemplateReset;
+                }
+                else
+                {
+                    fBracket.Bracket = deFinalDoublesBracketTemplateReset;
+                }
+            }
+        }
     }
 }

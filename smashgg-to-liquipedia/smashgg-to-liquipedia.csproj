@@ -68,17 +68,30 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FormHeadings.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormHeadings.Designer.cs">
+      <DependentUpon>FormHeadings.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormMatchShift.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormMatchShift.Designer.cs">
+      <DependentUpon>FormMatchShift.cs</DependentUpon>
+    </Compile>
     <Compile Include="FormStrings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>FormStrings.resx</DependentUpon>
     </Compile>
-    <Compile Include="Form1.cs">
+    <Compile Include="FormMain.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Form1.Designer.cs">
-      <DependentUpon>Form1.cs</DependentUpon>
+    <Compile Include="FormMain.Designer.cs">
+      <DependentUpon>FormMain.cs</DependentUpon>
     </Compile>
+    <Compile Include="LiquipediaBracket.cs" />
     <Compile Include="LpStrings.Designer.cs">
       <DependentUpon>LpStrings.resx</DependentUpon>
       <DesignTime>True</DesignTime>
@@ -103,12 +116,18 @@
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
     </Compile>
+    <EmbeddedResource Include="FormHeadings.resx">
+      <DependentUpon>FormHeadings.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormMatchShift.resx">
+      <DependentUpon>FormMatchShift.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="FormStrings.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>FormStrings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="Form1.resx">
-      <DependentUpon>Form1.cs</DependentUpon>
+    <EmbeddedResource Include="FormMain.resx">
+      <DependentUpon>FormMain.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="LpStrings.resx">
       <Generator>ResXFileCodeGenerator</Generator>

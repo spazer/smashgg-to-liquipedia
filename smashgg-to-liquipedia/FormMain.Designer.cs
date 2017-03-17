@@ -1,6 +1,6 @@
 ﻿namespace smashgg_to_liquipedia
 {
-    partial class Form1
+    partial class FormMain
     {
         /// <summary>
         /// Required designer variable.
@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormMain));
             this.richTextBoxEntrants = new System.Windows.Forms.RichTextBox();
             this.textBoxURLSingles = new System.Windows.Forms.TextBox();
             this.buttonGetBracket = new System.Windows.Forms.Button();
@@ -70,16 +70,19 @@
             this.checkBoxLockLosers = new System.Windows.Forms.CheckBox();
             this.progressBar = new System.Windows.Forms.ProgressBar();
             this.checkBoxGuessFinal = new System.Windows.Forms.CheckBox();
-            this.richTextBoxExRegexReplace = new RichTextBoxEx();
-            this.richTextBoxExRegexFind = new RichTextBoxEx();
-            this.richTextBoxExLpWinnersBracket = new RichTextBoxEx();
-            this.richTextBoxExLpLosersBracket = new RichTextBoxEx();
             this.numericUpDownAdvanceLosers = new System.Windows.Forms.NumericUpDown();
             this.label6 = new System.Windows.Forms.Label();
             this.checkBoxSMW = new System.Windows.Forms.CheckBox();
             this.buttonPrizePool = new System.Windows.Forms.Button();
             this.numericUpDownPrizePool = new System.Windows.Forms.NumericUpDown();
             this.checkBoxFillByeWins = new System.Windows.Forms.CheckBox();
+            this.buttonWinnerShift = new System.Windows.Forms.Button();
+            this.buttonLoserShift = new System.Windows.Forms.Button();
+            this.buttonHeadings = new System.Windows.Forms.Button();
+            this.richTextBoxExRegexReplace = new RichTextBoxEx();
+            this.richTextBoxExRegexFind = new RichTextBoxEx();
+            this.richTextBoxExLpWinnersBracket = new RichTextBoxEx();
+            this.richTextBoxExLpLosersBracket = new RichTextBoxEx();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAdvanceWinners)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabPageSingles.SuspendLayout();
@@ -278,6 +281,7 @@
             this.tabControl1.SelectedIndex = 0;
             this.tabControl1.Size = new System.Drawing.Size(229, 89);
             this.tabControl1.TabIndex = 0;
+            this.tabControl1.SelectedIndexChanged += new System.EventHandler(this.tabControl1_SelectedIndexChanged);
             // 
             // tabPageSingles
             // 
@@ -491,7 +495,99 @@
             this.checkBoxGuessFinal.TabIndex = 14;
             this.checkBoxGuessFinal.Text = "Guess Final Bracket";
             this.checkBoxGuessFinal.UseVisualStyleBackColor = true;
-            this.checkBoxGuessFinal.CheckedChanged += new System.EventHandler(this.checkBoxLock_CheckedChanged);
+            // 
+            // numericUpDownAdvanceLosers
+            // 
+            this.numericUpDownAdvanceLosers.Location = new System.Drawing.Point(847, 215);
+            this.numericUpDownAdvanceLosers.Name = "numericUpDownAdvanceLosers";
+            this.numericUpDownAdvanceLosers.Size = new System.Drawing.Size(32, 20);
+            this.numericUpDownAdvanceLosers.TabIndex = 10;
+            this.numericUpDownAdvanceLosers.Value = new decimal(new int[] {
+            2,
+            0,
+            0,
+            0});
+            // 
+            // label6
+            // 
+            this.label6.Location = new System.Drawing.Point(885, 210);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(50, 27);
+            this.label6.TabIndex = 5;
+            this.label6.Text = "Advance Losers";
+            // 
+            // checkBoxSMW
+            // 
+            this.checkBoxSMW.AutoSize = true;
+            this.checkBoxSMW.Location = new System.Drawing.Point(827, 254);
+            this.checkBoxSMW.Name = "checkBoxSMW";
+            this.checkBoxSMW.Size = new System.Drawing.Size(53, 17);
+            this.checkBoxSMW.TabIndex = 14;
+            this.checkBoxSMW.Text = "SMW";
+            this.checkBoxSMW.UseVisualStyleBackColor = true;
+            this.checkBoxSMW.CheckedChanged += new System.EventHandler(this.checkBoxSMW_CheckedChanged);
+            // 
+            // buttonPrizePool
+            // 
+            this.buttonPrizePool.Location = new System.Drawing.Point(810, 286);
+            this.buttonPrizePool.Name = "buttonPrizePool";
+            this.buttonPrizePool.Size = new System.Drawing.Size(94, 23);
+            this.buttonPrizePool.TabIndex = 17;
+            this.buttonPrizePool.Text = "Prize Pool Table";
+            this.buttonPrizePool.UseVisualStyleBackColor = true;
+            this.buttonPrizePool.Click += new System.EventHandler(this.buttonPrizePool_Click);
+            // 
+            // numericUpDownPrizePool
+            // 
+            this.numericUpDownPrizePool.Location = new System.Drawing.Point(910, 287);
+            this.numericUpDownPrizePool.Name = "numericUpDownPrizePool";
+            this.numericUpDownPrizePool.Size = new System.Drawing.Size(32, 20);
+            this.numericUpDownPrizePool.TabIndex = 18;
+            this.numericUpDownPrizePool.Value = new decimal(new int[] {
+            8,
+            0,
+            0,
+            0});
+            // 
+            // checkBoxFillByeWins
+            // 
+            this.checkBoxFillByeWins.AutoSize = true;
+            this.checkBoxFillByeWins.Location = new System.Drawing.Point(709, 231);
+            this.checkBoxFillByeWins.Name = "checkBoxFillByeWins";
+            this.checkBoxFillByeWins.Size = new System.Drawing.Size(82, 17);
+            this.checkBoxFillByeWins.TabIndex = 7;
+            this.checkBoxFillByeWins.Text = "Fill bye wins";
+            this.checkBoxFillByeWins.UseVisualStyleBackColor = true;
+            // 
+            // buttonWinnerShift
+            // 
+            this.buttonWinnerShift.Location = new System.Drawing.Point(252, 119);
+            this.buttonWinnerShift.Name = "buttonWinnerShift";
+            this.buttonWinnerShift.Size = new System.Drawing.Size(75, 23);
+            this.buttonWinnerShift.TabIndex = 19;
+            this.buttonWinnerShift.Text = "Shift";
+            this.buttonWinnerShift.UseVisualStyleBackColor = true;
+            this.buttonWinnerShift.Click += new System.EventHandler(this.buttonWinnerShift_Click);
+            // 
+            // buttonLoserShift
+            // 
+            this.buttonLoserShift.Location = new System.Drawing.Point(590, 119);
+            this.buttonLoserShift.Name = "buttonLoserShift";
+            this.buttonLoserShift.Size = new System.Drawing.Size(75, 23);
+            this.buttonLoserShift.TabIndex = 20;
+            this.buttonLoserShift.Text = "Shift";
+            this.buttonLoserShift.UseVisualStyleBackColor = true;
+            this.buttonLoserShift.Click += new System.EventHandler(this.buttonloserShift_Click);
+            // 
+            // buttonHeadings
+            // 
+            this.buttonHeadings.Location = new System.Drawing.Point(810, 343);
+            this.buttonHeadings.Name = "buttonHeadings";
+            this.buttonHeadings.Size = new System.Drawing.Size(94, 23);
+            this.buttonHeadings.TabIndex = 2;
+            this.buttonHeadings.Text = "Headings";
+            this.buttonHeadings.UseVisualStyleBackColor = true;
+            this.buttonHeadings.Click += new System.EventHandler(this.buttonHeadings_Click);
             // 
             // richTextBoxExRegexReplace
             // 
@@ -529,74 +625,13 @@
             this.richTextBoxExLpLosersBracket.TabIndex = 13;
             this.richTextBoxExLpLosersBracket.Text = "";
             // 
-            // numericUpDownAdvanceLosers
-            // 
-            this.numericUpDownAdvanceLosers.Location = new System.Drawing.Point(847, 215);
-            this.numericUpDownAdvanceLosers.Name = "numericUpDownAdvanceLosers";
-            this.numericUpDownAdvanceLosers.Size = new System.Drawing.Size(32, 20);
-            this.numericUpDownAdvanceLosers.TabIndex = 10;
-            this.numericUpDownAdvanceLosers.Value = new decimal(new int[] {
-            2,
-            0,
-            0,
-            0});
-            // 
-            // label6
-            // 
-            this.label6.Location = new System.Drawing.Point(885, 210);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(50, 27);
-            this.label6.TabIndex = 5;
-            this.label6.Text = "Advance Losers";
-            // 
-            // checkBoxSMW
-            // 
-            this.checkBoxSMW.AutoSize = true;
-            this.checkBoxSMW.Location = new System.Drawing.Point(827, 254);
-            this.checkBoxSMW.Name = "checkBoxSMW";
-            this.checkBoxSMW.Size = new System.Drawing.Size(53, 17);
-            this.checkBoxSMW.TabIndex = 14;
-            this.checkBoxSMW.Text = "SMW";
-            this.checkBoxSMW.UseVisualStyleBackColor = true;
-            this.checkBoxSMW.CheckedChanged += new System.EventHandler(this.checkBoxLock_CheckedChanged);
-            // 
-            // buttonPrizePool
-            // 
-            this.buttonPrizePool.Location = new System.Drawing.Point(810, 286);
-            this.buttonPrizePool.Name = "buttonPrizePool";
-            this.buttonPrizePool.Size = new System.Drawing.Size(94, 23);
-            this.buttonPrizePool.TabIndex = 17;
-            this.buttonPrizePool.Text = "Prize Pool Table";
-            this.buttonPrizePool.UseVisualStyleBackColor = true;
-            this.buttonPrizePool.Click += new System.EventHandler(this.buttonPrizePool_Click);
-            // 
-            // numericUpDownPrizePool
-            // 
-            this.numericUpDownPrizePool.Location = new System.Drawing.Point(910, 287);
-            this.numericUpDownPrizePool.Name = "numericUpDownPrizePool";
-            this.numericUpDownPrizePool.Size = new System.Drawing.Size(32, 20);
-            this.numericUpDownPrizePool.TabIndex = 18;
-            this.numericUpDownPrizePool.Value = new decimal(new int[] {
-            8,
-            0,
-            0,
-            0});
-            // 
-            // checkBoxFillByeWins
-            // 
-            this.checkBoxFillByeWins.AutoSize = true;
-            this.checkBoxFillByeWins.Location = new System.Drawing.Point(709, 231);
-            this.checkBoxFillByeWins.Name = "checkBoxFillByeWins";
-            this.checkBoxFillByeWins.Size = new System.Drawing.Size(82, 17);
-            this.checkBoxFillByeWins.TabIndex = 7;
-            this.checkBoxFillByeWins.Text = "Fill bye wins";
-            this.checkBoxFillByeWins.UseVisualStyleBackColor = true;
-            // 
-            // Form1
+            // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(948, 566);
+            this.Controls.Add(this.buttonLoserShift);
+            this.Controls.Add(this.buttonWinnerShift);
             this.Controls.Add(this.numericUpDownPrizePool);
             this.Controls.Add(this.buttonPrizePool);
             this.Controls.Add(this.richTextBoxExRegexReplace);
@@ -615,6 +650,7 @@
             this.Controls.Add(this.checkBoxLockLosers);
             this.Controls.Add(this.checkBoxFillByeWins);
             this.Controls.Add(this.checkBoxFillByes);
+            this.Controls.Add(this.buttonHeadings);
             this.Controls.Add(this.buttonRegexReplace);
             this.Controls.Add(this.checkBoxLosers);
             this.Controls.Add(this.checkBoxLockWinners);
@@ -645,8 +681,8 @@
             this.Controls.Add(this.label4);
             this.Controls.Add(this.numericUpDownWinnersEnd);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Name = "Form1";
-            this.Text = "Smash.gg to Liquipedia v2.4.1";
+            this.Name = "FormMain";
+            this.Text = "Smash.gg to Liquipedia v2.5.0";
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAdvanceWinners)).EndInit();
             this.tabControl1.ResumeLayout(false);
             this.tabPageSingles.ResumeLayout(false);
@@ -719,6 +755,9 @@
         private System.Windows.Forms.Button buttonPrizePool;
         private System.Windows.Forms.NumericUpDown numericUpDownPrizePool;
         private System.Windows.Forms.CheckBox checkBoxFillByeWins;
+        private System.Windows.Forms.Button buttonWinnerShift;
+        private System.Windows.Forms.Button buttonLoserShift;
+        private System.Windows.Forms.Button buttonHeadings;
     }
 }
 
