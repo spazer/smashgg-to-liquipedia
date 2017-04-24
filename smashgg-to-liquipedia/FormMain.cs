@@ -1891,6 +1891,15 @@ namespace smashgg_to_liquipedia
             }
         }
 
+        /// <summary>
+        /// Fills match details
+        /// </summary>
+        /// <param name="bracketSide">Winners or Losers Bracket</param>
+        /// <param name="round">Round number</param>
+        /// <param name="match">Match number</param>
+        /// <param name="setData">Set data</param>
+        /// <param name="bracketText">Text of the bracket to fill</param>
+        /// <param name="reverse">Reverses entrant 1 and 2. Used for grand final resets</param>
         private void FillMatchDetailsSingles(string bracketSide, int round, int match, Set setData, ref string bracketText, bool reverse)
         {
             string identifier = bracketSide + round + LpStrings.Match + match;
@@ -1898,7 +1907,6 @@ namespace smashgg_to_liquipedia
             // Find the last occurance of r1m1 or a similar match identifier
             Regex rgx = new Regex(identifier + @"[a-zA-Z]");
             MatchCollection rgxMatches = rgx.Matches(bracketText);
-
 
             if (rgxMatches.Count == 0)
             {
@@ -2882,6 +2890,12 @@ namespace smashgg_to_liquipedia
             UpdateRevID();
         }
 
+        /// <summary>
+        /// Loads a dictionary with values from a CSV file
+        /// </summary>
+        /// <param name="targetDictionary">The dictionary to fill</param>
+        /// <param name="gameId">ID of the game. Melee = 1, Wii U = 3, 64 = 4</param>
+        /// <param name="datatype"></param>
         private void LoadDictionaryFromCSV(ref Dictionary<int,string> targetDictionary, int gameId, string datatype)
         {
             // Clear the list
