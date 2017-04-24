@@ -1099,12 +1099,12 @@ namespace smashgg_to_liquipedia
             // Pool headers
             if (phase.id[0].waveNumberDetected)
             {
-                richTextBoxLpOutput.Text += LpStrings.SortStart + "===" + phase.id[phaseElement].Wave + phase.id[phaseElement].Number.ToString() + "===" + LpStrings.SortEnd + "\r\n";
+                richTextBoxLpOutput.Text += "===" + LpStrings.SortStart + phase.id[phaseElement].Wave + phase.id[phaseElement].Number.ToString() + LpStrings.SortEnd + "===\r\n";
                 richTextBoxLpOutput.Text += LpStrings.GroupStart + "Bracket " + phase.id[phaseElement].Wave + phase.id[phaseElement].Number.ToString() + LpStrings.GroupStartWidth + "\r\n";
             }
             else
             {
-                richTextBoxLpOutput.Text += LpStrings.SortStart + "===" + phase.id[phaseElement].Wave + phase.id[phaseElement].DisplayIdentifier.ToString() + "===" + LpStrings.SortEnd + "\r\n";
+                richTextBoxLpOutput.Text += "===" + LpStrings.SortStart + phase.id[phaseElement].Wave + phase.id[phaseElement].DisplayIdentifier.ToString() + LpStrings.SortEnd + "===\r\n";
                 richTextBoxLpOutput.Text += LpStrings.GroupStart + "Bracket " + phase.id[phaseElement].DisplayIdentifier.ToString() + LpStrings.GroupStartWidth + "\r\n";
             }
 
@@ -1896,12 +1896,19 @@ namespace smashgg_to_liquipedia
             string identifier = bracketSide + round + LpStrings.Match + match;
 
             // Find the last occurance of r1m1 or a similar match identifier
-            int location = bracketText.LastIndexOf(identifier);
+            Regex rgx = new Regex(identifier + @"[a-zA-Z]");
+            MatchCollection rgxMatches = rgx.Matches(bracketText);
 
-            if (location != -1)
+
+            if (rgxMatches.Count == 0)
+            {
+                return;
+            }
+
+            if (rgxMatches[rgxMatches.Count - 1].Index != -1)
             {
                 // Skip to the end of the line
-                int insertionlocation = bracketText.IndexOf("\n", location) + 1;
+                int insertionlocation = bracketText.IndexOf("\n", rgxMatches[rgxMatches.Count - 1].Index) + 1;
 
                 string insertiontext = string.Empty;
                 foreach (Game game in setData.games)
@@ -2416,8 +2423,6 @@ namespace smashgg_to_liquipedia
             {
                 lpText = lpText.Replace(match.Groups[1].Value + match.Groups[2].Value, match.Groups[1].Value + value + match.Groups[2].Value);
             }
-            //Regex.Replace(lpText, @"(\|" + param + @"=)([ \r\n])","$1"+value+"$2",)
-            //lpText = rgx.Replace(lpText, @"$1" + Regex.Escape(value) + "$2");
             
             //int start = lpText.IndexOf("|" + param + "=");
 
