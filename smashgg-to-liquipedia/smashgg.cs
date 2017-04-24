@@ -114,8 +114,9 @@ namespace smashgg_to_liquipedia
         /// </summary>
         /// <param name="input">json of the sets token</param>
         /// <param name="entrantList">List of sets to be outputted to</param>
+        /// <param name="parseMatchDetails">If true, parse match details where available</param>
         /// <returns>Returns true if successful, false otherwise</returns>
-        public bool GetSets(JToken input, ref List<Set> setList)
+        public bool GetSets(JToken input, ref List<Set> setList, bool parseMatchDetails)
         {
             if (input == null) return false;
             
@@ -164,6 +165,10 @@ namespace smashgg_to_liquipedia
                 newSet.displayRound = GetIntParameter(set, SmashggStrings.DisplayRound);
                 newSet.entrant1PrereqId = GetIntParameter(set, SmashggStrings.Entrant1PrereqId);
                 newSet.entrant2PrereqId = GetIntParameter(set, SmashggStrings.Entrant2PrereqId);
+
+                // Get game ID
+                newSet.gameId = GetIntParameter(set, SmashggStrings.GameId);
+
                 int round = Math.Abs(newSet.originalRound);
 
                 if (newSet.originalRound == -99)
@@ -189,6 +194,134 @@ namespace smashgg_to_liquipedia
 
                     matchCountLosers[round - 1]++;
                     newSet.match = matchCountLosers[round - 1];
+                }
+
+                // Get character lists for entrants
+                /*JToken charlist = set.SelectToken(SmashggStrings.Entrant1CharList);
+                if (charlist != null)
+                {
+                    List<int> chars = new List<int>();
+
+                    foreach (JToken entry in charlist)
+                    {
+                        chars.Add(entry.Value<int>());
+                    }
+
+                    newSet.entrant1chars = chars;
+                }
+
+                charlist = set.SelectToken(SmashggStrings.Entrant2CharList);
+                if (charlist != null)
+                {
+                    List<int> chars = new List<int>();
+
+                    foreach (JToken entry in charlist)
+                    {
+                        chars.Add(entry.Value<int>());
+                    }
+
+                    newSet.entrant2chars = chars;
+                }*/
+
+
+
+                // Make sure match details list is populated
+                JToken sourceGames = set.SelectToken(SmashggStrings.Games);
+                if (sourceGames != null)
+                {
+                    List<Game> gameList = new List<Game>();
+
+                    foreach (JToken gameData in sourceGames)
+                    {
+                        Game newGame = new Game();
+
+                        // Get entrant 1 character
+                        JToken charData = gameData.SelectToken(SmashggStrings.Selections + "." + newSet.entrantID1.ToString() + "." + SmashggStrings.Character);
+
+                        if (charData != null)
+                        {
+                            JToken[] charArray = charData.ToArray<JToken>();
+                            if (charArray[0].SelectToken(SmashggStrings.SelectionType).Value<string>() == "character")
+                            {
+                                newGame.entrant1p1char = GetIntParameter(charArray[0], SmashggStrings.SelectionValue);
+                            }
+                        }
+
+                        // Get entrant 2 character
+                        charData = gameData.SelectToken(SmashggStrings.Selections + "." + newSet.entrantID2.ToString() + "." + SmashggStrings.Character);
+
+                        if (charData != null)
+                        {
+                            JToken[] charArray = charData.ToArray<JToken>();
+                            if (charArray[0].SelectToken(SmashggStrings.SelectionType).Value<string>() == "character")
+                            {
+                                newGame.entrant2p1char = GetIntParameter(charArray[0], SmashggStrings.SelectionValue);
+                            }
+                        }
+
+                        newGame.winner = GetIntParameter(gameData, SmashggStrings.Winner);
+                        newGame.stage = GetIntParameter(gameData, SmashggStrings.Stage);
+                        newGame.gameOrder = gameData.SelectToken(SmashggStrings.GameOrder).Value<string>();
+
+                        /*newGame.entrant1p2char = GetIntParameter(gameData, SmashggStrings.Entrant1P2char);
+                        newGame.entrant2p1char = GetIntParameter(gameData, SmashggStrings.Entrant2P1char);
+                        newGame.entrant2p2char = GetIntParameter(gameData, SmashggStrings.Entrant2P2char);*/
+
+                        newGame.entrant1p1stocks = GetIntParameter(gameData, SmashggStrings.Entrant1P1stocks);
+                        newGame.entrant1p2stocks = GetIntParameter(gameData, SmashggStrings.Entrant1P2stocks);
+                        newGame.entrant2p1stocks = GetIntParameter(gameData, SmashggStrings.Entrant2P1stocks);
+                        newGame.entrant2p2stocks = GetIntParameter(gameData, SmashggStrings.Entrant2P2stocks);
+
+                        gameList.Add(newGame);
+                    }
+
+                    // If no characters are set per game and an overall character is set, assume all games are the same character
+                    bool nochars = false;
+                    if (newSet.entrant1chars != null && newSet.entrant1chars.Count == 1)
+                    {
+                        for (int i = 0; i < gameList.Count; i++)
+                        {
+                            if (gameList[i].entrant1p1char != -99)
+                            {
+                                break;
+                            }
+                        }
+
+                        nochars = true;
+                    }
+
+                    if (nochars)
+                    {
+                        for (int i = 0; i < gameList.Count; i++)
+                        {
+                            gameList[i].entrant1p1char = newSet.entrant1chars[0];
+                        }
+                    }
+
+                    // Do the same for player 2
+                    nochars = false;
+                    if (newSet.entrant2chars != null && newSet.entrant2chars.Count == 1)
+                    {
+                        for (int i = 0; i < gameList.Count; i++)
+                        {
+                            if (gameList[i].entrant2p1char != -99)
+                            {
+                                break;
+                            }
+                        }
+
+                        nochars = true;
+                    }
+
+                    if (nochars)
+                    {
+                        for (int i = 0; i < gameList.Count; i++)
+                        {
+                            gameList[i].entrant2p1char = newSet.entrant2chars[0];
+                        }
+                    }
+
+                    newSet.games = gameList;
                 }
 
                 setList.Add(newSet);

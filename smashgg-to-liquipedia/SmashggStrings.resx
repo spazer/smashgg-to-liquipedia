@@ -222,4 +222,58 @@
   <data name="IsGF" xml:space="preserve">
     <value>isGF</value>
   </data>
+  <data name="Entrant1P1char" xml:space="preserve">
+    <value>entrant1P1CharacterId</value>
+  </data>
+  <data name="Entrant1P1stocks" xml:space="preserve">
+    <value>entrant1P1Stocks</value>
+  </data>
+  <data name="Entrant1P2char" xml:space="preserve">
+    <value>entrant2P1CharacterId</value>
+  </data>
+  <data name="Entrant1P2stocks" xml:space="preserve">
+    <value>entrant2P1Stocks</value>
+  </data>
+  <data name="Stage" xml:space="preserve">
+    <value>stageId</value>
+  </data>
+  <data name="Character" xml:space="preserve">
+    <value>character</value>
+  </data>
+  <data name="Entrant1CharList" xml:space="preserve">
+    <value>entrant1CharacterIds</value>
+  </data>
+  <data name="Entrant2CharList" xml:space="preserve">
+    <value>entrant2CharacterIds</value>
+  </data>
+  <data name="Entrant2P1char" xml:space="preserve">
+    <value>entrant2P1CharacterId</value>
+  </data>
+  <data name="Entrant2P1stocks" xml:space="preserve">
+    <value>entrant2P1Stocks</value>
+  </data>
+  <data name="Entrant2P2char" xml:space="preserve">
+    <value>entrant2P2CharacterId</value>
+  </data>
+  <data name="Entrant2P2stocks" xml:space="preserve">
+    <value>entrant2P2Stocks</value>
+  </data>
+  <data name="GameId" xml:space="preserve">
+    <value>videogameId</value>
+  </data>
+  <data name="GameOrder" xml:space="preserve">
+    <value>orderNum</value>
+  </data>
+  <data name="Games" xml:space="preserve">
+    <value>games</value>
+  </data>
+  <data name="Selections" xml:space="preserve">
+    <value>selections</value>
+  </data>
+  <data name="SelectionType" xml:space="preserve">
+    <value>selectionType</value>
+  </data>
+  <data name="SelectionValue" xml:space="preserve">
+    <value>selectionValue</value>
+  </data>
 </root>

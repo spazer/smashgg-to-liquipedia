@@ -210,4 +210,13 @@
   <data name="DoublesSlotStart" xml:space="preserve">
     <value>{{DoublesGroupTableSlot</value>
   </data>
+  <data name="Character" xml:space="preserve">
+    <value>char</value>
+  </data>
+  <data name="Stage" xml:space="preserve">
+    <value>stage</value>
+  </data>
+  <data name="Stock" xml:space="preserve">
+    <value>stock</value>
+  </data>
 </root>

@@ -89,6 +89,7 @@
             this.richTextBoxExRegexFind = new RichTextBoxEx();
             this.richTextBoxExLpWinnersBracket = new RichTextBoxEx();
             this.richTextBoxExLpLosersBracket = new RichTextBoxEx();
+            this.checkBoxMatchDetails = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAdvanceWinners)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabPageSingles.SuspendLayout();
@@ -188,7 +189,7 @@
             this.richTextBoxWinners.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.richTextBoxWinners.Location = new System.Drawing.Point(12, 145);
             this.richTextBoxWinners.Name = "richTextBoxWinners";
-            this.richTextBoxWinners.Size = new System.Drawing.Size(342, 151);
+            this.richTextBoxWinners.Size = new System.Drawing.Size(342, 126);
             this.richTextBoxWinners.TabIndex = 0;
             this.richTextBoxWinners.Text = "";
             // 
@@ -197,7 +198,7 @@
             this.richTextBoxLosers.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.richTextBoxLosers.Location = new System.Drawing.Point(361, 145);
             this.richTextBoxLosers.Name = "richTextBoxLosers";
-            this.richTextBoxLosers.Size = new System.Drawing.Size(342, 151);
+            this.richTextBoxLosers.Size = new System.Drawing.Size(342, 126);
             this.richTextBoxLosers.TabIndex = 0;
             this.richTextBoxLosers.Text = "";
             // 
@@ -250,21 +251,21 @@
             // checkBoxWinners
             // 
             this.checkBoxWinners.AutoSize = true;
-            this.checkBoxWinners.Location = new System.Drawing.Point(709, 146);
+            this.checkBoxWinners.Location = new System.Drawing.Point(12, 277);
             this.checkBoxWinners.Name = "checkBoxWinners";
-            this.checkBoxWinners.Size = new System.Drawing.Size(65, 17);
+            this.checkBoxWinners.Size = new System.Drawing.Size(100, 17);
             this.checkBoxWinners.TabIndex = 7;
-            this.checkBoxWinners.Text = "Winners";
+            this.checkBoxWinners.Text = "Output Winners";
             this.checkBoxWinners.UseVisualStyleBackColor = true;
             // 
             // checkBoxLosers
             // 
             this.checkBoxLosers.AutoSize = true;
-            this.checkBoxLosers.Location = new System.Drawing.Point(709, 169);
+            this.checkBoxLosers.Location = new System.Drawing.Point(361, 277);
             this.checkBoxLosers.Name = "checkBoxLosers";
-            this.checkBoxLosers.Size = new System.Drawing.Size(57, 17);
+            this.checkBoxLosers.Size = new System.Drawing.Size(92, 17);
             this.checkBoxLosers.TabIndex = 7;
-            this.checkBoxLosers.Text = "Losers";
+            this.checkBoxLosers.Text = "Output Losers";
             this.checkBoxLosers.UseVisualStyleBackColor = true;
             // 
             // checkBoxFillByes
@@ -696,11 +697,22 @@
             this.richTextBoxExLpLosersBracket.TabIndex = 13;
             this.richTextBoxExLpLosersBracket.Text = "";
             // 
+            // checkBoxMatchDetails
+            // 
+            this.checkBoxMatchDetails.AutoSize = true;
+            this.checkBoxMatchDetails.Location = new System.Drawing.Point(709, 146);
+            this.checkBoxMatchDetails.Name = "checkBoxMatchDetails";
+            this.checkBoxMatchDetails.Size = new System.Drawing.Size(91, 17);
+            this.checkBoxMatchDetails.TabIndex = 25;
+            this.checkBoxMatchDetails.Text = "Match Details";
+            this.checkBoxMatchDetails.UseVisualStyleBackColor = true;
+            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(948, 566);
+            this.Controls.Add(this.checkBoxMatchDetails);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.labelAkaDatabaseRev);
@@ -751,7 +763,7 @@
             this.Controls.Add(this.numericUpDownWinnersEnd);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "FormMain";
-            this.Text = "Smash.gg to Liquipedia v2.6.0";
+            this.Text = "Smash.gg to Liquipedia v2.7.0";
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAdvanceWinners)).EndInit();
             this.tabControl1.ResumeLayout(false);
             this.tabPageSingles.ResumeLayout(false);
@@ -837,6 +849,7 @@
         private System.Windows.Forms.Label labelAkaDatabaseRev;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Panel panel2;
+        private System.Windows.Forms.CheckBox checkBoxMatchDetails;
     }
 }
 

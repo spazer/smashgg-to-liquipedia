@@ -56,6 +56,7 @@ namespace smashgg_to_liquipedia
                 updown.Location = new Point(5 + (i - start) * (ELEMENT_WIDTH + ELEMENT_SPACING), 20);
                 updown.Name = "numericUpDown" + i.ToString();
                 updown.Size = new Size(40, 20);
+                updown.Minimum = -1000;
 
                 if (side == FormMain.BracketSide.Winners)
                 {

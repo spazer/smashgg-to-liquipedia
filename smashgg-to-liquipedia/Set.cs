@@ -24,5 +24,12 @@ namespace smashgg_to_liquipedia
 
         public int wPlacement;
         public int lPlacement;
+
+        public int gameId;
+
+        public List<Game> games;
+
+        public List<int> entrant1chars;
+        public List<int> entrant2chars;
     }
 }

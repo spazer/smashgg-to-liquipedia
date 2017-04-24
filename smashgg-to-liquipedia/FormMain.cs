@@ -148,10 +148,14 @@ namespace smashgg_to_liquipedia
         Dictionary<int, List<Set>> roundList = new Dictionary<int, List<Set>>();
         List<Phase> phaseList = new List<Phase>();
         Dictionary<int, int> matchOffsetPerRound = new Dictionary<int, int>();
+        Dictionary<int, string> gameCharacterList = new Dictionary<int, string>();
+        Dictionary<int, string> gameStageList = new Dictionary<int, string>();
 
         JObject tournamentStructure;
         string tournament = string.Empty;
         EventType retrievedDataType = EventType.None;
+
+        bool loadedMatchDetailDictionary;
 
         LiquipediaBracket wBracket;
         LiquipediaBracket lBracket;
@@ -243,6 +247,7 @@ namespace smashgg_to_liquipedia
         {
             string output = string.Empty;
             string finalBracketOutput = string.Empty;
+            loadedMatchDetailDictionary = false;
 
             if (retrievedDataType == EventType.Doubles)
             {
@@ -372,6 +377,7 @@ namespace smashgg_to_liquipedia
 
             string output = string.Empty;
             string finalBracketOutput = string.Empty;
+            loadedMatchDetailDictionary = false;
 
             if (checkBoxWinners.Checked == true)
             {
@@ -856,7 +862,7 @@ namespace smashgg_to_liquipedia
                 richTextBoxLog.Text += "No entrants detected.\r\n";
                 return;
             }
-            if (!parser.GetSets(bracketJson.SelectToken(SmashggStrings.Entities + "." + SmashggStrings.Sets), ref setList))
+            if (!parser.GetSets(bracketJson.SelectToken(SmashggStrings.Entities + "." + SmashggStrings.Sets), ref setList, checkBoxMatchDetails.Checked))
             {
                 richTextBoxLog.Text += "No sets detected.\r\n";
                 return;
@@ -1363,7 +1369,7 @@ namespace smashgg_to_liquipedia
 
             // Parse entrant and set data
             parser.GetEntrants(bracketJson.SelectToken("entities.entrants"), ref entrantList, playerdb);
-            parser.GetSets(bracketJson.SelectToken("entities.sets"), ref setList);
+            parser.GetSets(bracketJson.SelectToken("entities.sets"), ref setList, false);
 
             // Create a record for each player
             foreach (KeyValuePair<int, Entrant> entrant in entrantList)
@@ -1730,6 +1736,15 @@ namespace smashgg_to_liquipedia
                 {
                     Set currentSet = roundList[i][j];
 
+                    // Try to load the match details dictionary if not done already
+                    if (!loadedMatchDetailDictionary)
+                    {
+                        LoadDictionaryFromCSV(ref gameCharacterList, currentSet.gameId, "Character");
+                        LoadDictionaryFromCSV(ref gameStageList, currentSet.gameId, "Stage");
+
+                        loadedMatchDetailDictionary = true;
+                    }
+
                     // Add offsets
                     outputRound = Math.Abs(i) + offset;
                     int outputSet = currentSet.match + matchOffsetPerRound[i];
@@ -1861,8 +1876,209 @@ namespace smashgg_to_liquipedia
                                 FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.Win, "2");
                             }
                         }
+
+                        // Fill in match details if available
+                        if (currentSet.isGF && currentSet.match == 2 && currentSet.games != null && checkBoxMatchDetails.Checked)
+                        {
+                            FillMatchDetailsSingles(bracketSide, outputRound, outputSet, currentSet, ref bracketText, true);
+                        }
+                        else if (currentSet.games != null && checkBoxMatchDetails.Checked)
+                        {
+                            FillMatchDetailsSingles(bracketSide, outputRound, outputSet, currentSet, ref bracketText, false);
+                        }
                     }
                 }
+            }
+        }
+
+        private void FillMatchDetailsSingles(string bracketSide, int round, int match, Set setData, ref string bracketText, bool reverse)
+        {
+            string identifier = bracketSide + round + LpStrings.Match + match;
+
+            // Find the last occurance of r1m1 or a similar match identifier
+            int location = bracketText.LastIndexOf(identifier);
+
+            if (location != -1)
+            {
+                // Skip to the end of the line
+                int insertionlocation = bracketText.IndexOf("\n", location) + 1;
+
+                string insertiontext = string.Empty;
+                foreach (Game game in setData.games)
+                {
+                    if (!reverse)
+                    {
+                        // Insert character for player 1
+                        string character;
+                        if (gameCharacterList.ContainsKey(game.entrant1p1char))
+                        {
+                            character = gameCharacterList[game.entrant1p1char];
+                        }
+                        else if (game.entrant1p1char == -99)
+                        {
+                            character = string.Empty;
+                        }
+                        else
+                        {
+                            character = game.entrant1p1char.ToString();
+                            richTextBoxLog.Text += "No character entry for number: " + character + "\r\n";
+                        }
+
+                        insertiontext += "|" + identifier + LpStrings.P1 + LpStrings.Character + game.gameOrder + "=" + character;
+
+                        // Insert character for player 2
+                        if (gameCharacterList.ContainsKey(game.entrant2p1char))
+                        {
+                            character = gameCharacterList[game.entrant2p1char];
+                        }
+                        else if (game.entrant2p1char == -99)
+                        {
+                            character = string.Empty;
+                        }
+                        else
+                        {
+                            character = game.entrant2p1char.ToString();
+                            richTextBoxLog.Text += "No character entry for number: " + character + "\r\n";
+                        }
+
+                        insertiontext += " |" + identifier + LpStrings.P2 + LpStrings.Character + game.gameOrder + "=" + character;
+
+                        // Insert stock counts
+                        if (game.entrant1p1stocks == -99)
+                        {
+                            insertiontext += " |" + identifier + LpStrings.P1 + LpStrings.Stock + game.gameOrder + "=";
+                        }
+                        else
+                        {
+                            insertiontext += " |" + identifier + LpStrings.P1 + LpStrings.Stock + game.gameOrder + "=" + game.entrant1p1stocks;
+                        }
+
+                        if (game.entrant2p1stocks == -99)
+                        {
+                            insertiontext += " |" + identifier + LpStrings.P2 + LpStrings.Stock + game.gameOrder + "=";
+                        }
+                        else
+                        {
+                            insertiontext += " |" + identifier + LpStrings.P2 + LpStrings.Stock + game.gameOrder + "=" + game.entrant2p1stocks;
+                        }
+
+                        // Insert game winner
+                        insertiontext += " |" + identifier + LpStrings.Win + game.gameOrder + "=";
+                        if (game.winner == setData.entrantID1)
+                        {
+                            insertiontext += "1";
+                        }
+                        else if (game.winner == setData.entrantID2)
+                        {
+                            insertiontext += "2";
+                        }
+
+                        // Insert stage
+                        string stage = string.Empty;
+                        if (gameStageList.ContainsKey(game.stage))
+                        {
+                            stage = gameStageList[game.stage];
+                        }
+                        else if (game.stage == -99)
+                        {
+                            stage = string.Empty;
+                        }
+                        else
+                        {
+                            stage = game.stage.ToString();
+                            richTextBoxLog.Text += "No stage entry for number: " + stage + "\r\n";
+                        }
+
+                        insertiontext += " |" + identifier + LpStrings.Stage + game.gameOrder + "=" + stage + "\r\n";
+                    }
+                    else
+                    {
+                        // Insert character for player 1
+                        string character;
+                        if (gameCharacterList.ContainsKey(game.entrant2p1char))
+                        {
+                            character = gameCharacterList[game.entrant2p1char];
+                        }
+                        else if (game.entrant2p1char == -99)
+                        {
+                            character = string.Empty;
+                        }
+                        else
+                        {
+                            character = game.entrant2p1char.ToString();
+                            richTextBoxLog.Text += "No character entry for number: " + character + "\r\n";
+                        }
+
+                        insertiontext += "|" + identifier + LpStrings.P1 + LpStrings.Character + game.gameOrder + "=" + character;
+
+                        // Insert character for player 2
+                        if (gameCharacterList.ContainsKey(game.entrant1p1char))
+                        {
+                            character = gameCharacterList[game.entrant1p1char];
+                        }
+                        else if (game.entrant1p1char == -99)
+                        {
+                            character = string.Empty;
+                        }
+                        else
+                        {
+                            character = game.entrant1p1char.ToString();
+                            richTextBoxLog.Text += "No character entry for number: " + character + "\r\n";
+                        }
+
+                        insertiontext += " |" + identifier + LpStrings.P2 + LpStrings.Character + game.gameOrder + "=" + character;
+
+                        // Insert stock counts
+                        if (game.entrant2p1stocks == -99)
+                        {
+                            insertiontext += " |" + identifier + LpStrings.P1 + LpStrings.Stock + game.gameOrder + "=";
+                        }
+                        else
+                        {
+                            insertiontext += " |" + identifier + LpStrings.P1 + LpStrings.Stock + game.gameOrder + "=" + game.entrant2p1stocks;
+                        }
+
+                        if (game.entrant1p1stocks == -99)
+                        {
+                            insertiontext += " |" + identifier + LpStrings.P2 + LpStrings.Stock + game.gameOrder + "=";
+                        }
+                        else
+                        {
+                            insertiontext += " |" + identifier + LpStrings.P2 + LpStrings.Stock + game.gameOrder + "=" + game.entrant1p1stocks;
+                        }
+
+                        // Insert game winner
+                        insertiontext += " |" + identifier + LpStrings.Win + game.gameOrder + "=";
+                        if (game.winner == setData.entrantID1)
+                        {
+                            insertiontext += "2";
+                        }
+                        else if (game.winner == setData.entrantID2)
+                        {
+                            insertiontext += "1";
+                        }
+
+                        // Insert stage
+                        string stage = string.Empty;
+                        if (gameStageList.ContainsKey(game.stage))
+                        {
+                            stage = gameStageList[game.stage];
+                        }
+                        else if (game.stage == -99)
+                        {
+                            stage = string.Empty;
+                        }
+                        else
+                        {
+                            stage = game.stage.ToString();
+                            richTextBoxLog.Text += "No stage entry for number: " + stage + "\r\n";
+                        }
+
+                        insertiontext += " |" + identifier + LpStrings.Stage + game.gameOrder + "=" + stage + "\r\n";
+                    }
+                }
+
+                bracketText = bracketText.Insert(insertionlocation, insertiontext + "\r\n");
             }
         }
 
@@ -2474,6 +2690,7 @@ namespace smashgg_to_liquipedia
             checkBoxWinners.Enabled = false;
             checkBoxSMW.Enabled = false;
             checkBoxFillByeWins.Enabled = false;
+            checkBoxMatchDetails.Enabled = false;
 
             numericUpDownAdvanceWinners.Enabled = false;
             numericUpDownAdvanceWinners.Enabled = false;
@@ -2525,6 +2742,7 @@ namespace smashgg_to_liquipedia
             checkBoxWinners.Enabled = true;
             checkBoxSMW.Enabled = true;
             checkBoxFillByeWins.Enabled = true;
+            checkBoxMatchDetails.Enabled = true;
 
             numericUpDownAdvanceWinners.Enabled = true;
             numericUpDownAdvanceWinners.Enabled = true;
@@ -2657,6 +2875,48 @@ namespace smashgg_to_liquipedia
             }
 
             UpdateRevID();
+        }
+
+        private void LoadDictionaryFromCSV(ref Dictionary<int,string> targetDictionary, int gameId, string datatype)
+        {
+            // Clear the list
+            targetDictionary.Clear();
+
+            string filename = datatype + " Lists\\" + datatype + " List " + gameId + ".csv";
+
+            // Read csv if available
+            try
+            {
+                using (StreamReader file = new StreamReader(filename, System.Text.Encoding.Default))
+                {
+                    while (!file.EndOfStream)
+                    {
+                        string input = file.ReadLine();
+                        string[] splitinput = input.Split(',');
+
+                        if (splitinput.Count() == 2)
+                        {
+                            int num;
+                            if (int.TryParse(splitinput[0], out num))
+                            {
+                                targetDictionary.Add(num, splitinput[1]);
+                            }
+                            else
+                            {
+                                richTextBoxLog.Text += "Invalid "+ datatype +" number in: " + input + "\r\n";
+                            }
+                        }
+                        else
+                        {
+                            richTextBoxLog.Text += "Couldn't parse " + datatype + " entry: " + input + "\r\n";
+                        }
+                    }
+                }
+            }
+            catch
+            {
+                richTextBoxLog.Text += "Couldn't find CSV file: " + filename + "\r\n";
+            }
         }
     }
 }

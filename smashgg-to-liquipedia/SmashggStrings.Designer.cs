@@ -61,6 +61,15 @@ namespace smashgg_to_liquipedia {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to character.
+        /// </summary>
+        internal static string Character {
+            get {
+                return ResourceManager.GetString("Character", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to country.
         /// </summary>
         internal static string Country {
@@ -97,11 +106,56 @@ namespace smashgg_to_liquipedia {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to entrant1CharacterIds.
+        /// </summary>
+        internal static string Entrant1CharList {
+            get {
+                return ResourceManager.GetString("Entrant1CharList", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to entrant1Id.
         /// </summary>
         internal static string Entrant1Id {
             get {
                 return ResourceManager.GetString("Entrant1Id", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to entrant1P1CharacterId.
+        /// </summary>
+        internal static string Entrant1P1char {
+            get {
+                return ResourceManager.GetString("Entrant1P1char", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to entrant1P1Stocks.
+        /// </summary>
+        internal static string Entrant1P1stocks {
+            get {
+                return ResourceManager.GetString("Entrant1P1stocks", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to entrant2P1CharacterId.
+        /// </summary>
+        internal static string Entrant1P2char {
+            get {
+                return ResourceManager.GetString("Entrant1P2char", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to entrant2P1Stocks.
+        /// </summary>
+        internal static string Entrant1P2stocks {
+            get {
+                return ResourceManager.GetString("Entrant1P2stocks", resourceCulture);
             }
         }
         
@@ -133,11 +187,56 @@ namespace smashgg_to_liquipedia {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to entrant2CharacterIds.
+        /// </summary>
+        internal static string Entrant2CharList {
+            get {
+                return ResourceManager.GetString("Entrant2CharList", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to entrant2Id.
         /// </summary>
         internal static string Entrant2Id {
             get {
                 return ResourceManager.GetString("Entrant2Id", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to entrant2P1CharacterId.
+        /// </summary>
+        internal static string Entrant2P1char {
+            get {
+                return ResourceManager.GetString("Entrant2P1char", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to entrant2P1Stocks.
+        /// </summary>
+        internal static string Entrant2P1stocks {
+            get {
+                return ResourceManager.GetString("Entrant2P1stocks", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to entrant2P2CharacterId.
+        /// </summary>
+        internal static string Entrant2P2char {
+            get {
+                return ResourceManager.GetString("Entrant2P2char", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to entrant2P2Stocks.
+        /// </summary>
+        internal static string Entrant2P2stocks {
+            get {
+                return ResourceManager.GetString("Entrant2P2stocks", resourceCulture);
             }
         }
         
@@ -178,11 +277,38 @@ namespace smashgg_to_liquipedia {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to videogameId.
+        /// </summary>
+        internal static string GameId {
+            get {
+                return ResourceManager.GetString("GameId", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to orderNum.
+        /// </summary>
+        internal static string GameOrder {
+            get {
+                return ResourceManager.GetString("GameOrder", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to gamerTag.
         /// </summary>
         internal static string Gamertag {
             get {
                 return ResourceManager.GetString("Gamertag", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to games.
+        /// </summary>
+        internal static string Games {
+            get {
+                return ResourceManager.GetString("Games", resourceCulture);
             }
         }
         
@@ -286,11 +412,47 @@ namespace smashgg_to_liquipedia {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to selections.
+        /// </summary>
+        internal static string Selections {
+            get {
+                return ResourceManager.GetString("Selections", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to selectionType.
+        /// </summary>
+        internal static string SelectionType {
+            get {
+                return ResourceManager.GetString("SelectionType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to selectionValue.
+        /// </summary>
+        internal static string SelectionValue {
+            get {
+                return ResourceManager.GetString("SelectionValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to sets.
         /// </summary>
         internal static string Sets {
             get {
                 return ResourceManager.GetString("Sets", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to stageId.
+        /// </summary>
+        internal static string Stage {
+            get {
+                return ResourceManager.GetString("Stage", resourceCulture);
             }
         }
         
