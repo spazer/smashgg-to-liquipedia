@@ -763,7 +763,7 @@
             this.Controls.Add(this.numericUpDownWinnersEnd);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "FormMain";
-            this.Text = "Smash.gg to Liquipedia v2.7.0";
+            this.Text = "Smash.gg to Liquipedia v2.7.1";
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAdvanceWinners)).EndInit();
             this.tabControl1.ResumeLayout(false);
             this.tabPageSingles.ResumeLayout(false);

@@ -1914,7 +1914,7 @@ namespace smashgg_to_liquipedia
                         {
                             character = gameCharacterList[game.entrant1p1char];
                         }
-                        else if (game.entrant1p1char == -99)
+                        else if (game.entrant1p1char == -99 || game.entrant1p1char == 0)
                         {
                             character = string.Empty;
                         }
@@ -1931,7 +1931,7 @@ namespace smashgg_to_liquipedia
                         {
                             character = gameCharacterList[game.entrant2p1char];
                         }
-                        else if (game.entrant2p1char == -99)
+                        else if (game.entrant2p1char == -99 || game.entrant2p1char == 0)
                         {
                             character = string.Empty;
                         }
@@ -1979,7 +1979,7 @@ namespace smashgg_to_liquipedia
                         {
                             stage = gameStageList[game.stage];
                         }
-                        else if (game.stage == -99)
+                        else if (game.stage == -99 || game.stage == 0)
                         {
                             stage = string.Empty;
                         }
