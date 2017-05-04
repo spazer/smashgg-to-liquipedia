@@ -9,12 +9,14 @@ namespace smashgg_to_liquipedia
     class Entrant
     {
         private List<Player> players = new List<Player>();
+        private int placement;
 
         public Entrant() { }
 
         public Entrant(Player player)
         {
             AddPlayer(player);
+            placement = 0;
         }
 
         public Entrant(List<Player> playerList)
@@ -23,6 +25,8 @@ namespace smashgg_to_liquipedia
             {
                 AddPlayer(player);
             }
+
+            placement = 0;
         }
 
         public void AddPlayer(Player newPlayer)
@@ -35,6 +39,18 @@ namespace smashgg_to_liquipedia
             get
             {
                 return players;
+            }
+        }
+
+        public int Placement
+        {
+            get
+            {
+                return placement;
+            }
+            set
+            {
+                placement = value;
             }
         }
     }

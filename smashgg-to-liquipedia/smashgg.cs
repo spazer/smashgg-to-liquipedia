@@ -331,6 +331,32 @@ namespace smashgg_to_liquipedia
         }
 
         /// <summary>
+        /// Appends sets from the json input into setList
+        /// </summary>
+        /// <param name="input">json of the sets token</param>
+        /// <param name="entrantList">List of sets to be outputted to</param>
+        /// <param name="parseMatchDetails">If true, parse match details where available</param>
+        /// <returns>Returns true if successful, false otherwise</returns>
+        public bool GetRank(JToken input, Dictionary<int, Entrant> entrantList)
+        {
+            if (input == null) return false;
+
+            // Get rank data for each entrant
+            foreach (int entrantId in entrantList.Keys)
+            {
+                foreach (JToken entry in input.Children())
+                {
+                    if (GetIntParameter(entry, SmashggStrings.EntrantId) == entrantId)
+                    {
+                        entrantList[entrantId].Placement = GetIntParameter(entry, SmashggStrings.Placement);
+                    }
+                }
+            }
+
+            return true;
+        }
+
+        /// <summary>
         /// Returns an integer from the specified parameter, or -99 on a null entry
         /// </summary>
         /// <param name="token">json input</param>

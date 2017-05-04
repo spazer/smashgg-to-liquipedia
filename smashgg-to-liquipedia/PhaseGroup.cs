@@ -8,17 +8,19 @@ namespace smashgg_to_liquipedia
 {
     class PhaseGroup
     {
+        public enum IdentiferType { WaveNumber, NumberOnly, Other };
+
         private string displayIdentifier;
         private string wave;
         private int number;
         public int id;
-        public bool waveNumberDetected;
+        public IdentiferType identifierType;
 
         public PhaseGroup()
         {
             wave = string.Empty;
             number = 0;
-            waveNumberDetected = false;
+            identifierType = IdentiferType.Other;
         }
 
         // When this is set, try to split the value into a letter (wave) and number (bracket number in wave)
@@ -32,39 +34,46 @@ namespace smashgg_to_liquipedia
             {
                 displayIdentifier = value;
 
-                // Attempt to split the identifier into waves
-                if (displayIdentifier.Length > 1)
+                int temp;
+                if (int.TryParse(displayIdentifier, out temp))
                 {
-                    // The wave should be a bunch of letters
-                    int waveLength = 0;
-                    while (waveLength < displayIdentifier.Length)
+                    identifierType = IdentiferType.NumberOnly;
+                }
+                else
+                {
+                    // Attempt to split the identifier into waves
+                    if (displayIdentifier.Length > 1)
                     {
-                        // If the next character in the identifier is a letter, add it to the wave name
-                        if (char.IsLetter(displayIdentifier, waveLength))
+                        // The wave should be a bunch of letters
+                        int waveLength = 0;
+                        while (waveLength < displayIdentifier.Length)
                         {
-                            waveLength++;
+                            // If the next character in the identifier is a letter, add it to the wave name
+                            if (char.IsLetter(displayIdentifier, waveLength))
+                            {
+                                waveLength++;
+                            }
+                            else
+                            {
+                                break;
+                            }
                         }
-                        else
-                        {
-                            break;
-                        }
-                    }
 
-                    // Ensure the rest of the identifier is a number
-                    waveNumberDetected = true;
-                    for (int i = waveLength; i < displayIdentifier.Length; i++)
-                    {
-                        if (!char.IsDigit(displayIdentifier, i))
+                        // Ensure the rest of the identifier is a number
+                        for (int i = waveLength; i < displayIdentifier.Length; i++)
                         {
-                            waveNumberDetected = false;
+                            if (!char.IsDigit(displayIdentifier, i))
+                            {
+                                identifierType = IdentiferType.WaveNumber;
+                            }
                         }
-                    }
 
-                    // If all conditions are met, fill in the wave and number variables
-                    if (waveNumberDetected)
-                    {
-                        wave = displayIdentifier.Substring(0, waveLength);
-                        number = int.Parse(displayIdentifier.Substring(waveLength, displayIdentifier.Length - waveLength));
+                        // If all conditions are met, fill in the wave and number variables
+                        if (identifierType == IdentiferType.WaveNumber)
+                        {
+                            wave = displayIdentifier.Substring(0, waveLength);
+                            number = int.Parse(displayIdentifier.Substring(waveLength, displayIdentifier.Length - waveLength));
+                        }
                     }
                 }
             }

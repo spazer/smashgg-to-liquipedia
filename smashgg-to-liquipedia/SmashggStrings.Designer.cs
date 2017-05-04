@@ -268,6 +268,15 @@ namespace smashgg_to_liquipedia {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to entrantId.
+        /// </summary>
+        internal static string EntrantId {
+            get {
+                return ResourceManager.GetString("EntrantId", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to entrants.
         /// </summary>
         internal static string Entrants {
@@ -385,6 +394,15 @@ namespace smashgg_to_liquipedia {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to placement.
+        /// </summary>
+        internal static string Placement {
+            get {
+                return ResourceManager.GetString("Placement", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to playerIds.
         /// </summary>
         internal static string PlayerIds {
@@ -489,6 +507,24 @@ namespace smashgg_to_liquipedia {
         internal static string UrlPrefixTourney {
             get {
                 return ResourceManager.GetString("UrlPrefixTourney", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &amp;expand[]=seeds.
+        /// </summary>
+        internal static string UrlSuffixAdditionSeeds {
+            get {
+                return ResourceManager.GetString("UrlSuffixAdditionSeeds", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &amp;expand[]=standings.
+        /// </summary>
+        internal static string UrlSuffixAdditionStandings {
+            get {
+                return ResourceManager.GetString("UrlSuffixAdditionStandings", resourceCulture);
             }
         }
         

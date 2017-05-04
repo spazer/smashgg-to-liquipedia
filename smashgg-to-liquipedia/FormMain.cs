@@ -1023,12 +1023,16 @@ namespace smashgg_to_liquipedia
                 {
                     // Sort the list by wave and number
                     // Assume that if the first element has a wave and number, the rest do too
-                    if (phase.id[0].waveNumberDetected)
+                    if (phase.id[0].identifierType == PhaseGroup.IdentiferType.WaveNumber)
                     {
                         phase.id = phase.id.OrderBy(c => c.Wave).ThenBy(c => c.Number).ToList();
                     }
-                    else
+                    else if (phase.id[0].identifierType == PhaseGroup.IdentiferType.NumberOnly)
                     {
+                        phase.id = phase.id.OrderBy(c => Convert.ToInt32(c.DisplayIdentifier)).ToList();
+                    }
+                    else
+                    { 
                         phase.id = phase.id.OrderBy(c => c.DisplayIdentifier).ToList();
                     }
 
@@ -1081,7 +1085,7 @@ namespace smashgg_to_liquipedia
         {
             // Output to textbox
             // Wave headers
-            if (phase.id[0].waveNumberDetected)
+            if (phase.id[0].identifierType == PhaseGroup.IdentiferType.WaveNumber)
             {
                 if (lastWave != phase.id[phaseElement].Wave)
                 {
@@ -1097,7 +1101,7 @@ namespace smashgg_to_liquipedia
             }
 
             // Pool headers
-            if (phase.id[0].waveNumberDetected)
+            if (phase.id[0].identifierType == PhaseGroup.IdentiferType.WaveNumber)
             {
                 richTextBoxLpOutput.Text += "===" + LpStrings.SortStart + phase.id[phaseElement].Wave + phase.id[phaseElement].Number.ToString() + LpStrings.SortEnd + "===\r\n";
                 richTextBoxLpOutput.Text += LpStrings.GroupStart + "Bracket " + phase.id[phaseElement].Wave + phase.id[phaseElement].Number.ToString() + LpStrings.GroupStartWidth + "\r\n";
@@ -1127,9 +1131,9 @@ namespace smashgg_to_liquipedia
                                                 LpStrings.SlotFlag + currentPlayer.country +
                                                 LpStrings.SlotMWin + poolData[poolData.ElementAt(i).Key].MatchesWin +
                                                 LpStrings.SlotMLoss + poolData[poolData.ElementAt(i).Key].MatchesLoss;
-                if (radioButtonRR.Checked == true)
+                /*if (radioButtonRR.Checked == true)
                 {
-                    if (poolData[poolData.ElementAt(i).Key].MatchesWin == lastWin && poolData[poolData.ElementAt(i).Key].MatchesLoss == lastLoss)
+                    /*if (poolData[poolData.ElementAt(i).Key].MatchesWin == lastWin && poolData[poolData.ElementAt(i).Key].MatchesLoss == lastLoss)
                     {
                         richTextBoxLpOutput.Text += LpStrings.SlotPlace + lastRank;
                     }
@@ -1141,7 +1145,7 @@ namespace smashgg_to_liquipedia
                         lastLoss = poolData[poolData.ElementAt(i).Key].MatchesLoss;
                     }
                 }
-                else if (poolData[poolData.ElementAt(i).Key].rank != -99)
+                else */if (poolData[poolData.ElementAt(i).Key].rank != -99)
                 {
                     richTextBoxLpOutput.Text += LpStrings.SlotPlace + poolData[poolData.ElementAt(i).Key].rank;
                 }
@@ -1171,7 +1175,7 @@ namespace smashgg_to_liquipedia
 
             // Pool footers
             richTextBoxLpOutput.Text += LpStrings.GroupEnd + "\r\n";
-            if (phase.id[0].waveNumberDetected)     // Waves exist
+            if (phase.id[0].identifierType == PhaseGroup.IdentiferType.WaveNumber)     // Waves exist
             {
                 if (phaseElement + 1 >= phase.id.Count)
                 {
@@ -1210,7 +1214,7 @@ namespace smashgg_to_liquipedia
         {
             // Output to textbox
             // Wave headers
-            if (phase.id[0].waveNumberDetected)
+            if (phase.id[0].identifierType == PhaseGroup.IdentiferType.WaveNumber)
             {
                 if (lastWave != phase.id[phaseElement].Wave)
                 {
@@ -1226,7 +1230,7 @@ namespace smashgg_to_liquipedia
             }
 
             // Pool headers
-            if (phase.id[0].waveNumberDetected)
+            if (phase.id[0].identifierType == PhaseGroup.IdentiferType.WaveNumber)
             {
                 richTextBoxLpOutput.Text += LpStrings.SortStart + "===" + phase.id[phaseElement].Wave + phase.id[phaseElement].Number.ToString() + "===" + LpStrings.SortEnd + "\r\n";
                 richTextBoxLpOutput.Text += LpStrings.GroupStart + "Bracket " + phase.id[phaseElement].Wave + phase.id[phaseElement].Number.ToString() + LpStrings.GroupStartWidth + "\r\n";
@@ -1316,7 +1320,7 @@ namespace smashgg_to_liquipedia
 
             // Pool footers
             richTextBoxLpOutput.Text += LpStrings.GroupEnd + "\r\n";
-            if (phase.id[0].waveNumberDetected)     // Waves exist
+            if (phase.id[0].identifierType == PhaseGroup.IdentiferType.WaveNumber)     // Waves exist
             {
                 if (phaseElement + 1 >= phase.id.Count)
                 {
@@ -1359,7 +1363,7 @@ namespace smashgg_to_liquipedia
 
             // Get json for group
             string json;
-            if (!retrievePhaseGroup(phase_group, out json))
+            if (!retrievePhaseGroup(phase_group, out json, SmashggStrings.UrlSuffixAdditionSeeds + SmashggStrings.UrlSuffixAdditionStandings))
             {
                 richTextBoxLog.Text += "Error retrieving bracket " + phase_group + ".\r\n";
                 return false;
@@ -1418,6 +1422,11 @@ namespace smashgg_to_liquipedia
                             }
                         }
                     }
+                    // Take reported rankings for RR Brackets
+                    else if (poolType == PoolType.RoundRobin)
+                    {
+                        parser.GetRank(bracketJson.SelectToken("entities.standings"), entrantList);
+                    }
                 }
                 else if (set.winner == set.entrantID2)
                 {
@@ -1434,20 +1443,29 @@ namespace smashgg_to_liquipedia
                         record[set.entrantID2].AddGameLosses(set.entrant1wins);
                     }
 
-                    if (record[set.entrantID1].rank == 0 || set.lPlacement < record[set.entrantID1].rank)
+                    // DE Brackets will set ranks for players
+                    if (poolType == PoolType.Bracket)
                     {
-                        if (set.lPlacement != -99)
+                        if (record[set.entrantID1].rank == 0 || set.lPlacement < record[set.entrantID1].rank)
                         {
-                            record[set.entrantID1].rank = set.lPlacement;
+                            if (set.lPlacement != -99)
+                            {
+                                record[set.entrantID1].rank = set.lPlacement;
+                            }
+                        }
+
+                        if (record[set.entrantID2].rank == 0 || set.wPlacement < record[set.entrantID2].rank)
+                        {
+                            if (set.wPlacement != -99)
+                            {
+                                record[set.entrantID2].rank = set.wPlacement;
+                            }
                         }
                     }
-
-                    if (record[set.entrantID2].rank == 0 || set.wPlacement < record[set.entrantID2].rank)
+                    // Take reported rankings for RR Brackets
+                    else if (poolType == PoolType.RoundRobin)
                     {
-                        if (set.wPlacement != -99)
-                        {
-                            record[set.entrantID2].rank = set.wPlacement;
-                        }
+                        parser.GetRank(bracketJson.SelectToken("entities.standings"), entrantList);
                     }
                 }
             }
@@ -1463,7 +1481,19 @@ namespace smashgg_to_liquipedia
             }
 
             // Sort the entrants by their rank and W-L records
-            record = record.OrderBy(x => x.Value.rank).ThenByDescending(x => x.Value.MatchWinrate).ThenBy(x => x.Value.MatchesLoss).ThenByDescending(x => x.Value.MatchesWin).ThenByDescending(x => x.Value.GameWinrate).ToDictionary(x => x.Key, x => x.Value);
+            if (poolType == PoolType.Bracket)
+            {
+                record = record.OrderBy(x => x.Value.rank).ThenByDescending(x => x.Value.MatchWinrate).ThenBy(x => x.Value.MatchesLoss).ThenByDescending(x => x.Value.MatchesWin).ThenByDescending(x => x.Value.GameWinrate).ToDictionary(x => x.Key, x => x.Value);
+            }
+            else
+            {
+                foreach (int entrant in record.Keys)
+                {
+                    record[entrant].rank = entrantList[entrant].Placement;
+                }
+
+                record = record.OrderBy(x => x.Value.rank).ThenByDescending(x => x.Value.MatchWinrate).ThenBy(x => x.Value.MatchesLoss).ThenByDescending(x => x.Value.MatchesWin).ThenByDescending(x => x.Value.GameWinrate).ToDictionary(x => x.Key, x => x.Value);
+            }
 
             // Rank round robin entrants
             if (poolType == PoolType.RoundRobin)
@@ -1479,12 +1509,12 @@ namespace smashgg_to_liquipedia
                     {
                         if (record.ElementAt(i).Value.GameWinrate == lastWinrate)   // Equal winrates means you share the same rank
                         {
-                            record.ElementAt(i).Value.rank = lastRank;
+                            //record.ElementAt(i).Value.rank = lastRank;
                         }
                         else
                         {
-                            record.ElementAt(i).Value.rank = i + 1;
-                            lastRank = i + 1;
+                            /*record.ElementAt(i).Value.rank = i + 1;
+                            lastRank = i + 1;*/
                             lastMatchWin = record.ElementAt(i).Value.MatchesWin;
                             lastMatchLoss = record.ElementAt(i).Value.MatchesLoss;
                             lastWinrate = record.ElementAt(i).Value.GameWinrate;
@@ -1492,8 +1522,8 @@ namespace smashgg_to_liquipedia
                     }
                     else
                     {
-                        record.ElementAt(i).Value.rank = i + 1;
-                        lastRank = i + 1;
+                        /*record.ElementAt(i).Value.rank = i + 1;
+                        lastRank = i + 1;*/
                         lastMatchWin = record.ElementAt(i).Value.MatchesWin;
                         lastMatchLoss = record.ElementAt(i).Value.MatchesLoss;
                         lastWinrate = record.ElementAt(i).Value.GameWinrate;
@@ -1674,14 +1704,14 @@ namespace smashgg_to_liquipedia
         /// <summary>
         /// Retrieves phase_group json from smash.gg using their api
         /// </summary> 
-        private bool retrievePhaseGroup(int phaseGroup, out string json)
+        private bool retrievePhaseGroup(int phaseGroup, out string json, string optionalSuffix = "")
         {
             richTextBoxLog.Text += "Retrieving phase group " + phaseGroup;
 
             json = string.Empty;
             try
             {
-                WebRequest r = WebRequest.Create(SmashggStrings.UrlPrefixPhaseGroup + phaseGroup + SmashggStrings.UrlSuffixPhaseGroup);
+                WebRequest r = WebRequest.Create(SmashggStrings.UrlPrefixPhaseGroup + phaseGroup + SmashggStrings.UrlSuffixPhaseGroup + optionalSuffix);
                 WebResponse resp = r.GetResponse();
                 using (StreamReader sr = new StreamReader(resp.GetResponseStream()))
                 {

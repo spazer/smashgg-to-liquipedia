@@ -276,4 +276,16 @@
   <data name="SelectionValue" xml:space="preserve">
     <value>selectionValue</value>
   </data>
+  <data name="UrlSuffixAdditionSeeds" xml:space="preserve">
+    <value>&amp;expand[]=seeds</value>
+  </data>
+  <data name="UrlSuffixAdditionStandings" xml:space="preserve">
+    <value>&amp;expand[]=standings</value>
+  </data>
+  <data name="EntrantId" xml:space="preserve">
+    <value>entrantId</value>
+  </data>
+  <data name="Placement" xml:space="preserve">
+    <value>placement</value>
+  </data>
 </root>
