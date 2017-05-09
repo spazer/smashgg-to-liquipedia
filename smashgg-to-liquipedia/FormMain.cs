@@ -925,18 +925,21 @@ namespace smashgg_to_liquipedia
             {
                 foreach (Set set in roundList.ElementAt(i).Value)
                 {
-                    if (set.originalRound > 0)
+                    if (entrantList.ContainsKey(set.entrantID1))
                     {
-                        if (entrantList[set.entrantID1].Players[0].name.Length > wPadding)
+                        if (set.originalRound > 0)
                         {
-                            wPadding = entrantList[set.entrantID1].Players[0].name.Length;
+                            if (entrantList[set.entrantID1].Players[0].name.Length > wPadding)
+                            {
+                                wPadding = entrantList[set.entrantID1].Players[0].name.Length;
+                            }
                         }
-                    }
-                    else
-                    {
-                        if (entrantList[set.entrantID1].Players[0].name.Length > lPadding)
+                        else
                         {
-                            lPadding = entrantList[set.entrantID1].Players[0].name.Length;
+                            if (entrantList[set.entrantID1].Players[0].name.Length > lPadding)
+                            {
+                                lPadding = entrantList[set.entrantID1].Players[0].name.Length;
+                            }
                         }
                     }
                 }
@@ -966,7 +969,14 @@ namespace smashgg_to_liquipedia
             {
                 foreach (Set set in roundList.ElementAt(i).Value)
                 {
-                    //if (checkBoxFillUnfinished.Checked == false && set.state == 1) continue;
+                    if (!entrantList.ContainsKey(set.entrantID1))
+                    {
+                        continue;
+                    }
+                    if (!entrantList.ContainsKey(set.entrantID2))
+                    {
+                        continue;
+                    }
 
                     if (set.displayRound > 0)
                     {
@@ -1384,8 +1394,23 @@ namespace smashgg_to_liquipedia
             // Add data to each record based on set information
             foreach (Set set in setList)
             {
-                record[set.entrantID1].isinGroup = true;
-                record[set.entrantID2].isinGroup = true;
+                if (entrantList.ContainsKey(set.entrantID1))
+                {
+                    record[set.entrantID1].isinGroup = true;
+                }
+                else
+                {
+                    continue;
+                }
+
+                if (entrantList.ContainsKey(set.entrantID2))
+                {
+                    record[set.entrantID2].isinGroup = true;
+                }
+                else
+                {
+                    continue;
+                }
 
                 // Record match data for each player's record
                 if (set.winner == set.entrantID1)
@@ -1765,6 +1790,10 @@ namespace smashgg_to_liquipedia
                 for (int j = 0; j < roundList[i].Count; j++)
                 {
                     Set currentSet = roundList[i][j];
+
+                    // Skip rounds with missing entrants
+                    if (!entrantList.ContainsKey(currentSet.entrantID1)) continue;
+                    if (!entrantList.ContainsKey(currentSet.entrantID2)) continue;
 
                     // Try to load the match details dictionary if not done already
                     if (!loadedMatchDetailDictionary)
