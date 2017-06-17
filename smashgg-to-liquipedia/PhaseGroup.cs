@@ -60,11 +60,12 @@ namespace smashgg_to_liquipedia
                         }
 
                         // Ensure the rest of the identifier is a number
+                        identifierType = IdentiferType.WaveNumber;
                         for (int i = waveLength; i < displayIdentifier.Length; i++)
                         {
                             if (!char.IsDigit(displayIdentifier, i))
                             {
-                                identifierType = IdentiferType.WaveNumber;
+                                identifierType = IdentiferType.Other;
                             }
                         }
 

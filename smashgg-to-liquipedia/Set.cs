@@ -8,6 +8,8 @@ namespace smashgg_to_liquipedia
 {
     class Set
     {
+        public enum SetState { Unknown, NotStarted, Pending, Completed };
+
         public int id;
         public int entrantID1;
         public int entrantID2;
@@ -19,7 +21,7 @@ namespace smashgg_to_liquipedia
         public int originalRound;
         public int displayRound;
         public int match;
-        public int state;
+        private SetState state;
         public bool isGF;
 
         public int wPlacement;
@@ -31,5 +33,17 @@ namespace smashgg_to_liquipedia
 
         public List<int> entrant1chars;
         public List<int> entrant2chars;
+
+        public SetState State
+        {
+            get
+            {
+                return state;
+            }
+            set
+            {
+                state = value;
+            }
+        }
     }
 }

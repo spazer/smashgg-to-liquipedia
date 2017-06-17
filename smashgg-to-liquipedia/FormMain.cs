@@ -1663,13 +1663,14 @@ namespace smashgg_to_liquipedia
         private UrlNumberType parseURL(string url, UrlNumberType type, out int output)
         {
             string[] splitURL = url.Split(new string[1] { "/" }, StringSplitOptions.RemoveEmptyEntries);
+            int index = 0;
 
             // Try getting the phase_group if it is requested
             if (type == UrlNumberType.Phase_Group)
             {
                 // https://smash.gg/tournament/the-big-house-6/events/melee-singles/brackets/76014?per_page=20&filter=%7B%22phaseId%22%3A76014%2C%22id%22%3A241487%7D&sort_by=-startAt&order=-1&page=1
                 // Look for filter, phaseId, id
-                int index = url.IndexOf("filter=%7B");
+                index = url.IndexOf("filter=%7B");
                 if (index != -1)
                 {
                     if (url.IndexOf("phaseId%22") != -1)
@@ -1717,6 +1718,30 @@ namespace smashgg_to_liquipedia
                     if (int.TryParse(splitURL[i + 1], out output))
                     {
                         return UrlNumberType.Phase;
+                    }
+                }
+            }
+
+            // Get the phase as a fallback method #2
+            index = url.IndexOf("filter=%7B");
+            if (index != -1)
+            {
+                if (url.IndexOf("phaseId%22") != -1)
+                {
+                    int startPos = url.IndexOf("phaseId%22%3A", index);
+                    if (startPos != -1)
+                    {
+                        startPos += "phaseId%22%3A".Length;
+                        int endPos = url.IndexOf("%7D", startPos);
+
+                        if (endPos != -1)
+                        {
+                            // Take the number
+                            if (int.TryParse(url.Substring(startPos, endPos - startPos), out output))
+                            {
+                                return UrlNumberType.Phase;
+                            }
+                        }
                     }
                 }
             }
@@ -1867,39 +1892,45 @@ namespace smashgg_to_liquipedia
                             // smash.gg switches P1 and P2 in the event of a bracket reset
                             if (currentSet.isGF && currentSet.match == 2)
                             {
-                                if (currentSet.entrant1wins != -99 && currentSet.entrant2wins != -99)
+                                if (checkBoxUnfinished.Checked || currentSet.State == Set.SetState.Completed)
                                 {
-                                    FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P2 + LpStrings.Score, currentSet.entrant1wins.ToString());
-                                    FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P1 + LpStrings.Score, currentSet.entrant2wins.ToString());
-                                }
-                                else
-                                {
-                                    if (currentSet.winner == currentSet.entrantID1)
+                                    if (currentSet.entrant1wins != -99 && currentSet.entrant2wins != -99)
                                     {
-                                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P2 + LpStrings.Score, "{{win}}");
+                                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P2 + LpStrings.Score, currentSet.entrant1wins.ToString());
+                                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P1 + LpStrings.Score, currentSet.entrant2wins.ToString());
                                     }
-                                    else if (currentSet.winner == currentSet.entrantID2)
+                                    else
                                     {
-                                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P1 + LpStrings.Score, "{{win}}");
+                                        if (currentSet.winner == currentSet.entrantID1)
+                                        {
+                                            FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P2 + LpStrings.Score, "{{win}}");
+                                        }
+                                        else if (currentSet.winner == currentSet.entrantID2)
+                                        {
+                                            FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P1 + LpStrings.Score, "{{win}}");
+                                        }
                                     }
                                 }
                             }
                             else
                             {
-                                if (currentSet.entrant1wins != -99 && currentSet.entrant2wins != -99)
+                                if (checkBoxUnfinished.Checked || currentSet.State == Set.SetState.Completed)
                                 {
-                                    FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P1 + LpStrings.Score, currentSet.entrant1wins.ToString());
-                                    FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P2 + LpStrings.Score, currentSet.entrant2wins.ToString());
-                                }
-                                else
-                                {
-                                    if (currentSet.winner == currentSet.entrantID1)
+                                    if (currentSet.entrant1wins != -99 && currentSet.entrant2wins != -99)
                                     {
-                                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P1 + LpStrings.Score, "{{win}}");
+                                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P1 + LpStrings.Score, currentSet.entrant1wins.ToString());
+                                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P2 + LpStrings.Score, currentSet.entrant2wins.ToString());
                                     }
-                                    else if (currentSet.winner == currentSet.entrantID2)
+                                    else
                                     {
-                                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P2 + LpStrings.Score, "{{win}}");
+                                        if (currentSet.winner == currentSet.entrantID1)
+                                        {
+                                            FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P1 + LpStrings.Score, "{{win}}");
+                                        }
+                                        else if (currentSet.winner == currentSet.entrantID2)
+                                        {
+                                            FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P2 + LpStrings.Score, "{{win}}");
+                                        }
                                     }
                                 }
                             }
@@ -1937,13 +1968,16 @@ namespace smashgg_to_liquipedia
                         }
 
                         // Fill in match details if available
-                        if (currentSet.isGF && currentSet.match == 2 && currentSet.games != null && checkBoxMatchDetails.Checked)
+                        if (checkBoxUnfinished.Checked || currentSet.State == Set.SetState.Completed)
                         {
-                            FillMatchDetailsSingles(bracketSide, outputRound, outputSet, currentSet, ref bracketText, true);
-                        }
-                        else if (currentSet.games != null && checkBoxMatchDetails.Checked)
-                        {
-                            FillMatchDetailsSingles(bracketSide, outputRound, outputSet, currentSet, ref bracketText, false);
+                            if (currentSet.isGF && currentSet.match == 2 && currentSet.games != null && checkBoxMatchDetails.Checked)
+                            {
+                                FillMatchDetailsSingles(bracketSide, outputRound, outputSet, currentSet, ref bracketText, true);
+                            }
+                            else if (currentSet.games != null && checkBoxMatchDetails.Checked)
+                            {
+                                FillMatchDetailsSingles(bracketSide, outputRound, outputSet, currentSet, ref bracketText, false);
+                            }
                         }
                     }
                 }
@@ -1968,6 +2002,14 @@ namespace smashgg_to_liquipedia
             MatchCollection rgxMatches = rgx.Matches(bracketText);
 
             if (rgxMatches.Count == 0)
+            {
+                return;
+            }
+
+            // If filled out details already exist for this match, exit
+            Regex detailRegex = new Regex("\\|" + identifier + @"(p[12])?(char|stock|win|stage)([1-9]=)[a-zA-Z]");
+            MatchCollection detailMatches = detailRegex.Matches(bracketText);
+            if (detailMatches.Count > 0)
             {
                 return;
             }
@@ -2152,7 +2194,10 @@ namespace smashgg_to_liquipedia
                     }
                 }
 
-                bracketText = bracketText.Insert(insertionlocation, insertiontext + "\r\n");
+                if (insertiontext.Trim() != string.Empty)
+                {
+                    bracketText = bracketText.Insert(insertionlocation, insertiontext + "\r\n");
+                }
             }
         }
 
@@ -2763,6 +2808,7 @@ namespace smashgg_to_liquipedia
             checkBoxSMW.Enabled = false;
             checkBoxFillByeWins.Enabled = false;
             checkBoxMatchDetails.Enabled = false;
+            checkBoxUnfinished.Enabled = false;
 
             numericUpDownAdvanceWinners.Enabled = false;
             numericUpDownAdvanceWinners.Enabled = false;
@@ -2815,6 +2861,7 @@ namespace smashgg_to_liquipedia
             checkBoxSMW.Enabled = true;
             checkBoxFillByeWins.Enabled = true;
             checkBoxMatchDetails.Enabled = true;
+            checkBoxUnfinished.Enabled = true;
 
             numericUpDownAdvanceWinners.Enabled = true;
             numericUpDownAdvanceWinners.Enabled = true;

@@ -90,6 +90,7 @@
             this.richTextBoxExLpWinnersBracket = new RichTextBoxEx();
             this.richTextBoxExLpLosersBracket = new RichTextBoxEx();
             this.checkBoxMatchDetails = new System.Windows.Forms.CheckBox();
+            this.checkBoxUnfinished = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAdvanceWinners)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabPageSingles.SuspendLayout();
@@ -707,11 +708,22 @@
             this.checkBoxMatchDetails.Text = "Match Details";
             this.checkBoxMatchDetails.UseVisualStyleBackColor = true;
             // 
+            // checkBoxUnfinished
+            // 
+            this.checkBoxUnfinished.AutoSize = true;
+            this.checkBoxUnfinished.Location = new System.Drawing.Point(709, 169);
+            this.checkBoxUnfinished.Name = "checkBoxUnfinished";
+            this.checkBoxUnfinished.Size = new System.Drawing.Size(112, 17);
+            this.checkBoxUnfinished.TabIndex = 26;
+            this.checkBoxUnfinished.Text = "Include unfinished";
+            this.checkBoxUnfinished.UseVisualStyleBackColor = true;
+            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(948, 566);
+            this.Controls.Add(this.checkBoxUnfinished);
             this.Controls.Add(this.checkBoxMatchDetails);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
@@ -763,7 +775,7 @@
             this.Controls.Add(this.numericUpDownWinnersEnd);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "FormMain";
-            this.Text = "Smash.gg to Liquipedia v2.7.3";
+            this.Text = "Smash.gg to Liquipedia v2.7.4";
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAdvanceWinners)).EndInit();
             this.tabControl1.ResumeLayout(false);
             this.tabPageSingles.ResumeLayout(false);
@@ -850,6 +862,7 @@
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.CheckBox checkBoxMatchDetails;
+        private System.Windows.Forms.CheckBox checkBoxUnfinished;
     }
 }
 

@@ -144,7 +144,7 @@ namespace smashgg_to_liquipedia
                 newSet.entrant1wins = GetIntParameter(set, SmashggStrings.Entrant1Score);
                 newSet.entrant2wins = GetIntParameter(set, SmashggStrings.Entrant2Score);
                 newSet.winner = GetIntParameter(set, SmashggStrings.Winner);
-                newSet.state = GetIntParameter(set, SmashggStrings.State);
+                newSet.State = (Set.SetState)GetIntParameter(set, SmashggStrings.State);
 
                 if (!set[SmashggStrings.IsGF].IsNullOrEmpty())
                 {
