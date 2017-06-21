@@ -219,4 +219,16 @@
   <data name="Stock" xml:space="preserve">
     <value>stock</value>
   </data>
+  <data name="MatchListEnd" xml:space="preserve">
+    <value>{{Match list end}}</value>
+  </data>
+  <data name="MatchListStart" xml:space="preserve">
+    <value>{{Match list start</value>
+  </data>
+  <data name="MatchStages" xml:space="preserve">
+    <value>{{Match stages</value>
+  </data>
+  <data name="MatchStagesEnd" xml:space="preserve">
+    <value>}}</value>
+  </data>
 </root>

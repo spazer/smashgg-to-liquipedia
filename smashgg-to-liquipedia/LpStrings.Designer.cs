@@ -205,6 +205,42 @@ namespace smashgg_to_liquipedia {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {{Match list end}}.
+        /// </summary>
+        internal static string MatchListEnd {
+            get {
+                return ResourceManager.GetString("MatchListEnd", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {{Match list start.
+        /// </summary>
+        internal static string MatchListStart {
+            get {
+                return ResourceManager.GetString("MatchListStart", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {{Match stages.
+        /// </summary>
+        internal static string MatchStages {
+            get {
+                return ResourceManager.GetString("MatchStages", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to }}.
+        /// </summary>
+        internal static string MatchStagesEnd {
+            get {
+                return ResourceManager.GetString("MatchStagesEnd", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to p1.
         /// </summary>
         internal static string P1 {
