@@ -236,6 +236,7 @@ namespace smashgg_to_liquipedia
                 retrievedDataType = EventType.Doubles;
             }
 
+            richTextBoxLpOutput.Text = richTextBoxLpOutput.Text.Trim();
             UnlockControls();
         }
 
@@ -358,7 +359,7 @@ namespace smashgg_to_liquipedia
                 }
             }
 
-            richTextBoxLpOutput.Text = output;
+            richTextBoxLpOutput.Text = output.Trim();
 
             buttonRegexReplace_Click(sender, e);
         }
@@ -696,6 +697,7 @@ namespace smashgg_to_liquipedia
                 richTextBoxLpOutput.Text += "{{prize pool end doubles}}\r\n";
             }
 
+            richTextBoxLpOutput.Text = richTextBoxLpOutput.Text.Trim();
             richTextBoxLog.Text += "Done.\r\n";
         }
 
