@@ -1776,30 +1776,51 @@ namespace smashgg_to_liquipedia
                     else if (currentSet.entrantID1 == PLAYER_BYE)
                     {
                         // Fill in player 1 as a bye if fill byes is checked
-                        if (checkBoxFillByes.Checked == true) FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P1, "Bye");
+                        if (checkBoxFillByes.Checked == true)
+                        {
+                            if (!checkBoxR1Only.Checked || (checkBoxR1Only.Checked && outputRound == 1))
+                            {
+                                FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P1, "Bye");
+                            }
+                        }
 
-                        // Give player 2 a checkmark
+                        // Fill player 2 info
                         FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P2, entrantList[currentSet.entrantID2].Players[0].name);
                         FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P2 + LpStrings.Flag, entrantList[currentSet.entrantID2].Players[0].country);
+
+                        // Give player 2 a checkmark
                         if (checkBoxFillByeWins.Checked == true)
                         {
-                            FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P2 + LpStrings.Score, LpStrings.Checkmark);
-                            FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.Win, "2");
+                            if (!checkBoxR1Only.Checked || (checkBoxR1Only.Checked && outputRound == 1))
+                            {
+                                FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P2 + LpStrings.Score, LpStrings.Checkmark);
+                                FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.Win, "2");
+                            }
                         }
                     }
                     else if (currentSet.entrantID2 == PLAYER_BYE)
                     {
                         // Fill in player 2 as a bye
-                        if (checkBoxFillByes.Checked == true) FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P2, "Bye");
+                        if (checkBoxFillByes.Checked == true)
+                        {
+                            if (!checkBoxR1Only.Checked || (checkBoxR1Only.Checked && outputRound == 1))
+                            {
+                                FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P2, "Bye");
+                            }
+                        }
 
-                        // Give player 1 a checkmark
+                        // Fill player 1 info
                         FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P1, entrantList[currentSet.entrantID1].Players[0].name);
                         FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P1 + LpStrings.Flag, entrantList[currentSet.entrantID1].Players[0].country);
 
+                        // Give player 1 a checkmark
                         if (checkBoxFillByeWins.Checked == true)
                         {
-                            FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P1 + LpStrings.Score, LpStrings.Checkmark);
-                            FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.Win, "1");
+                            if (!checkBoxR1Only.Checked || (checkBoxR1Only.Checked && outputRound == 1))
+                            {
+                                FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P1 + LpStrings.Score, LpStrings.Checkmark);
+                                FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.Win, "1");
+                            }
                         }
                     }
                     else
@@ -2753,6 +2774,7 @@ namespace smashgg_to_liquipedia
             buttonGroupTable.Enabled = false;
 
             checkBoxFillByes.Enabled = false;
+            checkBoxR1Only.Enabled = false;
             checkBoxGuessFinal.Enabled = false;
             checkBoxLockLosers.Enabled = false;
             checkBoxLockWinners.Enabled = false;
@@ -2807,6 +2829,7 @@ namespace smashgg_to_liquipedia
             buttonGroupTable.Enabled = true;
 
             checkBoxFillByes.Enabled = true;
+            checkBoxR1Only.Enabled = true;
             checkBoxGuessFinal.Enabled = true;
             checkBoxLockLosers.Enabled = true;
             checkBoxLockWinners.Enabled = true;
