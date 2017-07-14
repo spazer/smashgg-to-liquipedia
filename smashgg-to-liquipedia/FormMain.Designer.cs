@@ -91,6 +91,7 @@
             this.richTextBoxExLpLosersBracket = new RichTextBoxEx();
             this.checkBoxMatchDetails = new System.Windows.Forms.CheckBox();
             this.checkBoxUnfinished = new System.Windows.Forms.CheckBox();
+            this.buttonGroupTable = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAdvanceWinners)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabPageSingles.SuspendLayout();
@@ -234,16 +235,16 @@
             // 
             // richTextBoxLog
             // 
-            this.richTextBoxLog.Location = new System.Drawing.Point(709, 368);
+            this.richTextBoxLog.Location = new System.Drawing.Point(709, 407);
             this.richTextBoxLog.Name = "richTextBoxLog";
-            this.richTextBoxLog.Size = new System.Drawing.Size(225, 161);
+            this.richTextBoxLog.Size = new System.Drawing.Size(225, 122);
             this.richTextBoxLog.TabIndex = 4;
             this.richTextBoxLog.Text = "";
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(706, 348);
+            this.label1.Location = new System.Drawing.Point(710, 391);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(28, 13);
             this.label1.TabIndex = 5;
@@ -718,11 +719,22 @@
             this.checkBoxUnfinished.Text = "Include unfinished";
             this.checkBoxUnfinished.UseVisualStyleBackColor = true;
             // 
+            // buttonGroupTable
+            // 
+            this.buttonGroupTable.Location = new System.Drawing.Point(716, 344);
+            this.buttonGroupTable.Name = "buttonGroupTable";
+            this.buttonGroupTable.Size = new System.Drawing.Size(75, 23);
+            this.buttonGroupTable.TabIndex = 27;
+            this.buttonGroupTable.Text = "Group Table";
+            this.buttonGroupTable.UseVisualStyleBackColor = true;
+            this.buttonGroupTable.Click += new System.EventHandler(this.buttonGroupTable_Click);
+            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(948, 566);
+            this.Controls.Add(this.buttonGroupTable);
             this.Controls.Add(this.checkBoxUnfinished);
             this.Controls.Add(this.checkBoxMatchDetails);
             this.Controls.Add(this.panel2);
@@ -775,7 +787,7 @@
             this.Controls.Add(this.numericUpDownWinnersEnd);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "FormMain";
-            this.Text = "Smash.gg to Liquipedia v2.8.0";
+            this.Text = "Smash.gg to Liquipedia v3.0.0";
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAdvanceWinners)).EndInit();
             this.tabControl1.ResumeLayout(false);
             this.tabPageSingles.ResumeLayout(false);
@@ -863,6 +875,7 @@
         private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.CheckBox checkBoxMatchDetails;
         private System.Windows.Forms.CheckBox checkBoxUnfinished;
+        private System.Windows.Forms.Button buttonGroupTable;
     }
 }
 
