@@ -1261,7 +1261,7 @@ namespace smashgg_to_liquipedia
             }
 
             // Output pool
-            OutputDoublesGroup(title, poolData);
+            richTextBoxLpOutput.Text += OutputDoublesGroup(title, poolData);
 
             // Pool footers
             if (phase.id[0].identifierType == PhaseGroup.IdentiferType.WaveNumber)     // Waves exist
