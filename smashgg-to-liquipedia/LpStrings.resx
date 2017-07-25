@@ -231,4 +231,7 @@
   <data name="MatchStagesEnd" xml:space="preserve">
     <value>}}</value>
   </data>
+  <data name="SlotPbg" xml:space="preserve">
+    <value>|pbg=</value>
+  </data>
 </root>

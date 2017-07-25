@@ -12,6 +12,8 @@ namespace smashgg_to_liquipedia
     {
         static int PLAYER_BYE = -1;
 
+        public enum State { Unknown, NotStarted, Pending, Completed };
+
         Dictionary<string, string> flagList = new Dictionary<string, string>();
 
         /// <summary>
@@ -144,7 +146,7 @@ namespace smashgg_to_liquipedia
                 newSet.entrant1wins = GetIntParameter(set, SmashggStrings.Entrant1Score);
                 newSet.entrant2wins = GetIntParameter(set, SmashggStrings.Entrant2Score);
                 newSet.winner = GetIntParameter(set, SmashggStrings.Winner);
-                newSet.State = (Set.SetState)GetIntParameter(set, SmashggStrings.State);
+                newSet.State = (State)GetIntParameter(set, SmashggStrings.State);
 
                 if (!set[SmashggStrings.IsGF].IsNullOrEmpty())
                 {
@@ -165,6 +167,10 @@ namespace smashgg_to_liquipedia
                 newSet.displayRound = GetIntParameter(set, SmashggStrings.DisplayRound);
                 newSet.entrant1PrereqId = GetIntParameter(set, SmashggStrings.Entrant1PrereqId);
                 newSet.entrant2PrereqId = GetIntParameter(set, SmashggStrings.Entrant2PrereqId);
+
+                // Progression identifiers
+                newSet.wProgressingPhaseGroupId = GetIntParameter(set, SmashggStrings.wProgressingPhaseGroup);
+                newSet.lProgressingPhaseGroupId = GetIntParameter(set, SmashggStrings.lProgressingPhaseGroup);
 
                 // Get game ID
                 newSet.gameId = GetIntParameter(set, SmashggStrings.GameId);
@@ -195,35 +201,6 @@ namespace smashgg_to_liquipedia
                     matchCountLosers[round - 1]++;
                     newSet.match = matchCountLosers[round - 1];
                 }
-
-                // Get character lists for entrants
-                /*JToken charlist = set.SelectToken(SmashggStrings.Entrant1CharList);
-                if (charlist != null)
-                {
-                    List<int> chars = new List<int>();
-
-                    foreach (JToken entry in charlist)
-                    {
-                        chars.Add(entry.Value<int>());
-                    }
-
-                    newSet.entrant1chars = chars;
-                }
-
-                charlist = set.SelectToken(SmashggStrings.Entrant2CharList);
-                if (charlist != null)
-                {
-                    List<int> chars = new List<int>();
-
-                    foreach (JToken entry in charlist)
-                    {
-                        chars.Add(entry.Value<int>());
-                    }
-
-                    newSet.entrant2chars = chars;
-                }*/
-
-
 
                 // Make sure match details list is populated
                 JToken sourceGames = set.SelectToken(SmashggStrings.Games);
@@ -262,10 +239,6 @@ namespace smashgg_to_liquipedia
                         newGame.winner = GetIntParameter(gameData, SmashggStrings.Winner);
                         newGame.stage = GetIntParameter(gameData, SmashggStrings.Stage);
                         newGame.gameOrder = gameData.SelectToken(SmashggStrings.GameOrder).Value<string>();
-
-                        /*newGame.entrant1p2char = GetIntParameter(gameData, SmashggStrings.Entrant1P2char);
-                        newGame.entrant2p1char = GetIntParameter(gameData, SmashggStrings.Entrant2P1char);
-                        newGame.entrant2p2char = GetIntParameter(gameData, SmashggStrings.Entrant2P2char);*/
 
                         newGame.entrant1p1stocks = GetIntParameter(gameData, SmashggStrings.Entrant1P1stocks);
                         newGame.entrant1p2stocks = GetIntParameter(gameData, SmashggStrings.Entrant1P2stocks);
@@ -354,6 +327,16 @@ namespace smashgg_to_liquipedia
             }
 
             return true;
+        }
+
+        /// <summary>
+        /// Returns the state of the retrieved phase group
+        /// </summary>
+        /// <param name="input">JSON token</param>
+        /// <returns>State of the set</returns>
+        public State GetPhaseGroupState(JToken input)
+        {
+            return (State)GetIntParameter(input, SmashggStrings.State);
         }
 
         /// <summary>

@@ -8,6 +8,7 @@ namespace smashgg_to_liquipedia
 {
     class Entrant
     {
+        public string name;
         private List<Player> players = new List<Player>();
         private int placement;
 

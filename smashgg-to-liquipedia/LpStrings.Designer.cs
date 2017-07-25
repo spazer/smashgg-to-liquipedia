@@ -313,6 +313,15 @@ namespace smashgg_to_liquipedia {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to |pbg=.
+        /// </summary>
+        internal static string SlotPbg {
+            get {
+                return ResourceManager.GetString("SlotPbg", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to |place=.
         /// </summary>
         internal static string SlotPlace {

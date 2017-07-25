@@ -5,14 +5,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace smashgg_to_liquipedia
+namespace smashgg_to_liquipedia.Liquipedia
 {
-    public class LiquipediaBracket
+    public class LpBracket
     {
         private string header;
         private string bracket;
 
-        public LiquipediaBracket(string headerText, string bracketText)
+        public LpBracket(string headerText, string bracketText)
         {
             header = headerText;
             bracket = bracketText;

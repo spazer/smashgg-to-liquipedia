@@ -16,6 +16,7 @@ namespace smashgg_to_liquipedia
         private double gameWinrate;
         private double matchWinrate;
         public bool isinGroup;
+        private bool matchesComplete;
 
         public PoolRecord()
         {
@@ -27,6 +28,7 @@ namespace smashgg_to_liquipedia
             matchWinrate = -1;
             gameWinrate = -1;
             isinGroup = false;
+            matchesComplete = false;
         }
 
         public void AddGameWins(int count)
@@ -107,6 +109,12 @@ namespace smashgg_to_liquipedia
         public int MatchesLoss
         {
             get { return matchesLoss; }
+        }
+
+        public bool MatchesComplete
+        {
+            get { return matchesComplete; }
+            set { matchesComplete = value; }
         }
     }
 }

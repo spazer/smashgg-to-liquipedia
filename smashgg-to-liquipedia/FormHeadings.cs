@@ -17,7 +17,7 @@ namespace smashgg_to_liquipedia
         public string finalHeader;
         public string finalBracket;
 
-        public FormHeadings(ref LiquipediaBracket winners, ref LiquipediaBracket losers, ref LiquipediaBracket finals)
+        public FormHeadings(ref Liquipedia.LpBracket winners, ref Liquipedia.LpBracket losers, ref Liquipedia.LpBracket finals)
         {
             InitializeComponent();
 

@@ -68,6 +68,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Consts.cs" />
     <Compile Include="FormHeadings.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -92,7 +93,10 @@
       <DependentUpon>FormMain.cs</DependentUpon>
     </Compile>
     <Compile Include="Game.cs" />
-    <Compile Include="LiquipediaBracket.cs" />
+    <Compile Include="IFormMain.cs" />
+    <Compile Include="Liquipedia\GroupTables.cs" />
+    <Compile Include="Liquipedia\LpBracket.cs" />
+    <Compile Include="Liquipedia\LpOutput.cs" />
     <Compile Include="LpStrings.Designer.cs">
       <DependentUpon>LpStrings.resx</DependentUpon>
       <DesignTime>True</DesignTime>

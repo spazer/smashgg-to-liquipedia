@@ -288,4 +288,10 @@
   <data name="Placement" xml:space="preserve">
     <value>placement</value>
   </data>
+  <data name="lProgressingPhaseGroup" xml:space="preserve">
+    <value>lProgressingPhaseGroupId</value>
+  </data>
+  <data name="wProgressingPhaseGroup" xml:space="preserve">
+    <value>wProgressingPhaseGroupId</value>
+  </data>
 </root>

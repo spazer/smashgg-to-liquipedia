@@ -358,6 +358,15 @@ namespace smashgg_to_liquipedia {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to lProgressingPhaseGroupId.
+        /// </summary>
+        internal static string lProgressingPhaseGroup {
+            get {
+                return ResourceManager.GetString("lProgressingPhaseGroup", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to mutations.
         /// </summary>
         internal static string Mutations {
@@ -570,6 +579,15 @@ namespace smashgg_to_liquipedia {
         internal static string wPlace {
             get {
                 return ResourceManager.GetString("wPlace", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to wProgressingPhaseGroupId.
+        /// </summary>
+        internal static string wProgressingPhaseGroup {
+            get {
+                return ResourceManager.GetString("wProgressingPhaseGroup", resourceCulture);
             }
         }
     }
