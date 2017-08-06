@@ -139,7 +139,6 @@ namespace smashgg_to_liquipedia
 
         enum UrlNumberType { Phase, Phase_Group, None }
         enum EventType { Singles, Doubles, None }
-        enum PoolType { Bracket, RoundRobin }
         public enum BracketSide { Winners, Losers }
 
         Dictionary<int, Entrant> entrantList = new Dictionary<int, Entrant>();
@@ -151,7 +150,7 @@ namespace smashgg_to_liquipedia
         JObject tournamentStructure;
         string tournament = string.Empty;
         EventType retrievedDataType = EventType.None;
-        string log;
+        Entrant.EntrantType entrantType;
 
         int global_phase_group = 0;
 
@@ -174,9 +173,6 @@ namespace smashgg_to_liquipedia
 
             richTextBoxExLpWinnersBracket.Cue = FormStrings.CuetextLpWinners;
             richTextBoxExLpLosersBracket.Cue = FormStrings.CuetextLpLosers;
-
-            richTextBoxExRegexFind.Cue = FormStrings.CuetextRegexFind;
-            richTextBoxExRegexReplace.Cue = FormStrings.CuetextRegexReplace;
 
             swBracket = new Liquipedia.LpBracket(WINNERS_HEADER, string.Empty);
             slBracket = new Liquipedia.LpBracket(LOSERS_HEADER, string.Empty);
@@ -254,7 +250,7 @@ namespace smashgg_to_liquipedia
         {
             string output = string.Empty;
             string finalBracketOutput = string.Empty;
-            Liquipedia.LpOutput lpout = new Liquipedia.LpOutput(ref entrantList, ref setList, ref roundList);
+            Liquipedia.LpOutput lpout = new Liquipedia.LpOutput(ref entrantList, ref setList, ref roundList, ref entrantType);
 
             if (retrievedDataType == EventType.Doubles)
             {
@@ -370,9 +366,8 @@ namespace smashgg_to_liquipedia
                 }
             }
 
+            richTextBoxLog.Text += lpout.Log;
             richTextBoxLpOutput.Text = output.Trim();
-
-            buttonRegexReplace_Click(sender, e);
         }
 
         /// <summary>
@@ -390,7 +385,7 @@ namespace smashgg_to_liquipedia
 
             string output = string.Empty;
             string finalBracketOutput = string.Empty;
-            Liquipedia.LpOutput lpout = new Liquipedia.LpOutput(ref entrantList, ref setList, ref roundList);
+            Liquipedia.LpOutput lpout = new Liquipedia.LpOutput(ref entrantList, ref setList, ref roundList, ref entrantType);
 
             if (checkBoxWinners.Checked == true)
             {
@@ -488,35 +483,7 @@ namespace smashgg_to_liquipedia
             }
 
             richTextBoxLpOutput.Text = output;
-
-            buttonRegexReplace_Click(sender, e);
-        }
-
-        /// <summary>
-        /// Performs regex replacement on the liquipedia output textbox
-        /// </summary>
-        /// <param name="sender">N/A</param>
-        /// <param name="e">N/A</param>
-        private void buttonRegexReplace_Click(object sender, EventArgs e)
-        {
-            if (richTextBoxExRegexFind.Text != FormStrings.CuetextRegexFind)
-            {
-                string replace = string.Empty;
-                if (richTextBoxExRegexReplace.Text != FormStrings.CuetextRegexReplace)
-                {
-                    replace = richTextBoxExRegexReplace.Text;
-                }
-
-                if (Regex.IsMatch(richTextBoxLpOutput.Text, richTextBoxExRegexFind.Text))
-                {
-                    richTextBoxLpOutput.Text = Regex.Replace(richTextBoxLpOutput.Text, richTextBoxExRegexFind.Text, replace);
-                    richTextBoxLog.Text += "Match(es) found.\r\n";
-                }
-                else
-                {
-                    richTextBoxLog.Text += "No regex match found.\r\n";
-                }
-            }
+            richTextBoxLog.Text += lpout.Log;
         }
 
         /// <summary>
@@ -721,10 +688,26 @@ namespace smashgg_to_liquipedia
         private void buttonGroupTable_Click(object sender, EventArgs e)
         {
             string output = string.Empty;
-            Liquipedia.LpOutput lpout = new Liquipedia.LpOutput(ref entrantList, ref setList, ref roundList);
+            Liquipedia.LpOutput lpout = new Liquipedia.LpOutput(ref entrantList, ref setList, ref roundList, ref entrantType);
 
             Dictionary<int, PoolRecord> poolData = new Dictionary<int, PoolRecord>();
             smashgg parser = new smashgg();
+
+            // Set the pool type
+            PoolRecord.PoolType poolType;
+            if (radioButtonBracket.Checked)
+            {
+                poolType = PoolRecord.PoolType.Bracket;
+            }
+            else if (radioButtonRR.Checked)
+            {
+                poolType = PoolRecord.PoolType.RoundRobin;
+            }
+            else
+            {
+                richTextBoxLog.Text += "Specify a bracket type.\r\n";
+                return;
+            }
 
             bool foundMatch = false;
             smashgg.State phaseGroupState = smashgg.State.Unknown;
@@ -735,18 +718,9 @@ namespace smashgg_to_liquipedia
                 {
                     if (phase.id[i].id == global_phase_group)
                     {
-                        if (radioButtonBracket.Checked)
-                        {
-                            GeneratePoolData(global_phase_group, parser, PoolType.Bracket, ref poolData, ref phaseGroupState);
-                            title = phase.id[i].DisplayIdentifier;
-                            foundMatch = true;
-                        }
-                        else
-                        {
-                            GeneratePoolData(global_phase_group, parser, PoolType.RoundRobin, ref poolData, ref phaseGroupState);
-                            title = phase.id[i].DisplayIdentifier;
-                            foundMatch = true;
-                        }
+                        GeneratePoolData(global_phase_group, parser, poolType, ref poolData, ref phaseGroupState);
+                        title = phase.id[i].DisplayIdentifier;
+                        foundMatch = true;
 
                         break;
                     }
@@ -757,16 +731,15 @@ namespace smashgg_to_liquipedia
 
             if (retrievedDataType == EventType.Singles)
             {
-                output = lpout.OutputSinglesGroup(title, poolData, phaseGroupState, (int)numericUpDownAdvanceWinners.Value, (int)numericUpDownAdvanceLosers.Value, checkBoxMatchDetails.Checked);
+                output = lpout.OutputSinglesGroup(title, poolData, phaseGroupState, (int)numericUpDownAdvanceWinners.Value, (int)numericUpDownAdvanceLosers.Value, checkBoxMatchDetails.Checked, poolType);
             }
             else if (retrievedDataType == EventType.Doubles)
             {
-                output = lpout.OutputDoublesGroup(title, poolData, phaseGroupState, (int)numericUpDownAdvanceWinners.Value, (int)numericUpDownAdvanceLosers.Value, checkBoxMatchDetails.Checked);
+                output = lpout.OutputDoublesGroup(title, poolData, phaseGroupState, (int)numericUpDownAdvanceWinners.Value, (int)numericUpDownAdvanceLosers.Value, checkBoxMatchDetails.Checked, poolType);
             }
 
             richTextBoxLpOutput.Text = output.Trim();
-
-            buttonRegexReplace_Click(sender, e);
+            richTextBoxLog.Text += lpout.Log;
         }
 
         /// <summary>
@@ -931,7 +904,7 @@ namespace smashgg_to_liquipedia
 
             // Fill entrant and set lists
             smashgg parser = new smashgg();
-            if (!parser.GetEntrants(bracketJson.SelectToken(SmashggStrings.Entities + "." + SmashggStrings.Entrants), ref entrantList, playerdb))
+            if (!parser.GetEntrants(bracketJson.SelectToken(SmashggStrings.Entities + "." + SmashggStrings.Entrants), ref entrantList, playerdb, entrantType))
             {
                 richTextBoxLog.Text += "No entrants detected.\r\n";
                 return;
@@ -1137,22 +1110,31 @@ namespace smashgg_to_liquipedia
                         Dictionary<int, PoolRecord> poolData = new Dictionary<int, PoolRecord>();
                         smashgg.State groupState = smashgg.State.Unknown;
 
+                        // Set the pool type
+                        PoolRecord.PoolType poolType;
                         if (radioButtonBracket.Checked)
                         {
-                            if (!GeneratePoolData(phase.id[j].id, parser, PoolType.Bracket, ref poolData, ref groupState)) continue;
+                            poolType = PoolRecord.PoolType.Bracket;
+                        }
+                        else if (radioButtonRR.Checked)
+                        {
+                            poolType = PoolRecord.PoolType.RoundRobin;
                         }
                         else
                         {
-                            if (!GeneratePoolData(phase.id[j].id, parser, PoolType.RoundRobin, ref poolData, ref groupState)) continue;
+                            richTextBoxLog.Text += "Specify a bracket type.\r\n";
+                            return;
                         }
+
+                        if (!GeneratePoolData(phase.id[j].id, parser, poolType, ref poolData, ref groupState)) continue;
 
                         if (eventType == EventType.Singles)
                         {
-                            OutputSinglesPhase(phase, poolData, ref lastWave, j, groupState);
+                            OutputSinglesPhase(phase, poolData, ref lastWave, j, groupState, poolType);
                         }
                         else
                         {
-                            OutputDoublesPhase(phase, poolData, ref lastWave, j, groupState);
+                            OutputDoublesPhase(phase, poolData, ref lastWave, j, groupState, poolType);
                         }
                     }
                 }
@@ -1166,9 +1148,9 @@ namespace smashgg_to_liquipedia
         /// <param name="poolData">Pool records for each entrant</param>
         /// <param name="lastWave">Final wave in the pool</param>
         /// <param name="phaseElement">Pool in the phase to output</param>
-        private void OutputSinglesPhase(Phase phase, Dictionary<int, PoolRecord> poolData, ref string lastWave, int phaseElement, smashgg.State state)
+        private void OutputSinglesPhase(Phase phase, Dictionary<int, PoolRecord> poolData, ref string lastWave, int phaseElement, smashgg.State state, PoolRecord.PoolType poolType)
         {
-            Liquipedia.LpOutput lpout = new Liquipedia.LpOutput(ref entrantList, ref setList, ref roundList);
+            Liquipedia.LpOutput lpout = new Liquipedia.LpOutput(ref entrantList, ref setList, ref roundList, ref entrantType);
 
             // Output to textbox
             // Wave headers
@@ -1201,7 +1183,8 @@ namespace smashgg_to_liquipedia
             }
 
             // Output the group
-            richTextBoxLpOutput.Text += lpout.OutputSinglesGroup(title, poolData, state, (int)numericUpDownAdvanceWinners.Value, (int)numericUpDownAdvanceLosers.Value, checkBoxMatchDetails.Checked);
+            richTextBoxLpOutput.Text += lpout.OutputSinglesGroup(title, poolData, state, (int)numericUpDownAdvanceWinners.Value, (int)numericUpDownAdvanceLosers.Value, checkBoxMatchDetails.Checked, poolType);
+            richTextBoxLog.Text += lpout.Log;
 
             // Box handling
             if (phase.id[0].identifierType == PhaseGroup.IdentiferType.WaveNumber)     // Waves exist
@@ -1239,9 +1222,9 @@ namespace smashgg_to_liquipedia
         /// <param name="poolData">Records of each entrant in the pool</param>
         /// <param name="lastWave">Identifier of last wave</param>
         /// <param name="phaseElement">Element within the phase</param>
-        private void OutputDoublesPhase(Phase phase, Dictionary<int, PoolRecord> poolData, ref string lastWave, int phaseElement, smashgg.State state)
+        private void OutputDoublesPhase(Phase phase, Dictionary<int, PoolRecord> poolData, ref string lastWave, int phaseElement, smashgg.State state, PoolRecord.PoolType poolType)
         {
-            Liquipedia.LpOutput lpout = new Liquipedia.LpOutput(ref entrantList, ref setList, ref roundList);
+            Liquipedia.LpOutput lpout = new Liquipedia.LpOutput(ref entrantList, ref setList, ref roundList, ref entrantType);
             
             // Output to textbox
             // Wave headers
@@ -1274,7 +1257,8 @@ namespace smashgg_to_liquipedia
             }
 
             // Output pool
-            richTextBoxLpOutput.Text += lpout.OutputDoublesGroup(title, poolData, state, (int)numericUpDownAdvanceWinners.Value, (int)numericUpDownAdvanceLosers.Value, checkBoxMatchDetails.Checked);
+            richTextBoxLpOutput.Text += lpout.OutputDoublesGroup(title, poolData, state, (int)numericUpDownAdvanceWinners.Value, (int)numericUpDownAdvanceLosers.Value, checkBoxMatchDetails.Checked, poolType);
+            richTextBoxLog.Text += lpout.Log;
 
             // Pool footers
             if (phase.id[0].identifierType == PhaseGroup.IdentiferType.WaveNumber)     // Waves exist
@@ -1310,10 +1294,10 @@ namespace smashgg_to_liquipedia
         /// </summary>
         /// <param name="phase_group">Phase group number</param>
         /// <param name="parser">Parser for retrieving/processing json</param>
-        /// <param name="poolType">Specifies bracket or round robin</param>
+        /// <param name="PoolRecord.PoolType">Specifies bracket or round robin</param>
         /// <param name="record">List of player records for the pool</param>
         /// <returns>True if it completed succesfully, false otherwise</returns>
-        private bool GeneratePoolData(int phase_group, smashgg parser, PoolType poolType, ref Dictionary<int, PoolRecord> record, ref smashgg.State phaseState)
+        private bool GeneratePoolData(int phase_group, smashgg parser, PoolRecord.PoolType poolType, ref Dictionary<int, PoolRecord> record, ref smashgg.State phaseState)
         {
             // Clear data
             ClearData();
@@ -1329,7 +1313,7 @@ namespace smashgg_to_liquipedia
             JObject bracketJson = JsonConvert.DeserializeObject<JObject>(json);
 
             // Parse entrant and set data
-            parser.GetEntrants(bracketJson.SelectToken("entities.entrants"), ref entrantList, playerdb);
+            parser.GetEntrants(bracketJson.SelectToken("entities.entrants"), ref entrantList, playerdb, entrantType);
             parser.GetSets(bracketJson.SelectToken("entities.sets"), ref setList, checkBoxMatchDetails.Checked);
             phaseState = parser.GetPhaseGroupState(bracketJson.SelectToken("entities.groups"));
 
@@ -1377,7 +1361,7 @@ namespace smashgg_to_liquipedia
                     }
 
                     // DE Brackets will set ranks for players
-                    if (poolType == PoolType.Bracket)
+                    if (poolType == PoolRecord.PoolType.Bracket)
                     {
                         // Player 1 rank
                         if (record[set.entrantID1].rank == 0 || set.wPlacement < record[set.entrantID1].rank)
@@ -1408,7 +1392,7 @@ namespace smashgg_to_liquipedia
                         }
                     }
                     // Take reported rankings for RR Brackets
-                    else if (poolType == PoolType.RoundRobin)
+                    else if (poolType == PoolRecord.PoolType.RoundRobin)
                     {
                         parser.GetRank(bracketJson.SelectToken("entities.standings"), entrantList);
                     }
@@ -1429,7 +1413,7 @@ namespace smashgg_to_liquipedia
                     }
 
                     // DE Brackets will set ranks for players
-                    if (poolType == PoolType.Bracket)
+                    if (poolType == PoolRecord.PoolType.Bracket)
                     {
                         if (record[set.entrantID1].rank == 0 || set.lPlacement < record[set.entrantID1].rank)
                         {
@@ -1459,7 +1443,7 @@ namespace smashgg_to_liquipedia
                         }
                     }
                     // Take reported rankings for RR Brackets
-                    else if (poolType == PoolType.RoundRobin)
+                    else if (poolType == PoolRecord.PoolType.RoundRobin)
                     {
                         parser.GetRank(bracketJson.SelectToken("entities.standings"), entrantList);
                     }
@@ -1477,11 +1461,11 @@ namespace smashgg_to_liquipedia
             }
 
             // Sort the entrants by their rank and W-L records
-            if (poolType == PoolType.Bracket)
+            if (poolType == PoolRecord.PoolType.Bracket)
             {
                 record = record.OrderBy(x => x.Value.rank).ThenByDescending(x => x.Value.MatchWinrate).ThenBy(x => x.Value.MatchesLoss).ThenByDescending(x => x.Value.MatchesWin).ThenByDescending(x => x.Value.GameWinrate).ToDictionary(x => x.Key, x => x.Value);
             }
-            else if (poolType == PoolType.RoundRobin)
+            else if (poolType == PoolRecord.PoolType.RoundRobin)
             {
                 foreach (int entrant in record.Keys)
                 {
@@ -1716,12 +1700,6 @@ namespace smashgg_to_liquipedia
         #endregion
 
         #region TextBox Output Methods
-        
-
-        
-
-
-
         /// <summary>
         /// Output entrants to textbox
         /// </summary>
@@ -2094,7 +2072,6 @@ namespace smashgg_to_liquipedia
             buttonFill.Enabled = false;
             buttonFillDoubles.Enabled = false;
             buttonGetPhase.Enabled = false;
-            buttonRegexReplace.Enabled = false;
             buttonGetBracket.Enabled = false;
             buttonPrizePool.Enabled = false;
             buttonWinnerShift.Enabled = false;
@@ -2129,8 +2106,6 @@ namespace smashgg_to_liquipedia
             richTextBoxEntrants.Enabled = false;
             richTextBoxExLpLosersBracket.Enabled = false;
             richTextBoxExLpWinnersBracket.Enabled = false;
-            richTextBoxExRegexFind.Enabled = false;
-            richTextBoxExRegexReplace.Enabled = false;
             richTextBoxLog.Enabled = false;
             richTextBoxWinners.Enabled = false;
             richTextBoxLosers.Enabled = false;
@@ -2149,7 +2124,6 @@ namespace smashgg_to_liquipedia
             buttonFill.Enabled = true;
             buttonFillDoubles.Enabled = true;
             buttonGetPhase.Enabled = true;
-            buttonRegexReplace.Enabled = true;
             buttonGetBracket.Enabled = true;
             buttonPrizePool.Enabled = true;
             buttonWinnerShift.Enabled = true;
@@ -2184,8 +2158,6 @@ namespace smashgg_to_liquipedia
             richTextBoxEntrants.Enabled = true;
             richTextBoxExLpLosersBracket.Enabled = true;
             richTextBoxExLpWinnersBracket.Enabled = true;
-            richTextBoxExRegexFind.Enabled = true;
-            richTextBoxExRegexReplace.Enabled = true;
             richTextBoxLog.Enabled = true;
             richTextBoxWinners.Enabled = true;
             richTextBoxLosers.Enabled = true;
@@ -2199,7 +2171,7 @@ namespace smashgg_to_liquipedia
         #region Header Selection Methods
         private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (tabControl1.SelectedTab.Text == "Singles")
+            if (tabControl1.SelectedTab == tabPageSingles)
             {
                 sfBracket.Header = FINALS_SINGLES_HEADER;
 
@@ -2211,25 +2183,37 @@ namespace smashgg_to_liquipedia
                 {
                     sfBracket.Bracket = deFinalBracketTemplateReset;
                 }
-            }
-            else if (tabControl1.SelectedTab.Text == "Doubles")
-            {
-                sfBracket.Header = FINALS_DOUBLES_HEADER;
 
-                if (checkBoxSMW.Checked)
+                setEntrantType();
+            }
+            else if (tabControl1.SelectedTab == tabPageDoubles)
+            {
+                // Disable this tab for all non-smash games
+                if (!radioButtonSmash.Checked)
                 {
-                    sfBracket.Bracket = deFinalDoublesSmwBracketTemplateReset;
+                    tabControl1.SelectedTab = tabPageSingles;
                 }
                 else
                 {
-                    sfBracket.Bracket = deFinalDoublesBracketTemplateReset;
+                    sfBracket.Header = FINALS_DOUBLES_HEADER;
+
+                    if (checkBoxSMW.Checked)
+                    {
+                        sfBracket.Bracket = deFinalDoublesSmwBracketTemplateReset;
+                    }
+                    else
+                    {
+                        sfBracket.Bracket = deFinalDoublesBracketTemplateReset;
+                    }
+
+                    setEntrantType();
                 }
             }
         }
 
         private void checkBoxSMW_CheckedChanged(object sender, EventArgs e)
         {
-            if (tabControl1.SelectedTab.Text == "Singles")
+            if (tabControl1.SelectedTab == tabPageSingles)
             {
                 if (checkBoxSMW.Checked)
                 {
@@ -2240,7 +2224,7 @@ namespace smashgg_to_liquipedia
                     sfBracket.Bracket = deFinalBracketTemplateReset;
                 }
             }
-            else if (tabControl1.SelectedTab.Text == "Doubles")
+            else if (tabControl1.SelectedTab == tabPageDoubles)
             {
                 if (checkBoxSMW.Checked)
                 {
@@ -2281,12 +2265,17 @@ namespace smashgg_to_liquipedia
         /// <param name="e"></param>
         private void radioButtonDatabase_CheckedChanged(object sender, EventArgs e)
         {
+            setEntrantType();
+
             if (radioButtonSmash.Checked)
             {
                 if (!playerdb.ReadDatabaseFromFile(PlayerDatabase.DbSource.Smash))
                 {
                     richTextBoxLog.Text = "Could not retrieve Smash Database\r\n";
                 }
+
+                if (tabControl1.SelectedTab == tabPageSingles) { entrantType = Entrant.EntrantType.Singles; }
+                else if (tabControl1.SelectedTab == tabPageDoubles) { entrantType = Entrant.EntrantType.Doubles; }
             }
             else if (radioButtonFighters.Checked)
             {
@@ -2303,5 +2292,28 @@ namespace smashgg_to_liquipedia
             UpdateRevID();
         }
         #endregion
+
+        private void setEntrantType()
+        {
+            if (radioButtonSmash.Checked)
+            {
+                if (tabControl1.SelectedTab == tabPageSingles)
+                {
+                    entrantType = Entrant.EntrantType.Singles;
+                }
+                else if (tabControl1.SelectedTab == tabPageDoubles)
+                {
+                    entrantType = Entrant.EntrantType.Doubles;
+                }
+            }
+            else if (radioButtonFighters.Checked)
+            {
+                entrantType = Entrant.EntrantType.Singles;
+            }
+            else if (radioButtonRocketLeague.Checked)
+            {
+                entrantType = Entrant.EntrantType.Team;
+            }
+        }
     }
 }

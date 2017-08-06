@@ -8,7 +8,10 @@ namespace smashgg_to_liquipedia
 {
     class Entrant
     {
-        public string name;
+        public enum EntrantType { Singles, Doubles, Team }
+
+        private string name = string.Empty;
+        EntrantType entrantType;
         private List<Player> players = new List<Player>();
         private int placement;
 
@@ -52,6 +55,30 @@ namespace smashgg_to_liquipedia
             set
             {
                 placement = value;
+            }
+        }
+
+        public string Name
+        {
+            get
+            {
+                return name;
+            }
+            set
+            {
+                name = value;
+            }
+        }
+
+        public EntrantType Type
+        {
+            get
+            {
+                return entrantType;
+            }
+            set
+            {
+                entrantType = value;
             }
         }
     }

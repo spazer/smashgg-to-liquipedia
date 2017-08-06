@@ -8,6 +8,8 @@ namespace smashgg_to_liquipedia
 {
     class PoolRecord
     {
+        public enum PoolType { Bracket, RoundRobin }
+
         private int matchesWin;
         private int matchesLoss;
         private int gamesWin;

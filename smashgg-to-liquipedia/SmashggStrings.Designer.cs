@@ -376,6 +376,15 @@ namespace smashgg_to_liquipedia {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to name.
+        /// </summary>
+        internal static string Name {
+            get {
+                return ResourceManager.GetString("Name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to originalRound.
         /// </summary>
         internal static string OriginalRound {

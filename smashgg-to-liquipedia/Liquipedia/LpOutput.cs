@@ -17,6 +17,7 @@ namespace smashgg_to_liquipedia.Liquipedia
         Dictionary<int, Entrant> entrantList;
         List<Set> setList;
         Dictionary<int, List<Set>> roundList;
+        Entrant.EntrantType entrantType;
 
         Dictionary<int, string> gameCharacterList = new Dictionary<int, string>();
         Dictionary<int, string> gameStageList = new Dictionary<int, string>();
@@ -25,13 +26,14 @@ namespace smashgg_to_liquipedia.Liquipedia
         /// LpOutput constructor
         /// </summary>
         /// <param name="form">Reference to the main form</param>
-        public LpOutput(ref Dictionary<int, Entrant> entrantList, ref List<Set> setList, ref Dictionary<int, List<Set>> roundList)
+        public LpOutput(ref Dictionary<int, Entrant> entrantList, ref List<Set> setList, ref Dictionary<int, List<Set>> roundList, ref Entrant.EntrantType entrantType)
         {
             log = string.Empty;
 
             this.entrantList = entrantList;
             this.setList = setList;
             this.roundList = roundList;
+            this.entrantType = entrantType;
 
             loadedMatchDetailDictionary = false;
         }
@@ -762,9 +764,10 @@ namespace smashgg_to_liquipedia.Liquipedia
         /// <param name="groupTitle">Title of the group</param>
         /// <param name="poolData">Pool records for each entrant</param>
         /// <returns>A group table</returns>
-        public string OutputSinglesGroup(string groupTitle, Dictionary<int, PoolRecord> poolData, smashgg.State groupState, int advanceWinners, int advanceLosers, bool matchDetails)
+        public string OutputSinglesGroup(string groupTitle, Dictionary<int, PoolRecord> poolData, smashgg.State groupState, int advanceWinners, int advanceLosers, bool matchDetails, PoolRecord.PoolType poolType)
         {
             string output = string.Empty;
+            int totalWinners = advanceWinners;
 
             // Group header
             output = LpStrings.GroupStart + "Bracket " + groupTitle + LpStrings.GroupStartWidth + "\r\n";
@@ -786,7 +789,18 @@ namespace smashgg_to_liquipedia.Liquipedia
 
                 if (poolData[poolData.ElementAt(i).Key].rank != Consts.UNKNOWN)
                 {
-                    output += LpStrings.SlotPlace + poolData[poolData.ElementAt(i).Key].rank;
+                    if (advanceWinners > 0 && poolData[poolData.ElementAt(i).Key].rank != 0 && poolType != PoolRecord.PoolType.RoundRobin)
+                    {
+                        output += LpStrings.SlotPlace + (poolData[poolData.ElementAt(i).Key].rank - totalWinners);
+                    }
+                    else if (advanceLosers > 0 && poolData[poolData.ElementAt(i).Key].rank != 0 && poolType != PoolRecord.PoolType.RoundRobin)
+                    {
+                        output += LpStrings.SlotPlace + (poolData[poolData.ElementAt(i).Key].rank - 1);
+                    }
+                    else
+                    {
+                        output += LpStrings.SlotPlace + poolData[poolData.ElementAt(i).Key].rank;
+                    }
                 }
                 else
                 {
@@ -863,9 +877,10 @@ namespace smashgg_to_liquipedia.Liquipedia
         /// <param name="groupTitle">Title of the group</param>
         /// <param name="poolData">Pool records for each entrant</param>
         /// <returns>A group table</returns>
-        public string OutputDoublesGroup(string groupTitle, Dictionary<int, PoolRecord> poolData, smashgg.State groupState, int advanceWinners, int advanceLosers, bool matchDetails)
+        public string OutputDoublesGroup(string groupTitle, Dictionary<int, PoolRecord> poolData, smashgg.State groupState, int advanceWinners, int advanceLosers, bool matchDetails, PoolRecord.PoolType poolType)
         {
             string output = string.Empty;
+            int totalWinners = advanceWinners;
 
             // Group header
             output = LpStrings.GroupStart + "Bracket " + groupTitle + LpStrings.GroupStartWidth + "\r\n";
@@ -890,7 +905,18 @@ namespace smashgg_to_liquipedia.Liquipedia
 
                 if (poolData[poolData.ElementAt(i).Key].rank != Consts.UNKNOWN)
                 {
-                    output += LpStrings.SlotPlace + poolData[poolData.ElementAt(i).Key].rank;
+                    if (advanceWinners > 0 && poolData[poolData.ElementAt(i).Key].rank != 0 && poolType != PoolRecord.PoolType.RoundRobin)
+                    {
+                        output += LpStrings.SlotPlace + (poolData[poolData.ElementAt(i).Key].rank - totalWinners);
+                    }
+                    else if (advanceLosers > 0 && poolData[poolData.ElementAt(i).Key].rank != 0 && poolType != PoolRecord.PoolType.RoundRobin)
+                    {
+                        output += LpStrings.SlotPlace + (poolData[poolData.ElementAt(i).Key].rank - 1);
+                    }
+                    else
+                    {
+                        output += LpStrings.SlotPlace + poolData[poolData.ElementAt(i).Key].rank;
+                    }
                 }
                 else
                 {

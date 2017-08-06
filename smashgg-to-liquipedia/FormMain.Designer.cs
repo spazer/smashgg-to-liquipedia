@@ -51,7 +51,6 @@
             this.tabPageSingles = new System.Windows.Forms.TabPage();
             this.tabPageDoubles = new System.Windows.Forms.TabPage();
             this.textBoxURLDoubles = new System.Windows.Forms.TextBox();
-            this.buttonRegexReplace = new System.Windows.Forms.Button();
             this.numericUpDownWinnersStart = new System.Windows.Forms.NumericUpDown();
             this.label4 = new System.Windows.Forms.Label();
             this.numericUpDownWinnersEnd = new System.Windows.Forms.NumericUpDown();
@@ -84,13 +83,12 @@
             this.radioButtonFighters = new System.Windows.Forms.RadioButton();
             this.labelAkaDatabaseRev = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.radioButtonRocketLeague = new System.Windows.Forms.RadioButton();
             this.panel2 = new System.Windows.Forms.Panel();
             this.checkBoxMatchDetails = new System.Windows.Forms.CheckBox();
             this.checkBoxUnfinished = new System.Windows.Forms.CheckBox();
             this.buttonGroupTable = new System.Windows.Forms.Button();
             this.checkBoxR1Only = new System.Windows.Forms.CheckBox();
-            this.richTextBoxExRegexReplace = new RichTextBoxEx();
-            this.richTextBoxExRegexFind = new RichTextBoxEx();
             this.richTextBoxExLpWinnersBracket = new RichTextBoxEx();
             this.richTextBoxExLpLosersBracket = new RichTextBoxEx();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAdvanceWinners)).BeginInit();
@@ -208,9 +206,9 @@
             // richTextBoxLpOutput
             // 
             this.richTextBoxLpOutput.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.richTextBoxLpOutput.Location = new System.Drawing.Point(12, 459);
+            this.richTextBoxLpOutput.Location = new System.Drawing.Point(12, 439);
             this.richTextBoxLpOutput.Name = "richTextBoxLpOutput";
-            this.richTextBoxLpOutput.Size = new System.Drawing.Size(691, 99);
+            this.richTextBoxLpOutput.Size = new System.Drawing.Size(689, 119);
             this.richTextBoxLpOutput.TabIndex = 0;
             this.richTextBoxLpOutput.Text = "";
             // 
@@ -322,16 +320,6 @@
             this.textBoxURLDoubles.Size = new System.Drawing.Size(215, 20);
             this.textBoxURLDoubles.TabIndex = 2;
             this.textBoxURLDoubles.Enter += new System.EventHandler(this.textBoxURL_Enter);
-            // 
-            // buttonRegexReplace
-            // 
-            this.buttonRegexReplace.Location = new System.Drawing.Point(810, 315);
-            this.buttonRegexReplace.Name = "buttonRegexReplace";
-            this.buttonRegexReplace.Size = new System.Drawing.Size(94, 23);
-            this.buttonRegexReplace.TabIndex = 2;
-            this.buttonRegexReplace.Text = "Regex Replace";
-            this.buttonRegexReplace.UseVisualStyleBackColor = true;
-            this.buttonRegexReplace.Click += new System.EventHandler(this.buttonRegexReplace_Click);
             // 
             // numericUpDownWinnersStart
             // 
@@ -644,12 +632,24 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.radioButtonRocketLeague);
             this.panel1.Controls.Add(this.radioButtonSmash);
             this.panel1.Controls.Add(this.radioButtonFighters);
             this.panel1.Location = new System.Drawing.Point(551, 15);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(69, 42);
+            this.panel1.Size = new System.Drawing.Size(69, 67);
             this.panel1.TabIndex = 23;
+            // 
+            // radioButtonRocketLeague
+            // 
+            this.radioButtonRocketLeague.AutoSize = true;
+            this.radioButtonRocketLeague.Location = new System.Drawing.Point(3, 47);
+            this.radioButtonRocketLeague.Name = "radioButtonRocketLeague";
+            this.radioButtonRocketLeague.Size = new System.Drawing.Size(39, 17);
+            this.radioButtonRocketLeague.TabIndex = 22;
+            this.radioButtonRocketLeague.Text = "RL";
+            this.radioButtonRocketLeague.UseVisualStyleBackColor = true;
+            this.radioButtonRocketLeague.CheckedChanged += new System.EventHandler(this.radioButtonDatabase_CheckedChanged);
             // 
             // panel2
             // 
@@ -704,30 +704,12 @@
             this.checkBoxR1Only.Text = "R1";
             this.checkBoxR1Only.UseVisualStyleBackColor = true;
             // 
-            // richTextBoxExRegexReplace
-            // 
-            this.richTextBoxExRegexReplace.Cue = null;
-            this.richTextBoxExRegexReplace.Location = new System.Drawing.Point(361, 407);
-            this.richTextBoxExRegexReplace.Name = "richTextBoxExRegexReplace";
-            this.richTextBoxExRegexReplace.Size = new System.Drawing.Size(342, 46);
-            this.richTextBoxExRegexReplace.TabIndex = 16;
-            this.richTextBoxExRegexReplace.Text = "";
-            // 
-            // richTextBoxExRegexFind
-            // 
-            this.richTextBoxExRegexFind.Cue = null;
-            this.richTextBoxExRegexFind.Location = new System.Drawing.Point(12, 407);
-            this.richTextBoxExRegexFind.Name = "richTextBoxExRegexFind";
-            this.richTextBoxExRegexFind.Size = new System.Drawing.Size(342, 46);
-            this.richTextBoxExRegexFind.TabIndex = 16;
-            this.richTextBoxExRegexFind.Text = "";
-            // 
             // richTextBoxExLpWinnersBracket
             // 
             this.richTextBoxExLpWinnersBracket.Cue = null;
             this.richTextBoxExLpWinnersBracket.Location = new System.Drawing.Point(13, 302);
             this.richTextBoxExLpWinnersBracket.Name = "richTextBoxExLpWinnersBracket";
-            this.richTextBoxExLpWinnersBracket.Size = new System.Drawing.Size(341, 89);
+            this.richTextBoxExLpWinnersBracket.Size = new System.Drawing.Size(341, 131);
             this.richTextBoxExLpWinnersBracket.TabIndex = 13;
             this.richTextBoxExLpWinnersBracket.Text = "";
             // 
@@ -736,7 +718,7 @@
             this.richTextBoxExLpLosersBracket.Cue = null;
             this.richTextBoxExLpLosersBracket.Location = new System.Drawing.Point(360, 303);
             this.richTextBoxExLpLosersBracket.Name = "richTextBoxExLpLosersBracket";
-            this.richTextBoxExLpLosersBracket.Size = new System.Drawing.Size(341, 88);
+            this.richTextBoxExLpLosersBracket.Size = new System.Drawing.Size(341, 130);
             this.richTextBoxExLpLosersBracket.TabIndex = 13;
             this.richTextBoxExLpLosersBracket.Text = "";
             // 
@@ -756,8 +738,6 @@
             this.Controls.Add(this.buttonWinnerShift);
             this.Controls.Add(this.numericUpDownPrizePool);
             this.Controls.Add(this.buttonPrizePool);
-            this.Controls.Add(this.richTextBoxExRegexReplace);
-            this.Controls.Add(this.richTextBoxExRegexFind);
             this.Controls.Add(this.buttonAKA);
             this.Controls.Add(this.buttonGetBracket);
             this.Controls.Add(this.progressBar);
@@ -768,7 +748,6 @@
             this.Controls.Add(this.checkBoxFillByeWins);
             this.Controls.Add(this.checkBoxFillByes);
             this.Controls.Add(this.buttonHeadings);
-            this.Controls.Add(this.buttonRegexReplace);
             this.Controls.Add(this.checkBoxLosers);
             this.Controls.Add(this.checkBoxLockWinners);
             this.Controls.Add(this.buttonFill);
@@ -867,9 +846,6 @@
         private System.Windows.Forms.CheckBox checkBoxLockLosers;
         private System.Windows.Forms.ProgressBar progressBar;
         private System.Windows.Forms.CheckBox checkBoxGuessFinal;
-        private RichTextBoxEx richTextBoxExRegexFind;
-        private RichTextBoxEx richTextBoxExRegexReplace;
-        private System.Windows.Forms.Button buttonRegexReplace;
         private System.Windows.Forms.NumericUpDown numericUpDownAdvanceLosers;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.CheckBox checkBoxSMW;
@@ -889,6 +865,7 @@
         private System.Windows.Forms.CheckBox checkBoxUnfinished;
         private System.Windows.Forms.Button buttonGroupTable;
         private System.Windows.Forms.CheckBox checkBoxR1Only;
+        private System.Windows.Forms.RadioButton radioButtonRocketLeague;
     }
 }
 

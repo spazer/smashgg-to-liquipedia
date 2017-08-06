@@ -10,8 +10,6 @@ namespace smashgg_to_liquipedia
 {
     class smashgg
     {
-        static int PLAYER_BYE = -1;
-
         public enum State { Unknown, NotStarted, Pending, Completed };
 
         Dictionary<string, string> flagList = new Dictionary<string, string>();
@@ -44,7 +42,7 @@ namespace smashgg_to_liquipedia
         /// <param name="input">json of the entrants token</param>
         /// <param name="entrantList">List of entrants to be outputted to</param>
         /// <returns>Returns true if successful, false otherwise</returns>
-        public bool GetEntrants(JToken input, ref Dictionary<int, Entrant> entrantList, PlayerDatabase playerdb)
+        public bool GetEntrants(JToken input, ref Dictionary<int, Entrant> entrantList, PlayerDatabase playerdb, Entrant.EntrantType assumedType)
         {
             if (input == null) return false;
             
@@ -57,6 +55,7 @@ namespace smashgg_to_liquipedia
                 // Get entrant ID
                 if (entrant[SmashggStrings.ID].IsNullOrEmpty()) { continue; }
                 int id = GetIntParameter(entrant, SmashggStrings.ID);
+                string name = entrant.SelectToken(SmashggStrings.Name).Value<string>();
 
                 // Get participant IDs
                 SortedList<int, Player> pIds = new SortedList<int, Player>();
@@ -105,6 +104,7 @@ namespace smashgg_to_liquipedia
                 }
 
                 Entrant newEntrant = new Entrant(pIds.Values.ToList<Player>());
+                newEntrant.Name = name;
                 entrantList.Add(id, newEntrant);
             }
 
@@ -133,13 +133,13 @@ namespace smashgg_to_liquipedia
                 newSet.entrantID1 = GetIntParameter(set, SmashggStrings.Entrant1Id);
                 if (newSet.entrantID1 == -99)
                 {
-                    newSet.entrantID1 = PLAYER_BYE;
+                    newSet.entrantID1 = Consts.PLAYER_BYE;
                 }
 
                 newSet.entrantID2 = GetIntParameter(set, SmashggStrings.Entrant2Id);
                 if (newSet.entrantID2 == -99)
                 {
-                    newSet.entrantID2 = PLAYER_BYE;
+                    newSet.entrantID2 = Consts.PLAYER_BYE;
                 }
 
                 // Get match data
@@ -355,7 +355,7 @@ namespace smashgg_to_liquipedia
                 }
             }
 
-            return -99;
+            return Consts.UNKNOWN;
         }
         #endregion
 
