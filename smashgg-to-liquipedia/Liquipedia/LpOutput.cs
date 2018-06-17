@@ -783,9 +783,17 @@ namespace smashgg_to_liquipedia.Liquipedia
 
                 Player currentPlayer = entrantList[poolData.ElementAt(i).Key].Players[0];
                 output += LpStrings.SlotStart + currentPlayer.name +
-                          LpStrings.SlotFlag + currentPlayer.country +
-                          LpStrings.SlotMWin + poolData[poolData.ElementAt(i).Key].MatchesWin +
-                          LpStrings.SlotMLoss + poolData[poolData.ElementAt(i).Key].MatchesLoss;
+                          LpStrings.SlotFlag + currentPlayer.country;
+                if (poolData[poolData.ElementAt(i).Key].matchesActuallyPlayed == 0)
+                {
+                    output += LpStrings.DQ + "true";
+                }
+                else
+                {
+                    output += LpStrings.SlotMWin + poolData[poolData.ElementAt(i).Key].MatchesWin +
+                              LpStrings.SlotMLoss + poolData[poolData.ElementAt(i).Key].MatchesLoss;
+                }
+                          
 
                 if (poolData[poolData.ElementAt(i).Key].rank != Consts.UNKNOWN)
                 {

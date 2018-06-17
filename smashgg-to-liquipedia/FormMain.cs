@@ -1358,6 +1358,9 @@ namespace smashgg_to_liquipedia
                         record[set.entrantID2].AddGameWins(set.entrant2wins);
                         record[set.entrantID1].AddGameLosses(set.entrant2wins);
                         record[set.entrantID2].AddGameLosses(set.entrant1wins);
+
+                        record[set.entrantID1].AddMatchesActuallyPlayed(1);
+                        record[set.entrantID2].AddMatchesActuallyPlayed(1);
                     }
 
                     // DE Brackets will set ranks for players
@@ -1410,6 +1413,9 @@ namespace smashgg_to_liquipedia
                         record[set.entrantID2].AddGameWins(set.entrant2wins);
                         record[set.entrantID1].AddGameLosses(set.entrant2wins);
                         record[set.entrantID2].AddGameLosses(set.entrant1wins);
+
+                        record[set.entrantID1].AddMatchesActuallyPlayed(1);
+                        record[set.entrantID2].AddMatchesActuallyPlayed(1);
                     }
 
                     // DE Brackets will set ranks for players

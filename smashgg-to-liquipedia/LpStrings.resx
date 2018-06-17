@@ -234,4 +234,7 @@
   <data name="SlotPbg" xml:space="preserve">
     <value>|pbg=</value>
   </data>
+  <data name="DQ" xml:space="preserve">
+    <value>|dq=</value>
+  </data>
 </root>

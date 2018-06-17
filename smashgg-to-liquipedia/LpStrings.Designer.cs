@@ -151,6 +151,15 @@ namespace smashgg_to_liquipedia {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to |dq=.
+        /// </summary>
+        internal static string DQ {
+            get {
+                return ResourceManager.GetString("DQ", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to flag.
         /// </summary>
         internal static string Flag {

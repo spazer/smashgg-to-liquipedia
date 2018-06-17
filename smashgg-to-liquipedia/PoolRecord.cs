@@ -19,6 +19,8 @@ namespace smashgg_to_liquipedia
         private double matchWinrate;
         public bool isinGroup;
         private bool matchesComplete;
+        public int matchesActuallyPlayed;
+        public bool disqualified;
 
         public PoolRecord()
         {
@@ -31,7 +33,10 @@ namespace smashgg_to_liquipedia
             gameWinrate = -1;
             isinGroup = false;
             matchesComplete = false;
-        }
+
+            matchesActuallyPlayed = 0;
+            disqualified = false;
+    }
 
         public void AddGameWins(int count)
         {
@@ -78,6 +83,14 @@ namespace smashgg_to_liquipedia
             {
                 matchesLoss += count;
                 CalculateMatchRatio();
+            }
+        }
+
+        public void AddMatchesActuallyPlayed(int count)
+        {
+            if (count != -99)
+            {
+                matchesActuallyPlayed += count;
             }
         }
 
