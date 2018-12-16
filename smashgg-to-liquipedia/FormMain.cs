@@ -1657,7 +1657,7 @@ namespace smashgg_to_liquipedia
                     if (startPos != -1)
                     {
                         startPos += "phaseId%22%3A".Length;
-                        int endPos = url.IndexOf("%7D", startPos);
+                        int endPos = url.IndexOf("%2C", startPos);
 
                         if (endPos != -1)
                         {
