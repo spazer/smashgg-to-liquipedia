@@ -784,7 +784,7 @@ namespace smashgg_to_liquipedia.Liquipedia
                 Player currentPlayer = entrantList[poolData.ElementAt(i).Key].Players[0];
                 output += LpStrings.SlotStart + currentPlayer.name +
                           LpStrings.SlotFlag + currentPlayer.country;
-                if (poolData[poolData.ElementAt(i).Key].matchesActuallyPlayed == 0)
+                if ((poolData[poolData.ElementAt(i).Key].MatchesWin + poolData[poolData.ElementAt(i).Key].MatchesLoss > 0) && poolData[poolData.ElementAt(i).Key].matchesActuallyPlayed == 0)
                 {
                     output += LpStrings.DQ + "true";
                 }
@@ -859,9 +859,24 @@ namespace smashgg_to_liquipedia.Liquipedia
 
                     output += LpStrings.MatchStages;
 
-                    output += "|" + LpStrings.P1 + "=" + p1.name + " |" + LpStrings.P1 + LpStrings.Flag + "=" + p1.country + " |" + LpStrings.P1 + LpStrings.Score + "=" + currentSet.entrant1wins + "\r\n" +
+                    if (currentSet.entrant1wins == -1 && currentSet.entrant2wins == 0)
+                    {
+                        output += "\r\n|" + LpStrings.P1 + "=" + p1.name + " |" + LpStrings.P1 + LpStrings.Flag + "=" + p1.country + " |" + LpStrings.P1 + LpStrings.Score + "=DQ" +  "\r\n" +
+                              "|" + LpStrings.P2 + "=" + p2.name + " |" + LpStrings.P2 + LpStrings.Flag + "=" + p2.country + " |" + LpStrings.P2 + LpStrings.Score + "=-" + "\r\n" +
+                              "|" + LpStrings.Win + "=";
+                    }
+                    else if (currentSet.entrant1wins == 0 && currentSet.entrant2wins == -1)
+                    {
+                        output += "\r\n|" + LpStrings.P1 + "=" + p1.name + " |" + LpStrings.P1 + LpStrings.Flag + "=" + p1.country + " |" + LpStrings.P1 + LpStrings.Score + "=-" + "\r\n" +
+                              "|" + LpStrings.P2 + "=" + p2.name + " |" + LpStrings.P2 + LpStrings.Flag + "=" + p2.country + " |" + LpStrings.P2 + LpStrings.Score + "=DQ" + "\r\n" +
+                              "|" + LpStrings.Win + "=";
+                    }
+                    else
+                    {
+                        output += "\r\n|" + LpStrings.P1 + "=" + p1.name + " |" + LpStrings.P1 + LpStrings.Flag + "=" + p1.country + " |" + LpStrings.P1 + LpStrings.Score + "=" + currentSet.entrant1wins + "\r\n" +
                               "|" + LpStrings.P2 + "=" + p2.name + " |" + LpStrings.P2 + LpStrings.Flag + "=" + p2.country + " |" + LpStrings.P2 + LpStrings.Score + "=" + currentSet.entrant2wins + "\r\n" +
                               "|" + LpStrings.Win + "=";
+                    }
 
                     if (currentSet.winner == currentSet.entrantID1) { output += "1\r\n"; }
                     else if (currentSet.winner == currentSet.entrantID2) { output += "2\r\n"; }
@@ -907,9 +922,17 @@ namespace smashgg_to_liquipedia.Liquipedia
                           LpStrings.DoublesSlotP1 + entrantList[poolData.ElementAt(i).Key].Players[0].name +
                           LpStrings.DoublesSlotP1Flag + entrantList[poolData.ElementAt(i).Key].Players[0].country +
                           LpStrings.DoublesSlotP2 + entrantList[poolData.ElementAt(i).Key].Players[1].name +
-                          LpStrings.DoublesSlotP2Flag + entrantList[poolData.ElementAt(i).Key].Players[1].country +
-                          LpStrings.SlotMWin + poolData[poolData.ElementAt(i).Key].MatchesWin +
-                          LpStrings.SlotMLoss + poolData[poolData.ElementAt(i).Key].MatchesLoss;
+                          LpStrings.DoublesSlotP2Flag + entrantList[poolData.ElementAt(i).Key].Players[1].country;
+
+                if ((poolData[poolData.ElementAt(i).Key].MatchesWin + poolData[poolData.ElementAt(i).Key].MatchesLoss > 0) && poolData[poolData.ElementAt(i).Key].matchesActuallyPlayed == 0)
+                {
+                    output += LpStrings.DQ + "true";
+                }
+                else
+                {
+                    output += LpStrings.SlotMWin + poolData[poolData.ElementAt(i).Key].MatchesWin +
+                              LpStrings.SlotMLoss + poolData[poolData.ElementAt(i).Key].MatchesLoss;
+                }
 
                 if (poolData[poolData.ElementAt(i).Key].rank != Consts.UNKNOWN)
                 {

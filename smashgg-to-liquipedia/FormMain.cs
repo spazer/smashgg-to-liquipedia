@@ -22,8 +22,8 @@ namespace smashgg_to_liquipedia
         static string LOSERS_HEADER = "==Losers Bracket==";
         static string FINALS_SINGLES_HEADER = "==Final Singles Bracket==";
         static string FINALS_DOUBLES_HEADER = "==Final Doubles Bracket==";
-        static string SMASH_DB_URI = "http://wiki.teamliquid.net/smash/api.php?action=parse&page=Liquipedia:Players_Regex&prop=revid|wikitext&format=json";
-        static string FIGHTERS_DB_URI = "http://wiki.teamliquid.net/fighters/api.php?action=parse&page=Liquipedia:Players_Regex&prop=revid|wikitext&format=json";
+        static string SMASH_DB_URI = "http://liquipedia.net/smash/api.php?action=parse&page=Liquipedia:Players_Regex&prop=revid|wikitext&format=json";
+        static string FIGHTERS_DB_URI = "http://liquipedia.net/fighters/api.php?action=parse&page=Liquipedia:Players_Regex&prop=revid|wikitext&format=json";
 
         #region Bracket Template Contants
         static string deFinalBracketTemplateReset = "{{DEFinalBracket\r\n" +
