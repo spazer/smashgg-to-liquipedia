@@ -13,6 +13,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System.IO.Compression;
 
 namespace smashgg_to_liquipedia
 {
@@ -795,16 +796,21 @@ namespace smashgg_to_liquipedia
         private void buttonAKA_Click(object sender, EventArgs e)
         {
             WebClient client = new WebClient();
+            client.Headers[HttpRequestHeader.AcceptEncoding] = "gzip";
 
             // Decide on the URL to use
             string json = string.Empty;
             if (radioButtonSmash.Checked)
             {
-                json = client.DownloadString(SMASH_DB_URI);
+                var responseStream = new GZipStream(client.OpenRead(SMASH_DB_URI), CompressionMode.Decompress);
+                var reader = new StreamReader(responseStream);
+                json = reader.ReadToEnd();
             }
             else if (radioButtonFighters.Checked)
             {
-                json = client.DownloadString(FIGHTERS_DB_URI);
+                var responseStream = new GZipStream(client.OpenRead(FIGHTERS_DB_URI), CompressionMode.Decompress);
+                var reader = new StreamReader(responseStream);
+                json = reader.ReadToEnd();
             }
             else
             {
