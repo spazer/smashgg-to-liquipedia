@@ -1,0 +1,192 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>GraphQL.Client</name>
+    </assembly>
+    <members>
+        <member name="T:GraphQL.Client.Exceptions.GraphQLHttpException">
+            <summary>
+            An exception thrown on unexpected <see cref="T:System.Net.Http.HttpResponseMessage"/>
+            </summary>
+        </member>
+        <member name="P:GraphQL.Client.Exceptions.GraphQLHttpException.HttpResponseMessage">
+            <summary>
+            The <see cref="T:System.Net.Http.HttpResponseMessage"/>
+            </summary>
+        </member>
+        <member name="M:GraphQL.Client.Exceptions.GraphQLHttpException.#ctor(System.Net.Http.HttpResponseMessage)">
+            <summary>
+            Creates a new instance of <see cref="T:GraphQL.Client.Exceptions.GraphQLHttpException"/>
+            </summary>
+            <param name="httpResponseMessage">The unexpected <see cref="T:System.Net.Http.HttpResponseMessage"/></param>
+        </member>
+        <member name="T:GraphQL.Client.GraphQLClient">
+            <summary>
+            A Client to access GraphQL EndPoints
+            </summary>
+        </member>
+        <member name="P:GraphQL.Client.GraphQLClient.DefaultRequestHeaders">
+            <summary>
+            Gets the headers which should be sent with each request.
+            </summary>
+        </member>
+        <member name="P:GraphQL.Client.GraphQLClient.EndPoint">
+            <summary>
+            The GraphQL EndPoint to be used
+            </summary>
+        </member>
+        <member name="P:GraphQL.Client.GraphQLClient.Options">
+            <summary>
+            The Options	to be used
+            </summary>
+        </member>
+        <member name="M:GraphQL.Client.GraphQLClient.#ctor(System.String)">
+            <summary>
+            Initializes a new instance
+            </summary>
+            <param name="endPoint">The EndPoint to be used</param>
+        </member>
+        <member name="M:GraphQL.Client.GraphQLClient.#ctor(System.Uri)">
+            <summary>
+            Initializes a new instance
+            </summary>
+            <param name="endPoint">The EndPoint to be used</param>
+        </member>
+        <member name="M:GraphQL.Client.GraphQLClient.#ctor(System.String,GraphQL.Client.GraphQLClientOptions)">
+            <summary>
+            Initializes a new instance
+            </summary>
+            <param name="endPoint">The EndPoint to be used</param>
+            <param name="options">The Options to be used</param>
+        </member>
+        <member name="M:GraphQL.Client.GraphQLClient.#ctor(System.Uri,GraphQL.Client.GraphQLClientOptions)">
+            <summary>
+            Initializes a new instance
+            </summary>
+            <param name="endPoint">The EndPoint to be used</param>
+            <param name="options">The Options to be used</param>
+        </member>
+        <member name="M:GraphQL.Client.GraphQLClient.#ctor(GraphQL.Client.GraphQLClientOptions)">
+            <summary>
+            Initializes a new instance
+            </summary>
+            <param name="options">The Options to be used</param>
+        </member>
+        <member name="M:GraphQL.Client.GraphQLClient.GetQueryAsync(System.String)">
+            <summary>
+            Send a query via GET
+            </summary>
+            <param name="query">The Request</param>
+            <returns>The Response</returns>
+        </member>
+        <member name="M:GraphQL.Client.GraphQLClient.GetQueryAsync(System.String,System.Threading.CancellationToken)">
+            <summary>
+            Send a query via GET
+            </summary>
+            <param name="query">The Request</param>
+            <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+            <returns>The Response</returns>
+        </member>
+        <member name="M:GraphQL.Client.GraphQLClient.GetAsync(GraphQL.Common.Request.GraphQLRequest)">
+            <summary>
+            Send a <see cref="T:GraphQL.Common.Request.GraphQLRequest"/> via GET
+            </summary>
+            <param name="request">The Request</param>
+            <returns>The Response</returns>
+        </member>
+        <member name="M:GraphQL.Client.GraphQLClient.GetAsync(GraphQL.Common.Request.GraphQLRequest,System.Threading.CancellationToken)">
+            <summary>
+            Send a <see cref="T:GraphQL.Common.Request.GraphQLRequest"/> via GET
+            </summary>
+            <param name="request">The Request</param>
+            <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+            <returns>The Response</returns>
+        </member>
+        <member name="M:GraphQL.Client.GraphQLClient.PostQueryAsync(System.String)">
+            <summary>
+            Send a query via POST
+            </summary>
+            <param name="query">The Request</param>
+            <returns>The Response</returns>
+        </member>
+        <member name="M:GraphQL.Client.GraphQLClient.PostQueryAsync(System.String,System.Threading.CancellationToken)">
+            <summary>
+            Send a query via POST
+            </summary>
+            <param name="query">The Request</param>
+            <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+            <returns>The Response</returns>
+        </member>
+        <member name="M:GraphQL.Client.GraphQLClient.PostAsync(GraphQL.Common.Request.GraphQLRequest)">
+            <summary>
+            Send a <see cref="T:GraphQL.Common.Request.GraphQLRequest"/> via POST
+            </summary>
+            <param name="request">The Request</param>
+            <returns>The Response</returns>
+        </member>
+        <member name="M:GraphQL.Client.GraphQLClient.PostAsync(GraphQL.Common.Request.GraphQLRequest,System.Threading.CancellationToken)">
+            <summary>
+            Send a <see cref="T:GraphQL.Common.Request.GraphQLRequest"/> via POST
+            </summary>
+            <param name="request">The Request</param>
+            <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+            <returns>The Response</returns>
+        </member>
+        <member name="M:GraphQL.Client.GraphQLClient.Dispose">
+            <summary>
+            Releases unmanaged resources
+            </summary>
+        </member>
+        <member name="M:GraphQL.Client.GraphQLClient.ReadHttpResponseMessageAsync(System.Net.Http.HttpResponseMessage)">
+            <summary>
+            Reads the <see cref="T:System.Net.Http.HttpResponseMessage"/>
+            </summary>
+            <param name="httpResponseMessage">The Response</param>
+            <returns>The GrahQLResponse</returns>
+        </member>
+        <member name="T:GraphQL.Client.GraphQLClientExtensions">
+            <summary>
+            Extension Methods for <see cref="T:GraphQL.Client.GraphQLClient"/>
+            </summary>
+        </member>
+        <member name="M:GraphQL.Client.GraphQLClientExtensions.GetIntrospectionQueryAsync(GraphQL.Client.GraphQLClient)">
+            <summary>
+            Send an IntrospectionQuery via GET
+            </summary>
+            <param name="graphQLClient">The GraphQLClient</param>
+            <returns>The GraphQLResponse</returns>
+        </member>
+        <member name="M:GraphQL.Client.GraphQLClientExtensions.PostIntrospectionQueryAsync(GraphQL.Client.GraphQLClient)">
+            <summary>
+            Send an IntrospectionQuery via POST
+            </summary>
+            <param name="graphQLClient">The GraphQLClient</param>
+            <returns>The GraphQLResponse</returns>
+        </member>
+        <member name="T:GraphQL.Client.GraphQLClientOptions">
+            <summary>
+            The Options that the <see cref="T:GraphQL.Client.GraphQLClient"/> will use
+            </summary>
+        </member>
+        <member name="P:GraphQL.Client.GraphQLClientOptions.EndPoint">
+            <summary>
+            The GraphQL EndPoint to be used
+            </summary>
+        </member>
+        <member name="P:GraphQL.Client.GraphQLClientOptions.JsonSerializerSettings">
+            <summary>
+            The <see cref="T:Newtonsoft.Json.JsonSerializerSettings"/> that is going to be used
+            </summary>
+        </member>
+        <member name="P:GraphQL.Client.GraphQLClientOptions.HttpMessageHandler">
+            <summary>
+            The <see cref="T:System.Net.Http.HttpMessageHandler"/> that is going to be used
+            </summary>
+        </member>
+        <member name="P:GraphQL.Client.GraphQLClientOptions.MediaType">
+            <summary>
+            The <see cref="T:System.Net.Http.Headers.MediaTypeHeaderValue"/> that will be send on POST
+            </summary>
+        </member>
+    </members>
+</doc>

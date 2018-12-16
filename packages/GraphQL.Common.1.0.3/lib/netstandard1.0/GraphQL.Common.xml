@@ -1,0 +1,140 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>GraphQL.Common</name>
+    </assembly>
+    <members>
+        <member name="T:GraphQL.Common.Exceptions.GraphQLException">
+            <summary>
+            An exception that contains a <see cref="T:GraphQL.Common.Response.GraphQLError"/>
+            </summary>
+        </member>
+        <member name="P:GraphQL.Common.Exceptions.GraphQLException.GraphQLError">
+            <summary>
+            The GraphQLError
+            </summary>
+        </member>
+        <member name="M:GraphQL.Common.Exceptions.GraphQLException.#ctor(GraphQL.Common.Response.GraphQLError)">
+            <summary>
+            Constructor for a GraphQLException
+            </summary>
+            <param name="graphQLError">The GraphQL Error</param>
+        </member>
+        <member name="T:GraphQL.Common.Request.GraphQLRequest">
+            <summary>
+            Represents a Query that can be fetched to a GraphQL Server.
+            For more information <see href="http://graphql.org/learn/serving-over-http/#post-request"/>
+            </summary>
+        </member>
+        <member name="P:GraphQL.Common.Request.GraphQLRequest.Query">
+            <summary>
+            The Query
+            </summary>
+        </member>
+        <member name="P:GraphQL.Common.Request.GraphQLRequest.OperationName">
+            <summary>
+            If the provided <see cref="P:GraphQL.Common.Request.GraphQLRequest.Query"/> contains multiple named operations, this specifies which operation should be executed.
+            </summary>
+        </member>
+        <member name="P:GraphQL.Common.Request.GraphQLRequest.Variables">
+            <summary>
+            The Variables
+            </summary>
+        </member>
+        <member name="T:GraphQL.Common.Response.GraphQLError">
+            <summary>
+            Represents the error of a <see cref="T:GraphQL.Common.Response.GraphQLResponse"/>
+            </summary>
+        </member>
+        <member name="P:GraphQL.Common.Response.GraphQLError.Message">
+            <summary>
+            The error message
+            </summary>
+        </member>
+        <member name="P:GraphQL.Common.Response.GraphQLError.Locations">
+            <summary>
+            The Location of an error
+            </summary>
+        </member>
+        <member name="P:GraphQL.Common.Response.GraphQLError.AdditonalEntries">
+            <summary>
+            Additional error entries
+            </summary>
+        </member>
+        <member name="T:GraphQL.Common.Response.GraphQLLocation">
+            <summary>
+            Represents the location where the <see cref="T:GraphQL.Common.Response.GraphQLError"/> has been found
+            </summary>
+        </member>
+        <member name="P:GraphQL.Common.Response.GraphQLLocation.Column">
+            <summary>
+            The Column
+            </summary>
+        </member>
+        <member name="P:GraphQL.Common.Response.GraphQLLocation.Line">
+            <summary>
+            The Line
+            </summary>
+        </member>
+        <member name="M:GraphQL.Common.Response.GraphQLLocation.GetHashCode">
+            <summary>
+            Returns the hash code for this instance.
+            </summary>
+            <returns>The hash code</returns>
+        </member>
+        <member name="M:GraphQL.Common.Response.GraphQLLocation.Equals(System.Object)">
+            <summary>
+            Returns a value that indicates whether this instance is equal to a specified object
+            </summary>
+            <param name="obj">The object to compare with this instance</param>
+            <returns>true if obj is an instance of <see cref="T:GraphQL.Common.Response.GraphQLLocation"/> and equals the value of the instance; otherwise, false</returns>
+        </member>
+        <member name="M:GraphQL.Common.Response.GraphQLLocation.Equals(GraphQL.Common.Response.GraphQLLocation)">
+            <summary>
+            Returns a value that indicates whether this instance is equal to a specified object
+            </summary>
+            <param name="other">The object to compare with this instance</param>
+            <returns>true if other is an instance of <see cref="T:GraphQL.Common.Response.GraphQLLocation"/> and equals the value of the instance; otherwise, false</returns>
+        </member>
+        <member name="M:GraphQL.Common.Response.GraphQLLocation.op_Equality(GraphQL.Common.Response.GraphQLLocation,GraphQL.Common.Response.GraphQLLocation)">
+            <summary>
+            Tests whether two specified <see cref="T:GraphQL.Common.Response.GraphQLLocation"/> instances are equivalent
+            </summary>
+            <param name="left">The <see cref="T:GraphQL.Common.Response.GraphQLLocation"/> instance that is to the left of the equality operator</param>
+            <param name="right">The <see cref="T:GraphQL.Common.Response.GraphQLLocation"/> instance that is to the right of the equality operator</param>
+            <returns>true if left and right are equal; otherwise, false</returns>
+        </member>
+        <member name="M:GraphQL.Common.Response.GraphQLLocation.op_Inequality(GraphQL.Common.Response.GraphQLLocation,GraphQL.Common.Response.GraphQLLocation)">
+            <summary>
+            Tests whether two specified <see cref="T:GraphQL.Common.Response.GraphQLLocation"/> instances are not equal
+            </summary>
+            <param name="left">The <see cref="T:GraphQL.Common.Response.GraphQLLocation"/> instance that is to the left of the not equal operator</param>
+            <param name="right">The <see cref="T:GraphQL.Common.Response.GraphQLLocation"/> instance that is to the right of the not equal operator</param>
+            <returns>true if left and right are unequal; otherwise, false</returns>
+        </member>
+        <member name="T:GraphQL.Common.Response.GraphQLResponse">
+            <summary>
+            Represent the response of a <see cref="T:GraphQL.Common.Request.GraphQLRequest"/>
+            For more information <see href="http://graphql.org/learn/serving-over-http/#response"/>
+            </summary>
+        </member>
+        <member name="P:GraphQL.Common.Response.GraphQLResponse.Data">
+            <summary>
+            The data of the response
+            </summary>
+        </member>
+        <member name="P:GraphQL.Common.Response.GraphQLResponse.Errors">
+            <summary>
+            The Errors if ocurred
+            </summary>
+        </member>
+        <member name="M:GraphQL.Common.Response.GraphQLResponse.GetDataFieldAs``1(System.String)">
+            <summary>
+            Get a field of <see cref="P:GraphQL.Common.Response.GraphQLResponse.Data"/> as Type
+            </summary>
+            <typeparam name="Type">The expected type</typeparam>
+            <param name="fieldName">The name of the field</param>
+            <returns>The field of data as an object</returns>
+        </member>
+    </members>
+</doc>
