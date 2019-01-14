@@ -8,7 +8,7 @@ using Newtonsoft.Json.Linq;
 
 namespace smashgg_to_liquipedia
 {
-    class smashgg
+    public class smashgg
     {
         public enum State { Unknown, NotStarted, Pending, Completed };
 
@@ -130,22 +130,22 @@ namespace smashgg_to_liquipedia
                 Set newSet = new Set();
 
                 // Get the entrant IDs. Set the entrant as a bye if it is null.
-                newSet.entrantID1 = GetIntParameter(set, SmashggStrings.Entrant1Id);
-                if (newSet.entrantID1 == -99)
+                newSet.slots[0].entrant.id = GetIntParameter(set, SmashggStrings.Entrant1Id);
+                if (newSet.slots[0].entrant.id == -99)
                 {
-                    newSet.entrantID1 = Consts.PLAYER_BYE;
+                    newSet.slots[0].entrant.id = Consts.PLAYER_BYE;
                 }
 
-                newSet.entrantID2 = GetIntParameter(set, SmashggStrings.Entrant2Id);
-                if (newSet.entrantID2 == -99)
+                newSet.slots[1].entrant.id = GetIntParameter(set, SmashggStrings.Entrant2Id);
+                if (newSet.slots[1].entrant.id == -99)
                 {
-                    newSet.entrantID2 = Consts.PLAYER_BYE;
+                    newSet.slots[1].entrant.id = Consts.PLAYER_BYE;
                 }
 
                 // Get match data
                 newSet.entrant1wins = GetIntParameter(set, SmashggStrings.Entrant1Score);
                 newSet.entrant2wins = GetIntParameter(set, SmashggStrings.Entrant2Score);
-                newSet.winner = GetIntParameter(set, SmashggStrings.Winner);
+                newSet.winnerId = GetIntParameter(set, SmashggStrings.Winner);
                 newSet.State = (State)GetIntParameter(set, SmashggStrings.State);
 
                 if (!set[SmashggStrings.IsGF].IsNullOrEmpty())

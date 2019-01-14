@@ -30,7 +30,7 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormMain));
             this.richTextBoxEntrants = new System.Windows.Forms.RichTextBox();
-            this.textBoxURLSingles = new System.Windows.Forms.TextBox();
+            this.textBoxTournamentUrl = new System.Windows.Forms.TextBox();
             this.buttonGetBracket = new System.Windows.Forms.Button();
             this.buttonGetPhase = new System.Windows.Forms.Button();
             this.radioButtonBracket = new System.Windows.Forms.RadioButton();
@@ -47,10 +47,6 @@
             this.checkBoxWinners = new System.Windows.Forms.CheckBox();
             this.checkBoxLosers = new System.Windows.Forms.CheckBox();
             this.checkBoxFillByes = new System.Windows.Forms.CheckBox();
-            this.tabControl1 = new System.Windows.Forms.TabControl();
-            this.tabPageSingles = new System.Windows.Forms.TabPage();
-            this.tabPageDoubles = new System.Windows.Forms.TabPage();
-            this.textBoxURLDoubles = new System.Windows.Forms.TextBox();
             this.numericUpDownWinnersStart = new System.Windows.Forms.NumericUpDown();
             this.label4 = new System.Windows.Forms.Label();
             this.numericUpDownWinnersEnd = new System.Windows.Forms.NumericUpDown();
@@ -71,13 +67,11 @@
             this.checkBoxGuessFinal = new System.Windows.Forms.CheckBox();
             this.numericUpDownAdvanceLosers = new System.Windows.Forms.NumericUpDown();
             this.label6 = new System.Windows.Forms.Label();
-            this.checkBoxSMW = new System.Windows.Forms.CheckBox();
             this.buttonPrizePool = new System.Windows.Forms.Button();
             this.numericUpDownPrizePool = new System.Windows.Forms.NumericUpDown();
             this.checkBoxFillByeWins = new System.Windows.Forms.CheckBox();
             this.buttonWinnerShift = new System.Windows.Forms.Button();
             this.buttonLoserShift = new System.Windows.Forms.Button();
-            this.buttonHeadings = new System.Windows.Forms.Button();
             this.buttonAKA = new System.Windows.Forms.Button();
             this.radioButtonSmash = new System.Windows.Forms.RadioButton();
             this.radioButtonFighters = new System.Windows.Forms.RadioButton();
@@ -91,10 +85,13 @@
             this.checkBoxR1Only = new System.Windows.Forms.CheckBox();
             this.richTextBoxExLpWinnersBracket = new RichTextBoxEx();
             this.richTextBoxExLpLosersBracket = new RichTextBoxEx();
+            this.buttonAuthentication = new System.Windows.Forms.Button();
+            this.richTextBoxExLpFinalBracket = new RichTextBoxEx();
+            this.textBoxHeaderFinals = new System.Windows.Forms.TextBox();
+            this.textBoxHeaderLosers = new System.Windows.Forms.TextBox();
+            this.textBoxHeaderWinners = new System.Windows.Forms.TextBox();
+            this.label7 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAdvanceWinners)).BeginInit();
-            this.tabControl1.SuspendLayout();
-            this.tabPageSingles.SuspendLayout();
-            this.tabPageDoubles.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownWinnersStart)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownWinnersEnd)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownWinnersOffset)).BeginInit();
@@ -117,21 +114,21 @@
             this.richTextBoxEntrants.TabIndex = 0;
             this.richTextBoxEntrants.Text = "";
             // 
-            // textBoxURLSingles
+            // textBoxTournamentUrl
             // 
-            this.textBoxURLSingles.Location = new System.Drawing.Point(3, 16);
-            this.textBoxURLSingles.Name = "textBoxURLSingles";
-            this.textBoxURLSingles.Size = new System.Drawing.Size(215, 20);
-            this.textBoxURLSingles.TabIndex = 1;
-            this.textBoxURLSingles.Enter += new System.EventHandler(this.textBoxURL_Enter);
+            this.textBoxTournamentUrl.Location = new System.Drawing.Point(709, 31);
+            this.textBoxTournamentUrl.Name = "textBoxTournamentUrl";
+            this.textBoxTournamentUrl.Size = new System.Drawing.Size(229, 20);
+            this.textBoxTournamentUrl.TabIndex = 1;
+            this.textBoxTournamentUrl.Enter += new System.EventHandler(this.textBoxURL_Enter);
             // 
             // buttonGetBracket
             // 
-            this.buttonGetBracket.Location = new System.Drawing.Point(709, 107);
+            this.buttonGetBracket.Location = new System.Drawing.Point(830, 59);
             this.buttonGetBracket.Name = "buttonGetBracket";
-            this.buttonGetBracket.Size = new System.Drawing.Size(75, 23);
+            this.buttonGetBracket.Size = new System.Drawing.Size(108, 23);
             this.buttonGetBracket.TabIndex = 2;
-            this.buttonGetBracket.Text = "Get Bracket";
+            this.buttonGetBracket.Text = "Get Tournament";
             this.buttonGetBracket.UseVisualStyleBackColor = true;
             this.buttonGetBracket.Click += new System.EventHandler(this.buttonGetBracket_Click);
             // 
@@ -143,7 +140,6 @@
             this.buttonGetPhase.TabIndex = 2;
             this.buttonGetPhase.Text = "Get Phase";
             this.buttonGetPhase.UseVisualStyleBackColor = true;
-            this.buttonGetPhase.Click += new System.EventHandler(this.buttonGetPhase_Click);
             // 
             // radioButtonBracket
             // 
@@ -199,7 +195,7 @@
             this.richTextBoxLosers.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.richTextBoxLosers.Location = new System.Drawing.Point(361, 145);
             this.richTextBoxLosers.Name = "richTextBoxLosers";
-            this.richTextBoxLosers.Size = new System.Drawing.Size(342, 126);
+            this.richTextBoxLosers.Size = new System.Drawing.Size(340, 126);
             this.richTextBoxLosers.TabIndex = 0;
             this.richTextBoxLosers.Text = "";
             // 
@@ -262,7 +258,7 @@
             // checkBoxLosers
             // 
             this.checkBoxLosers.AutoSize = true;
-            this.checkBoxLosers.Location = new System.Drawing.Point(361, 277);
+            this.checkBoxLosers.Location = new System.Drawing.Point(245, 277);
             this.checkBoxLosers.Name = "checkBoxLosers";
             this.checkBoxLosers.Size = new System.Drawing.Size(92, 17);
             this.checkBoxLosers.TabIndex = 7;
@@ -278,48 +274,6 @@
             this.checkBoxFillByes.TabIndex = 7;
             this.checkBoxFillByes.Text = "Fill byes";
             this.checkBoxFillByes.UseVisualStyleBackColor = true;
-            // 
-            // tabControl1
-            // 
-            this.tabControl1.Controls.Add(this.tabPageSingles);
-            this.tabControl1.Controls.Add(this.tabPageDoubles);
-            this.tabControl1.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tabControl1.Location = new System.Drawing.Point(709, 12);
-            this.tabControl1.Name = "tabControl1";
-            this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(229, 89);
-            this.tabControl1.TabIndex = 0;
-            this.tabControl1.SelectedIndexChanged += new System.EventHandler(this.tabControl1_SelectedIndexChanged);
-            // 
-            // tabPageSingles
-            // 
-            this.tabPageSingles.Controls.Add(this.textBoxURLSingles);
-            this.tabPageSingles.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tabPageSingles.Location = new System.Drawing.Point(4, 34);
-            this.tabPageSingles.Name = "tabPageSingles";
-            this.tabPageSingles.Size = new System.Drawing.Size(221, 51);
-            this.tabPageSingles.TabIndex = 0;
-            this.tabPageSingles.Text = "Singles";
-            this.tabPageSingles.UseVisualStyleBackColor = true;
-            // 
-            // tabPageDoubles
-            // 
-            this.tabPageDoubles.Controls.Add(this.textBoxURLDoubles);
-            this.tabPageDoubles.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tabPageDoubles.Location = new System.Drawing.Point(4, 34);
-            this.tabPageDoubles.Name = "tabPageDoubles";
-            this.tabPageDoubles.Size = new System.Drawing.Size(221, 51);
-            this.tabPageDoubles.TabIndex = 0;
-            this.tabPageDoubles.Text = "Doubles";
-            this.tabPageDoubles.UseVisualStyleBackColor = true;
-            // 
-            // textBoxURLDoubles
-            // 
-            this.textBoxURLDoubles.Location = new System.Drawing.Point(3, 16);
-            this.textBoxURLDoubles.Name = "textBoxURLDoubles";
-            this.textBoxURLDoubles.Size = new System.Drawing.Size(215, 20);
-            this.textBoxURLDoubles.TabIndex = 2;
-            this.textBoxURLDoubles.Enter += new System.EventHandler(this.textBoxURL_Enter);
             // 
             // numericUpDownWinnersStart
             // 
@@ -487,7 +441,7 @@
             // checkBoxGuessFinal
             // 
             this.checkBoxGuessFinal.AutoSize = true;
-            this.checkBoxGuessFinal.Location = new System.Drawing.Point(709, 254);
+            this.checkBoxGuessFinal.Location = new System.Drawing.Point(477, 277);
             this.checkBoxGuessFinal.Name = "checkBoxGuessFinal";
             this.checkBoxGuessFinal.Size = new System.Drawing.Size(121, 17);
             this.checkBoxGuessFinal.TabIndex = 14;
@@ -513,17 +467,6 @@
             this.label6.Size = new System.Drawing.Size(50, 27);
             this.label6.TabIndex = 5;
             this.label6.Text = "Advance Losers";
-            // 
-            // checkBoxSMW
-            // 
-            this.checkBoxSMW.AutoSize = true;
-            this.checkBoxSMW.Location = new System.Drawing.Point(827, 254);
-            this.checkBoxSMW.Name = "checkBoxSMW";
-            this.checkBoxSMW.Size = new System.Drawing.Size(53, 17);
-            this.checkBoxSMW.TabIndex = 14;
-            this.checkBoxSMW.Text = "SMW";
-            this.checkBoxSMW.UseVisualStyleBackColor = true;
-            this.checkBoxSMW.CheckedChanged += new System.EventHandler(this.checkBoxSMW_CheckedChanged);
             // 
             // buttonPrizePool
             // 
@@ -576,16 +519,6 @@
             this.buttonLoserShift.Text = "Shift";
             this.buttonLoserShift.UseVisualStyleBackColor = true;
             this.buttonLoserShift.Click += new System.EventHandler(this.buttonloserShift_Click);
-            // 
-            // buttonHeadings
-            // 
-            this.buttonHeadings.Location = new System.Drawing.Point(810, 343);
-            this.buttonHeadings.Name = "buttonHeadings";
-            this.buttonHeadings.Size = new System.Drawing.Size(94, 23);
-            this.buttonHeadings.TabIndex = 2;
-            this.buttonHeadings.Text = "Headings";
-            this.buttonHeadings.UseVisualStyleBackColor = true;
-            this.buttonHeadings.Click += new System.EventHandler(this.buttonHeadings_Click);
             // 
             // buttonAKA
             // 
@@ -707,26 +640,84 @@
             // richTextBoxExLpWinnersBracket
             // 
             this.richTextBoxExLpWinnersBracket.Cue = null;
-            this.richTextBoxExLpWinnersBracket.Location = new System.Drawing.Point(13, 302);
+            this.richTextBoxExLpWinnersBracket.Location = new System.Drawing.Point(13, 326);
             this.richTextBoxExLpWinnersBracket.Name = "richTextBoxExLpWinnersBracket";
-            this.richTextBoxExLpWinnersBracket.Size = new System.Drawing.Size(341, 131);
+            this.richTextBoxExLpWinnersBracket.Size = new System.Drawing.Size(225, 106);
             this.richTextBoxExLpWinnersBracket.TabIndex = 13;
             this.richTextBoxExLpWinnersBracket.Text = "";
             // 
             // richTextBoxExLpLosersBracket
             // 
             this.richTextBoxExLpLosersBracket.Cue = null;
-            this.richTextBoxExLpLosersBracket.Location = new System.Drawing.Point(360, 303);
+            this.richTextBoxExLpLosersBracket.Location = new System.Drawing.Point(245, 326);
             this.richTextBoxExLpLosersBracket.Name = "richTextBoxExLpLosersBracket";
-            this.richTextBoxExLpLosersBracket.Size = new System.Drawing.Size(341, 130);
+            this.richTextBoxExLpLosersBracket.Size = new System.Drawing.Size(225, 107);
             this.richTextBoxExLpLosersBracket.TabIndex = 13;
             this.richTextBoxExLpLosersBracket.Text = "";
+            // 
+            // buttonAuthentication
+            // 
+            this.buttonAuthentication.Location = new System.Drawing.Point(626, 62);
+            this.buttonAuthentication.Name = "buttonAuthentication";
+            this.buttonAuthentication.Size = new System.Drawing.Size(75, 23);
+            this.buttonAuthentication.TabIndex = 29;
+            this.buttonAuthentication.Text = "Auth";
+            this.buttonAuthentication.UseVisualStyleBackColor = true;
+            this.buttonAuthentication.Click += new System.EventHandler(this.buttonAuth_Click);
+            // 
+            // richTextBoxExLpFinalBracket
+            // 
+            this.richTextBoxExLpFinalBracket.Cue = null;
+            this.richTextBoxExLpFinalBracket.Location = new System.Drawing.Point(477, 326);
+            this.richTextBoxExLpFinalBracket.Name = "richTextBoxExLpFinalBracket";
+            this.richTextBoxExLpFinalBracket.Size = new System.Drawing.Size(224, 107);
+            this.richTextBoxExLpFinalBracket.TabIndex = 13;
+            this.richTextBoxExLpFinalBracket.Text = resources.GetString("richTextBoxExLpFinalBracket.Text");
+            // 
+            // textBoxHeaderFinals
+            // 
+            this.textBoxHeaderFinals.Location = new System.Drawing.Point(477, 300);
+            this.textBoxHeaderFinals.Name = "textBoxHeaderFinals";
+            this.textBoxHeaderFinals.Size = new System.Drawing.Size(224, 20);
+            this.textBoxHeaderFinals.TabIndex = 30;
+            this.textBoxHeaderFinals.Text = "==Final Singles Bracket==";
+            // 
+            // textBoxHeaderLosers
+            // 
+            this.textBoxHeaderLosers.Location = new System.Drawing.Point(244, 300);
+            this.textBoxHeaderLosers.Name = "textBoxHeaderLosers";
+            this.textBoxHeaderLosers.Size = new System.Drawing.Size(226, 20);
+            this.textBoxHeaderLosers.TabIndex = 30;
+            this.textBoxHeaderLosers.Text = "==Losers Bracket==";
+            // 
+            // textBoxHeaderWinners
+            // 
+            this.textBoxHeaderWinners.Location = new System.Drawing.Point(12, 300);
+            this.textBoxHeaderWinners.Name = "textBoxHeaderWinners";
+            this.textBoxHeaderWinners.Size = new System.Drawing.Size(226, 20);
+            this.textBoxHeaderWinners.TabIndex = 30;
+            this.textBoxHeaderWinners.Text = "==Winners Bracket==";
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(709, 15);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(116, 13);
+            this.label7.TabIndex = 31;
+            this.label7.Text = "Enter tournament URL:";
             // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(948, 566);
+            this.Controls.Add(this.label7);
+            this.Controls.Add(this.textBoxTournamentUrl);
+            this.Controls.Add(this.textBoxHeaderWinners);
+            this.Controls.Add(this.textBoxHeaderLosers);
+            this.Controls.Add(this.textBoxHeaderFinals);
+            this.Controls.Add(this.buttonAuthentication);
             this.Controls.Add(this.checkBoxR1Only);
             this.Controls.Add(this.buttonGroupTable);
             this.Controls.Add(this.checkBoxUnfinished);
@@ -742,18 +733,17 @@
             this.Controls.Add(this.buttonGetBracket);
             this.Controls.Add(this.progressBar);
             this.Controls.Add(this.buttonGetPhase);
-            this.Controls.Add(this.checkBoxSMW);
             this.Controls.Add(this.checkBoxGuessFinal);
             this.Controls.Add(this.checkBoxLockLosers);
             this.Controls.Add(this.checkBoxFillByeWins);
             this.Controls.Add(this.checkBoxFillByes);
-            this.Controls.Add(this.buttonHeadings);
             this.Controls.Add(this.checkBoxLosers);
             this.Controls.Add(this.checkBoxLockWinners);
             this.Controls.Add(this.buttonFill);
             this.Controls.Add(this.buttonFillDoubles);
             this.Controls.Add(this.checkBoxWinners);
             this.Controls.Add(this.richTextBoxExLpWinnersBracket);
+            this.Controls.Add(this.richTextBoxExLpFinalBracket);
             this.Controls.Add(this.richTextBoxExLpLosersBracket);
             this.Controls.Add(this.numericUpDownLosersStart);
             this.Controls.Add(this.label11);
@@ -761,7 +751,6 @@
             this.Controls.Add(this.label12);
             this.Controls.Add(this.label13);
             this.Controls.Add(this.numericUpDownLosersEnd);
-            this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.richTextBoxLog);
             this.Controls.Add(this.richTextBoxLpOutput);
@@ -779,12 +768,8 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "FormMain";
             this.Text = "Smash.gg to Liquipedia v3.2.0";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormMain_FormClosing);
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAdvanceWinners)).EndInit();
-            this.tabControl1.ResumeLayout(false);
-            this.tabPageSingles.ResumeLayout(false);
-            this.tabPageSingles.PerformLayout();
-            this.tabPageDoubles.ResumeLayout(false);
-            this.tabPageDoubles.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownWinnersStart)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownWinnersEnd)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownWinnersOffset)).EndInit();
@@ -805,7 +790,7 @@
         #endregion
 
         private System.Windows.Forms.RichTextBox richTextBoxEntrants;
-        private System.Windows.Forms.TextBox textBoxURLSingles;
+        private System.Windows.Forms.TextBox textBoxTournamentUrl;
         private System.Windows.Forms.Button buttonGetBracket;
         private System.Windows.Forms.Button buttonGetPhase;
         private System.Windows.Forms.RadioButton radioButtonBracket;
@@ -822,16 +807,12 @@
         private System.Windows.Forms.CheckBox checkBoxWinners;
         private System.Windows.Forms.CheckBox checkBoxLosers;
         private System.Windows.Forms.CheckBox checkBoxFillByes;
-        private System.Windows.Forms.TabControl tabControl1;
-        private System.Windows.Forms.TabPage tabPageSingles;
         private System.Windows.Forms.NumericUpDown numericUpDownWinnersStart;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.NumericUpDown numericUpDownWinnersEnd;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.NumericUpDown numericUpDownWinnersOffset;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.TabPage tabPageDoubles;
-        private System.Windows.Forms.TextBox textBoxURLDoubles;
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.NumericUpDown numericUpDownLosersStart;
@@ -848,13 +829,11 @@
         private System.Windows.Forms.CheckBox checkBoxGuessFinal;
         private System.Windows.Forms.NumericUpDown numericUpDownAdvanceLosers;
         private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.CheckBox checkBoxSMW;
         private System.Windows.Forms.Button buttonPrizePool;
         private System.Windows.Forms.NumericUpDown numericUpDownPrizePool;
         private System.Windows.Forms.CheckBox checkBoxFillByeWins;
         private System.Windows.Forms.Button buttonWinnerShift;
         private System.Windows.Forms.Button buttonLoserShift;
-        private System.Windows.Forms.Button buttonHeadings;
         private System.Windows.Forms.Button buttonAKA;
         private System.Windows.Forms.RadioButton radioButtonSmash;
         private System.Windows.Forms.RadioButton radioButtonFighters;
@@ -866,6 +845,12 @@
         private System.Windows.Forms.Button buttonGroupTable;
         private System.Windows.Forms.CheckBox checkBoxR1Only;
         private System.Windows.Forms.RadioButton radioButtonRocketLeague;
+        private System.Windows.Forms.Button buttonAuthentication;
+        private RichTextBoxEx richTextBoxExLpFinalBracket;
+        private System.Windows.Forms.TextBox textBoxHeaderFinals;
+        private System.Windows.Forms.TextBox textBoxHeaderLosers;
+        private System.Windows.Forms.TextBox textBoxHeaderWinners;
+        private System.Windows.Forms.Label label7;
     }
 }
 

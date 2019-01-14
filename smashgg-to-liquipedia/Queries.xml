@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<RequestCollection>
+  <Request name="TournamentEvents">
+    <Query>{ tournament(slug:"genesis-5") { id name events { id name videogame{ name } } } }</Query>
+  </Request>
+  <Request>
+    <Title></Title>
+    <Query></Query>
+  </Request>
+  <Request>
+    <Title></Title>
+    <Query></Query>
+  </Request>
+</RequestCollection>

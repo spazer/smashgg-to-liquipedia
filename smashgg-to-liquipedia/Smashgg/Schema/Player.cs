@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace smashgg_to_liquipedia
 {
-    class Player
+    public class Player
     {
         public string name;
         public string country;

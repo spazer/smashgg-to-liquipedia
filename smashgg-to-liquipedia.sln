@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "smashgg api", "smashgg-to-liquipedia\smashgg-to-liquipedia.csproj", "{09CFBF0E-D285-461E-9FE5-549C314A84E3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "smashgg-to-liquipedia", "smashgg-to-liquipedia\smashgg-to-liquipedia.csproj", "{09CFBF0E-D285-461E-9FE5-549C314A84E3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

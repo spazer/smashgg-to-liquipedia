@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace smashgg_to_liquipedia
 {
-    class Game
+    public class Game
     {
         public int winner;
         public int stage;

@@ -72,6 +72,7 @@
       <HintPath>..\packages\System.Runtime.InteropServices.RuntimeInformation.4.3.0\lib\net45\System.Runtime.InteropServices.RuntimeInformation.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="System.Security" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -83,13 +84,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Consts.cs" />
-    <Compile Include="FormHeadings.cs">
+    <Compile Include="Authentication.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FormHeadings.Designer.cs">
-      <DependentUpon>FormHeadings.cs</DependentUpon>
+    <Compile Include="Authentication.Designer.cs">
+      <DependentUpon>Authentication.cs</DependentUpon>
     </Compile>
+    <Compile Include="Consts.cs" />
+    <Compile Include="DataProtectionExtensions.cs" />
     <Compile Include="FormMatchShift.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -107,7 +109,9 @@
     <Compile Include="FormMain.Designer.cs">
       <DependentUpon>FormMain.cs</DependentUpon>
     </Compile>
-    <Compile Include="Game.cs" />
+    <Compile Include="Smashgg\Schema\ContactInfo.cs" />
+    <Compile Include="Smashgg\Schema\Event.cs" />
+    <Compile Include="Smashgg\Schema\Game.cs" />
     <Compile Include="IFormMain.cs" />
     <Compile Include="Liquipedia\GroupTables.cs" />
     <Compile Include="Liquipedia\LpBracket.cs" />
@@ -117,29 +121,42 @@
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
     </Compile>
-    <Compile Include="PhaseGroup.cs" />
+    <Compile Include="Smashgg\Schema\Participant.cs" />
+    <Compile Include="Smashgg\Schema\PhaseGroup.cs" />
     <Compile Include="JsonExtensions.cs" />
-    <Compile Include="Phase.cs" />
-    <Compile Include="Player.cs" />
-    <Compile Include="PlayerDatabase.cs" />
-    <Compile Include="PlayerInfo.cs" />
-    <Compile Include="PoolRecord.cs" />
+    <Compile Include="Smashgg\Schema\Phase.cs" />
+    <Compile Include="Smashgg\Schema\Player.cs" />
+    <Compile Include="Liquipedia\PlayerDatabase.cs" />
+    <Compile Include="Liquipedia\PlayerInfo.cs" />
+    <Compile Include="Intermediary\PoolRecord.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RichTextBoxEx.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Set.cs" />
-    <Compile Include="SetsByRound.cs" />
-    <Compile Include="smashgg.cs" />
-    <Compile Include="Entrant.cs" />
-    <Compile Include="SmashggStrings.Designer.cs">
+    <Compile Include="SelectionForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SelectionForm.Designer.cs">
+      <DependentUpon>SelectionForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Smashgg\Schema\Seed.cs" />
+    <Compile Include="Smashgg\Schema\Set.cs" />
+    <Compile Include="Intermediary\SetsByRound.cs" />
+    <Compile Include="Smashgg\Schema\Entrant.cs" />
+    <Compile Include="Smashgg\ApiQueries.cs" />
+    <Compile Include="Smashgg\SmashggStrings.Designer.cs">
       <DependentUpon>SmashggStrings.resx</DependentUpon>
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
     </Compile>
-    <EmbeddedResource Include="FormHeadings.resx">
-      <DependentUpon>FormHeadings.cs</DependentUpon>
+    <Compile Include="Smashgg\Schema\SetSlot.cs" />
+    <Compile Include="Smashgg\Schema\Standing.cs" />
+    <Compile Include="Smashgg\Schema\Tournament.cs" />
+    <Compile Include="Smashgg\Schema\Videogame.cs" />
+    <Compile Include="Smashgg\TreeNodeData.cs" />
+    <EmbeddedResource Include="Authentication.resx">
+      <DependentUpon>Authentication.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FormMatchShift.resx">
       <DependentUpon>FormMatchShift.cs</DependentUpon>
@@ -165,7 +182,10 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <EmbeddedResource Include="SmashggStrings.resx">
+    <EmbeddedResource Include="SelectionForm.resx">
+      <DependentUpon>SelectionForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Smashgg\SmashggStrings.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>SmashggStrings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
@@ -199,6 +219,13 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Configuration.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Queries.xml">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="smashgg to liquipedia.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
