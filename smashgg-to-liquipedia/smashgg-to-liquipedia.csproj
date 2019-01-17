@@ -134,12 +134,6 @@
     <Compile Include="RichTextBoxEx.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="SelectionForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="SelectionForm.Designer.cs">
-      <DependentUpon>SelectionForm.cs</DependentUpon>
-    </Compile>
     <Compile Include="Smashgg\Schema\Seed.cs" />
     <Compile Include="Smashgg\Schema\Set.cs" />
     <Compile Include="Intermediary\SetsByRound.cs" />
@@ -182,9 +176,6 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <EmbeddedResource Include="SelectionForm.resx">
-      <DependentUpon>SelectionForm.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Smashgg\SmashggStrings.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>SmashggStrings.Designer.cs</LastGenOutput>

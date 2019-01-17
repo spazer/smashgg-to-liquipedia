@@ -70,31 +70,32 @@
             this.label7 = new System.Windows.Forms.Label();
             this.tabControl = new System.Windows.Forms.TabControl();
             this.tabPageTournamentExplorer = new System.Windows.Forms.TabPage();
+            this.treeView1 = new System.Windows.Forms.TreeView();
             this.tabPageRetrievedData = new System.Windows.Forms.TabPage();
             this.richTextBoxLosers = new System.Windows.Forms.RichTextBox();
             this.richTextBoxWinners = new System.Windows.Forms.RichTextBox();
             this.buttonLoserShift = new System.Windows.Forms.Button();
-            this.checkBoxLockLosers = new System.Windows.Forms.CheckBox();
-            this.checkBoxLockWinners = new System.Windows.Forms.CheckBox();
-            this.numericUpDownLosersStart = new System.Windows.Forms.NumericUpDown();
-            this.label11 = new System.Windows.Forms.Label();
-            this.buttonWinnerShift = new System.Windows.Forms.Button();
-            this.numericUpDownLosersOffset = new System.Windows.Forms.NumericUpDown();
-            this.label12 = new System.Windows.Forms.Label();
-            this.label13 = new System.Windows.Forms.Label();
-            this.numericUpDownLosersEnd = new System.Windows.Forms.NumericUpDown();
-            this.numericUpDownWinnersStart = new System.Windows.Forms.NumericUpDown();
             this.label10 = new System.Windows.Forms.Label();
+            this.numericUpDownLosersEnd = new System.Windows.Forms.NumericUpDown();
+            this.label13 = new System.Windows.Forms.Label();
+            this.label12 = new System.Windows.Forms.Label();
+            this.numericUpDownLosersOffset = new System.Windows.Forms.NumericUpDown();
+            this.label11 = new System.Windows.Forms.Label();
+            this.numericUpDownLosersStart = new System.Windows.Forms.NumericUpDown();
+            this.checkBoxLockLosers = new System.Windows.Forms.CheckBox();
+            this.buttonWinnerShift = new System.Windows.Forms.Button();
             this.label9 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
-            this.numericUpDownWinnersOffset = new System.Windows.Forms.NumericUpDown();
-            this.label3 = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
             this.numericUpDownWinnersEnd = new System.Windows.Forms.NumericUpDown();
-            this.treeView1 = new System.Windows.Forms.TreeView();
+            this.label4 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
+            this.numericUpDownWinnersOffset = new System.Windows.Forms.NumericUpDown();
+            this.label2 = new System.Windows.Forms.Label();
+            this.numericUpDownWinnersStart = new System.Windows.Forms.NumericUpDown();
+            this.checkBoxLockWinners = new System.Windows.Forms.CheckBox();
             this.richTextBoxExLpWinnersBracket = new RichTextBoxEx();
             this.richTextBoxExLpFinalBracket = new RichTextBoxEx();
             this.richTextBoxExLpLosersBracket = new RichTextBoxEx();
+            this.buttonGetData = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAdvanceWinners)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAdvanceLosers)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPrizePool)).BeginInit();
@@ -103,12 +104,12 @@
             this.tabControl.SuspendLayout();
             this.tabPageTournamentExplorer.SuspendLayout();
             this.tabPageRetrievedData.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownLosersStart)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownLosersOffset)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownLosersEnd)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownWinnersStart)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownWinnersOffset)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownLosersOffset)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownLosersStart)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownWinnersEnd)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownWinnersOffset)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownWinnersStart)).BeginInit();
             this.SuspendLayout();
             // 
             // richTextBoxEntrants
@@ -137,7 +138,7 @@
             this.buttonGetBracket.TabIndex = 2;
             this.buttonGetBracket.Text = "Get Tournament";
             this.buttonGetBracket.UseVisualStyleBackColor = true;
-            this.buttonGetBracket.Click += new System.EventHandler(this.buttonGetBracket_Click);
+            this.buttonGetBracket.Click += new System.EventHandler(this.buttonGetTournament_Click);
             // 
             // buttonGetPhase
             // 
@@ -505,6 +506,7 @@
             // 
             // tabPageTournamentExplorer
             // 
+            this.tabPageTournamentExplorer.Controls.Add(this.buttonGetData);
             this.tabPageTournamentExplorer.Controls.Add(this.treeView1);
             this.tabPageTournamentExplorer.Location = new System.Drawing.Point(4, 22);
             this.tabPageTournamentExplorer.Name = "tabPageTournamentExplorer";
@@ -513,6 +515,15 @@
             this.tabPageTournamentExplorer.TabIndex = 0;
             this.tabPageTournamentExplorer.Text = "Tournament Explorer";
             this.tabPageTournamentExplorer.UseVisualStyleBackColor = true;
+            // 
+            // treeView1
+            // 
+            this.treeView1.CheckBoxes = true;
+            this.treeView1.Location = new System.Drawing.Point(6, 6);
+            this.treeView1.Name = "treeView1";
+            this.treeView1.Size = new System.Drawing.Size(448, 221);
+            this.treeView1.TabIndex = 28;
+            this.treeView1.AfterCheck += new System.Windows.Forms.TreeViewEventHandler(this.treeView1_AfterCheck);
             // 
             // tabPageRetrievedData
             // 
@@ -573,54 +584,39 @@
             this.buttonLoserShift.UseVisualStyleBackColor = true;
             this.buttonLoserShift.Click += new System.EventHandler(this.buttonloserShift_Click);
             // 
-            // checkBoxLockLosers
+            // label10
             // 
-            this.checkBoxLockLosers.AutoSize = true;
-            this.checkBoxLockLosers.Location = new System.Drawing.Point(516, 122);
-            this.checkBoxLockLosers.Name = "checkBoxLockLosers";
-            this.checkBoxLockLosers.Size = new System.Drawing.Size(50, 17);
-            this.checkBoxLockLosers.TabIndex = 14;
-            this.checkBoxLockLosers.Text = "Lock";
-            this.checkBoxLockLosers.UseVisualStyleBackColor = true;
-            this.checkBoxLockLosers.CheckedChanged += new System.EventHandler(this.checkBoxLock_CheckedChanged);
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(340, 128);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(38, 13);
+            this.label10.TabIndex = 6;
+            this.label10.Text = "Losers";
             // 
-            // checkBoxLockWinners
+            // numericUpDownLosersEnd
             // 
-            this.checkBoxLockWinners.AutoSize = true;
-            this.checkBoxLockWinners.Location = new System.Drawing.Point(190, 122);
-            this.checkBoxLockWinners.Name = "checkBoxLockWinners";
-            this.checkBoxLockWinners.Size = new System.Drawing.Size(50, 17);
-            this.checkBoxLockWinners.TabIndex = 14;
-            this.checkBoxLockWinners.Text = "Lock";
-            this.checkBoxLockWinners.UseVisualStyleBackColor = true;
-            this.checkBoxLockWinners.CheckedChanged += new System.EventHandler(this.checkBoxLock_CheckedChanged);
+            this.numericUpDownLosersEnd.Location = new System.Drawing.Point(428, 121);
+            this.numericUpDownLosersEnd.Name = "numericUpDownLosersEnd";
+            this.numericUpDownLosersEnd.Size = new System.Drawing.Size(38, 20);
+            this.numericUpDownLosersEnd.TabIndex = 9;
             // 
-            // numericUpDownLosersStart
+            // label13
             // 
-            this.numericUpDownLosersStart.Location = new System.Drawing.Point(384, 121);
-            this.numericUpDownLosersStart.Name = "numericUpDownLosersStart";
-            this.numericUpDownLosersStart.Size = new System.Drawing.Size(38, 20);
-            this.numericUpDownLosersStart.TabIndex = 7;
-            this.numericUpDownLosersStart.ValueChanged += new System.EventHandler(this.numericUpDownLosersStart_ValueChanged);
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(469, 104);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(35, 13);
+            this.label13.TabIndex = 12;
+            this.label13.Text = "Offset";
             // 
-            // label11
+            // label12
             // 
-            this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(381, 104);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(29, 13);
-            this.label11.TabIndex = 10;
-            this.label11.Text = "Start";
-            // 
-            // buttonWinnerShift
-            // 
-            this.buttonWinnerShift.Location = new System.Drawing.Point(246, 115);
-            this.buttonWinnerShift.Name = "buttonWinnerShift";
-            this.buttonWinnerShift.Size = new System.Drawing.Size(75, 23);
-            this.buttonWinnerShift.TabIndex = 19;
-            this.buttonWinnerShift.Text = "Shift";
-            this.buttonWinnerShift.UseVisualStyleBackColor = true;
-            this.buttonWinnerShift.Click += new System.EventHandler(this.buttonWinnerShift_Click);
+            this.label12.AutoSize = true;
+            this.label12.Location = new System.Drawing.Point(425, 104);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(26, 13);
+            this.label12.TabIndex = 11;
+            this.label12.Text = "End";
             // 
             // numericUpDownLosersOffset
             // 
@@ -638,51 +634,43 @@
             this.numericUpDownLosersOffset.Name = "numericUpDownLosersOffset";
             this.numericUpDownLosersOffset.Size = new System.Drawing.Size(38, 20);
             this.numericUpDownLosersOffset.TabIndex = 8;
-            this.numericUpDownLosersOffset.ValueChanged += new System.EventHandler(this.numericUpDownLosersOffset_ValueChanged);
             // 
-            // label12
+            // label11
             // 
-            this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(425, 104);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(26, 13);
-            this.label12.TabIndex = 11;
-            this.label12.Text = "End";
-            this.label12.Click += new System.EventHandler(this.label12_Click);
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(381, 104);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(29, 13);
+            this.label11.TabIndex = 10;
+            this.label11.Text = "Start";
             // 
-            // label13
+            // numericUpDownLosersStart
             // 
-            this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(469, 104);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(35, 13);
-            this.label13.TabIndex = 12;
-            this.label13.Text = "Offset";
-            this.label13.Click += new System.EventHandler(this.label13_Click);
+            this.numericUpDownLosersStart.Location = new System.Drawing.Point(384, 121);
+            this.numericUpDownLosersStart.Name = "numericUpDownLosersStart";
+            this.numericUpDownLosersStart.Size = new System.Drawing.Size(38, 20);
+            this.numericUpDownLosersStart.TabIndex = 7;
             // 
-            // numericUpDownLosersEnd
+            // checkBoxLockLosers
             // 
-            this.numericUpDownLosersEnd.Location = new System.Drawing.Point(428, 121);
-            this.numericUpDownLosersEnd.Name = "numericUpDownLosersEnd";
-            this.numericUpDownLosersEnd.Size = new System.Drawing.Size(38, 20);
-            this.numericUpDownLosersEnd.TabIndex = 9;
-            this.numericUpDownLosersEnd.ValueChanged += new System.EventHandler(this.numericUpDownLosersEnd_ValueChanged);
+            this.checkBoxLockLosers.AutoSize = true;
+            this.checkBoxLockLosers.Location = new System.Drawing.Point(516, 122);
+            this.checkBoxLockLosers.Name = "checkBoxLockLosers";
+            this.checkBoxLockLosers.Size = new System.Drawing.Size(50, 17);
+            this.checkBoxLockLosers.TabIndex = 14;
+            this.checkBoxLockLosers.Text = "Lock";
+            this.checkBoxLockLosers.UseVisualStyleBackColor = true;
+            this.checkBoxLockLosers.CheckedChanged += new System.EventHandler(this.checkBoxLock_CheckedChanged);
             // 
-            // numericUpDownWinnersStart
+            // buttonWinnerShift
             // 
-            this.numericUpDownWinnersStart.Location = new System.Drawing.Point(58, 121);
-            this.numericUpDownWinnersStart.Name = "numericUpDownWinnersStart";
-            this.numericUpDownWinnersStart.Size = new System.Drawing.Size(38, 20);
-            this.numericUpDownWinnersStart.TabIndex = 3;
-            // 
-            // label10
-            // 
-            this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(340, 128);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(38, 13);
-            this.label10.TabIndex = 6;
-            this.label10.Text = "Losers";
+            this.buttonWinnerShift.Location = new System.Drawing.Point(246, 115);
+            this.buttonWinnerShift.Name = "buttonWinnerShift";
+            this.buttonWinnerShift.Size = new System.Drawing.Size(75, 23);
+            this.buttonWinnerShift.TabIndex = 19;
+            this.buttonWinnerShift.Text = "Shift";
+            this.buttonWinnerShift.UseVisualStyleBackColor = true;
+            this.buttonWinnerShift.Click += new System.EventHandler(this.buttonWinnerShift_Click);
             // 
             // label9
             // 
@@ -693,14 +681,30 @@
             this.label9.TabIndex = 6;
             this.label9.Text = "Winners";
             // 
-            // label2
+            // numericUpDownWinnersEnd
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(55, 104);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(29, 13);
-            this.label2.TabIndex = 6;
-            this.label2.Text = "Start";
+            this.numericUpDownWinnersEnd.Location = new System.Drawing.Point(102, 121);
+            this.numericUpDownWinnersEnd.Name = "numericUpDownWinnersEnd";
+            this.numericUpDownWinnersEnd.Size = new System.Drawing.Size(38, 20);
+            this.numericUpDownWinnersEnd.TabIndex = 3;
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(143, 104);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(35, 13);
+            this.label4.TabIndex = 6;
+            this.label4.Text = "Offset";
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(99, 104);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(26, 13);
+            this.label3.TabIndex = 6;
+            this.label3.Text = "End";
             // 
             // numericUpDownWinnersOffset
             // 
@@ -719,39 +723,32 @@
             this.numericUpDownWinnersOffset.Size = new System.Drawing.Size(38, 20);
             this.numericUpDownWinnersOffset.TabIndex = 3;
             // 
-            // label3
+            // label2
             // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(99, 104);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(26, 13);
-            this.label3.TabIndex = 6;
-            this.label3.Text = "End";
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(55, 104);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(29, 13);
+            this.label2.TabIndex = 6;
+            this.label2.Text = "Start";
             // 
-            // label4
+            // numericUpDownWinnersStart
             // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(143, 104);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(35, 13);
-            this.label4.TabIndex = 6;
-            this.label4.Text = "Offset";
+            this.numericUpDownWinnersStart.Location = new System.Drawing.Point(58, 121);
+            this.numericUpDownWinnersStart.Name = "numericUpDownWinnersStart";
+            this.numericUpDownWinnersStart.Size = new System.Drawing.Size(38, 20);
+            this.numericUpDownWinnersStart.TabIndex = 3;
             // 
-            // numericUpDownWinnersEnd
+            // checkBoxLockWinners
             // 
-            this.numericUpDownWinnersEnd.Location = new System.Drawing.Point(102, 121);
-            this.numericUpDownWinnersEnd.Name = "numericUpDownWinnersEnd";
-            this.numericUpDownWinnersEnd.Size = new System.Drawing.Size(38, 20);
-            this.numericUpDownWinnersEnd.TabIndex = 3;
-            // 
-            // treeView1
-            // 
-            this.treeView1.CheckBoxes = true;
-            this.treeView1.Location = new System.Drawing.Point(6, 6);
-            this.treeView1.Name = "treeView1";
-            this.treeView1.Size = new System.Drawing.Size(448, 221);
-            this.treeView1.TabIndex = 28;
-            this.treeView1.AfterCheck += new System.Windows.Forms.TreeViewEventHandler(this.treeView1_AfterCheck);
+            this.checkBoxLockWinners.AutoSize = true;
+            this.checkBoxLockWinners.Location = new System.Drawing.Point(190, 122);
+            this.checkBoxLockWinners.Name = "checkBoxLockWinners";
+            this.checkBoxLockWinners.Size = new System.Drawing.Size(50, 17);
+            this.checkBoxLockWinners.TabIndex = 14;
+            this.checkBoxLockWinners.Text = "Lock";
+            this.checkBoxLockWinners.UseVisualStyleBackColor = true;
+            this.checkBoxLockWinners.CheckedChanged += new System.EventHandler(this.checkBoxLock_CheckedChanged);
             // 
             // richTextBoxExLpWinnersBracket
             // 
@@ -779,6 +776,16 @@
             this.richTextBoxExLpLosersBracket.Size = new System.Drawing.Size(225, 107);
             this.richTextBoxExLpLosersBracket.TabIndex = 13;
             this.richTextBoxExLpLosersBracket.Text = "";
+            // 
+            // buttonGetData
+            // 
+            this.buttonGetData.Location = new System.Drawing.Point(580, 6);
+            this.buttonGetData.Name = "buttonGetData";
+            this.buttonGetData.Size = new System.Drawing.Size(97, 90);
+            this.buttonGetData.TabIndex = 29;
+            this.buttonGetData.Text = "Get";
+            this.buttonGetData.UseVisualStyleBackColor = true;
+            this.buttonGetData.Click += new System.EventHandler(this.buttonGetData_Click);
             // 
             // FormMain
             // 
@@ -833,12 +840,12 @@
             this.tabPageTournamentExplorer.ResumeLayout(false);
             this.tabPageRetrievedData.ResumeLayout(false);
             this.tabPageRetrievedData.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownLosersStart)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownLosersOffset)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownLosersEnd)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownWinnersStart)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownWinnersOffset)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownLosersOffset)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownLosersStart)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownWinnersEnd)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownWinnersOffset)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownWinnersStart)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -912,6 +919,7 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.NumericUpDown numericUpDownWinnersEnd;
         private System.Windows.Forms.TreeView treeView1;
+        private System.Windows.Forms.Button buttonGetData;
     }
 }
 

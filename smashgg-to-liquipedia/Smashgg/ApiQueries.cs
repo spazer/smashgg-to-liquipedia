@@ -92,6 +92,12 @@ namespace smashgg_to_liquipedia
             return (graphQLResponse.Data);
         }
 
+        /// <summary>
+        /// Gets a list of events from the tournament slug
+        /// </summary>
+        /// <param name="tournamentSlug">Tournament slug</param>
+        /// <param name="errors">Errors</param>
+        /// <returns>Tournament object with all events</returns>
         public Tournament GetEvents(string tournamentSlug, out string errors)
         {
             errors = string.Empty;
@@ -193,6 +199,110 @@ namespace smashgg_to_liquipedia
                             }
 
                             tournament.events[i].phases[j].phasegroups.Sort((group1,group2) => group1.displayIdentifier.CompareTo(group2.displayIdentifier));
+                        }
+                    }
+                }
+                else
+                {
+                    // Return the errors
+                    errors = "Could not retrieve any data";
+                }
+            }
+
+            return tournament;
+        }
+
+        public Tournament GetSets(int phaseGroupId, out string errors)
+        {
+            errors = string.Empty;
+
+            GraphQLRequest eventsRequest = new GraphQLRequest
+            {
+                Query = @"
+                query GetSets($phaseGroupId: Int) {
+                    phaseGroup(id: $phaseGroupId) {
+                        sets{
+                          round
+                          displayScore
+                          winnerId                          
+                          slots {
+                            entrant {
+                              id
+                              name
+                            }
+                          }
+                        }
+                    }
+                }",
+                OperationName = "GetSets",
+                Variables = new
+                {
+                    phaseGroupId = phaseGroupId
+                }
+            };
+
+            GraphQLResponse response = graphQLClient.PostAsync(eventsRequest).Result;
+            Tournament tournament = new Tournament();
+            if (response.Errors != null)
+            {
+                // Return the errors
+                errors = response.Errors.ToString();
+            }
+            else
+            {
+                if (response.Data != null)
+                {
+                    // Parse the json response
+                    tournament = JsonConvert.DeserializeObject<Tournament>(response.Data.tournament.ToString());
+                    tournament.slug = tournamentSlug;
+
+                    // For each event
+                    for (int i = 0; i < tournament.events.Count; i++)
+                    {
+                        // For each phasegroup in the event
+                        for (int j = 0; j < tournament.events[i].phaseGroups.Count; j++)
+                        {
+                            // Generate waves for the phasegroup if relevant
+                            tournament.events[i].phaseGroups[j].GenerateWave();
+
+                            // For each phase in the event
+                            for (int k = 0; k < tournament.events[i].phases.Count; k++)
+                            {
+                                // Check if the phasegroup phase is equal to the selected phase and add it if true
+                                if (tournament.events[i].phases[k].id == tournament.events[i].phaseGroups[j].phaseId)
+                                {
+                                    tournament.events[i].phases[k].phasegroups.Add(tournament.events[i].phaseGroups[j]);
+
+                                    // If the phasegroup has a wave, add it to the wave dictionary
+                                    if (tournament.events[i].phaseGroups[j].Wave != string.Empty && tournament.events[i].phases[k].waves.ContainsKey(tournament.events[i].phaseGroups[j].Wave))
+                                    {
+                                        tournament.events[i].phases[k].waves[tournament.events[i].phaseGroups[j].Wave].Add(tournament.events[i].phaseGroups[j]);
+                                    }
+                                    else if (tournament.events[i].phaseGroups[j].Wave != string.Empty)
+                                    {
+                                        tournament.events[i].phases[k].waves.Add(tournament.events[i].phaseGroups[j].Wave, new List<PhaseGroup>());
+                                        tournament.events[i].phases[k].waves[tournament.events[i].phaseGroups[j].Wave].Add(tournament.events[i].phaseGroups[j]);
+                                    }
+
+                                    break;
+                                }
+                            }
+                        }
+
+                        // Sort the phasegroups into a logical order
+
+                        for (int j = 0; j < tournament.events[i].phases.Count; j++)
+                        {
+                            // Sort the phasegroups within the waves
+                            if (tournament.events[i].phases[j].waves.Count > 0)
+                            {
+                                for (int k = 0; k < tournament.events[i].phases[j].waves.Count; k++)
+                                {
+                                    tournament.events[i].phases[j].waves.ElementAt(k).Value.Sort((group1, group2) => group1.displayIdentifier.CompareTo(group2.displayIdentifier));
+                                }
+                            }
+
+                            tournament.events[i].phases[j].phasegroups.Sort((group1, group2) => group1.displayIdentifier.CompareTo(group2.displayIdentifier));
                         }
                     }
                 }

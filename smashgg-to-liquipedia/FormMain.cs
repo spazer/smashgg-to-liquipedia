@@ -189,7 +189,7 @@ namespace smashgg_to_liquipedia
         /// </summary>
         /// <param name="sender">N/A</param>
         /// <param name="e">N/A</param>
-        private void buttonGetBracket_Click(object sender, EventArgs e)
+        private void buttonGetTournament_Click(object sender, EventArgs e)
         {
             LockControls();
 
@@ -1033,7 +1033,6 @@ namespace smashgg_to_liquipedia
             string json = string.Empty;
 
             // Deserialize json
-            JObject bracketJson = JsonConvert.DeserializeObject<JObject>(json);
 
             // Fill entrant and set lists
 
@@ -2104,31 +2103,7 @@ namespace smashgg_to_liquipedia
         }
         #endregion
 
-        private void numericUpDownLosersOffset_ValueChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label13_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label12_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void numericUpDownLosersEnd_ValueChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void numericUpDownLosersStart_ValueChanged(object sender, EventArgs e)
-        {
-
-        }
-
+        #region TreeView Methods
         private void treeView1_AfterCheck(object sender, TreeViewEventArgs e)
         {
             // The code only executes if the user caused the checked state to change.
@@ -2211,6 +2186,23 @@ namespace smashgg_to_liquipedia
             else
             {
                 return FindParentEvent(node.Parent);
+            }
+        }
+        #endregion
+
+        private void buttonGetData_Click(object sender, EventArgs e)
+        {
+            switch (selectedObjectType)
+            {
+                case TreeNodeData.NodeType.Phase:
+                    break;
+                case TreeNodeData.NodeType.PhaseGroup:
+                    break;
+                case TreeNodeData.NodeType.Wave:
+                    break;
+                default:
+                    richTextBoxLog.Text += "Can't do anything with that object\r\n";
+                    break;
             }
         }
     }
