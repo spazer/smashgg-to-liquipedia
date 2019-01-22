@@ -18,6 +18,6 @@ namespace smashgg_to_liquipedia
 
         // Internal fields
         public List<PhaseGroup> phasegroups = new List<PhaseGroup>();
-        public Dictionary<string, List<PhaseGroup>> waves = new Dictionary<string, List<PhaseGroup>>();
+        public SortedDictionary<string, List<PhaseGroup>> waves = new SortedDictionary<string, List<PhaseGroup>>();
     }
 }

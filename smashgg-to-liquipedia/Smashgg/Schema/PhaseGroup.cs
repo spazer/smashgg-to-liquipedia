@@ -21,7 +21,7 @@ namespace smashgg_to_liquipedia
         // Internal fields
         public enum IdentiferType { WaveNumber, NumberOnly, Other };
         private int number;
-        private IdentiferType identifierType;
+        public IdentiferType identifierType;
         private string wavePrefix;
 
         public PhaseGroup()

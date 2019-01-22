@@ -8,9 +8,9 @@ namespace smashgg_to_liquipedia
 {
     public class Player
     {
-        public string name;
+        public string gamerTag;
         public string country;
-        public int playerID;
+        public int id;
 
         // Blank constructor
         public Player() { }
@@ -18,8 +18,8 @@ namespace smashgg_to_liquipedia
         // Overloaded constructor
         public Player(int inputID, string inputName, string inputCountry)
         {
-            playerID = inputID;
-            name = inputName;
+            id = inputID;
+            gamerTag = inputName;
             country = inputCountry;
         }
     }

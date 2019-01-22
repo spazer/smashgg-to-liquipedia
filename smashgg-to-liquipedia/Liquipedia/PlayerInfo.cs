@@ -18,7 +18,7 @@ namespace smashgg_to_liquipedia
             name = string.Empty;
             flag = string.Empty;
             regexMatch = string.Empty;
-            smashggID = 0;
+            smashggID = Consts.UNKNOWN;
         }
 
         public PlayerInfo(string name, string flag, string regex, int id)
@@ -26,7 +26,15 @@ namespace smashgg_to_liquipedia
             this.name = name;
             this.flag = flag;
             regexMatch = regex;
-            smashggID = id;
+
+            if (id != 0)
+            {
+                smashggID = id;
+            }
+            else
+            {
+                smashggID = Consts.UNKNOWN;
+            }
         }
     }
 }

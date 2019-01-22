@@ -12,9 +12,6 @@ namespace smashgg_to_liquipedia
         public enum EntrantType { Singles, Doubles, Team }
 
 #region GraphQL fields
-        /// <summary>
-        /// Gamertag
-        /// </summary>
         public string name { get; set; }
         public int id { get; set; }
         public List<Participant> participants = new List<Participant>();

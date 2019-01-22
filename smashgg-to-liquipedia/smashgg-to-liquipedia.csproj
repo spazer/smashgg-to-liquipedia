@@ -51,6 +51,10 @@
     <ApplicationIcon>smashgg to liquipedia.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Esendex.TokenBucket, Version=1.0.7.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Esendex.TokenBucket.1.0.7\lib\net40\Esendex.TokenBucket.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="GraphQL.Client, Version=1.0.3.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\GraphQL.Client.1.0.3\lib\netstandard1.1\GraphQL.Client.dll</HintPath>
       <Private>True</Private>
@@ -59,8 +63,8 @@
       <HintPath>..\packages\GraphQL.Common.1.0.3\lib\netstandard1.0\GraphQL.Common.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -139,6 +143,7 @@
     <Compile Include="Intermediary\SetsByRound.cs" />
     <Compile Include="Smashgg\Schema\Entrant.cs" />
     <Compile Include="Smashgg\ApiQueries.cs" />
+    <Compile Include="Smashgg\Schema\StandingConnection.cs" />
     <Compile Include="Smashgg\SmashggStrings.Designer.cs">
       <DependentUpon>SmashggStrings.resx</DependentUpon>
       <DesignTime>True</DesignTime>
@@ -148,6 +153,7 @@
     <Compile Include="Smashgg\Schema\Standing.cs" />
     <Compile Include="Smashgg\Schema\Tournament.cs" />
     <Compile Include="Smashgg\Schema\Videogame.cs" />
+    <Compile Include="Smashgg\Standardization.cs" />
     <Compile Include="Smashgg\TreeNodeData.cs" />
     <EmbeddedResource Include="Authentication.resx">
       <DependentUpon>Authentication.cs</DependentUpon>

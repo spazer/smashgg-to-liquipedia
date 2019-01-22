@@ -15,6 +15,7 @@ namespace smashgg_to_liquipedia.Liquipedia
         private string log;
         bool loadedMatchDetailDictionary;
 
+        Event selectedEvent;
         Dictionary<int, Entrant> entrantList;
         List<Set> setList;
         Dictionary<int, List<Set>> roundList;
@@ -26,10 +27,11 @@ namespace smashgg_to_liquipedia.Liquipedia
         /// LpOutput constructor
         /// </summary>
         /// <param name="form">Reference to the main form</param>
-        public LpOutput(Event.EventType eventType, ref Dictionary<int, Entrant> entrantList, ref List<Set> setList, ref Dictionary<int, List<Set>> roundList)
+        public LpOutput(Event selectedEvent, ref Dictionary<int, Entrant> entrantList, ref List<Set> setList, ref Dictionary<int, List<Set>> roundList)
         {
             log = string.Empty;
 
+            this.selectedEvent = selectedEvent;
             this.entrantList = entrantList;
             this.setList = setList;
             this.roundList = roundList;
@@ -48,8 +50,8 @@ namespace smashgg_to_liquipedia.Liquipedia
         {
             if (!loadedMatchDetailDictionary)
             {
-                LoadDictionaryFromCSV(ref gameCharacterList, set.gameId, "Character");
-                LoadDictionaryFromCSV(ref gameStageList, set.gameId, "Stage");
+                LoadDictionaryFromCSV(ref gameCharacterList, selectedEvent.videogame.id, "Character");
+                LoadDictionaryFromCSV(ref gameStageList, selectedEvent.videogame.id, "Stage");
 
                 loadedMatchDetailDictionary = true;
             }
@@ -450,7 +452,7 @@ namespace smashgg_to_liquipedia.Liquipedia
                         else
                         {
                             // smash.gg switches P1 and P2 in the event of a bracket reset
-                            if (currentSet.isGF && currentSet.match == 2)
+                            if ((currentSet.round == roundList.Keys.Max()) && currentSet.match == 2)
                             {
                                 if (includeUnfinished || currentSet.State == Tournament.ActivityState.Completed)
                                 {
@@ -497,7 +499,7 @@ namespace smashgg_to_liquipedia.Liquipedia
                         }
 
                         // Set the winner
-                        if (currentSet.isGF && currentSet.match == 2)
+                        if ((currentSet.round == roundList.Keys.Max()) && currentSet.match == 2)
                         {
                             if (currentSet.winnerId == currentSet.slots[0].entrant.id)
                             {
@@ -508,7 +510,7 @@ namespace smashgg_to_liquipedia.Liquipedia
                                 FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + 1 + LpStrings.Win, "1");
                             }
                         }
-                        else if (currentSet.isGF && currentSet.match == 1 && roundList[i].Count > 1)
+                        else if ((currentSet.round == roundList.Keys.Max()) && currentSet.match == 1 && roundList[i].Count > 1)
                         {
                             if (currentSet.winnerId == currentSet.slots[0].entrant.id)
                             {
@@ -530,7 +532,7 @@ namespace smashgg_to_liquipedia.Liquipedia
                         // Fill in match details if available
                         if (includeUnfinished || currentSet.State == Tournament.ActivityState.Completed)
                         {
-                            if (currentSet.isGF && currentSet.match == 2 && currentSet.games != null && matchDetails)
+                            if ((currentSet.round == roundList.Keys.Max()) && currentSet.match == 2 && currentSet.games != null && matchDetails)
                             {
                                 FillMatchDetailsSingles(bracketSide, outputRound, outputSet, currentSet, ref bracketText, true);
                             }
@@ -663,7 +665,7 @@ namespace smashgg_to_liquipedia.Liquipedia
                         else
                         {
                             // smash.gg switches P1 and P2 in the event of a bracket reset
-                            if (currentSet.isGF && currentSet.match == 2)
+                            if ((currentSet.round == roundList.Keys.Max()) && currentSet.match == 2)
                             {
                                 if (currentSet.entrant1wins != Consts.UNKNOWN && currentSet.entrant2wins != Consts.UNKNOWN)
                                 {
@@ -704,7 +706,7 @@ namespace smashgg_to_liquipedia.Liquipedia
                         }
 
                         // Set the winner
-                        if (currentSet.isGF && currentSet.match == 2)
+                        if ((currentSet.round == roundList.Keys.Max()) && currentSet.match == 2)
                         {
                             if (currentSet.winnerId == currentSet.slots[0].entrant.id)
                             {
@@ -715,7 +717,7 @@ namespace smashgg_to_liquipedia.Liquipedia
                                 FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + 1 + LpStrings.Win, "1");
                             }
                         }
-                        else if (currentSet.isGF && currentSet.match == 1 && roundList[i].Count > 1)
+                        else if ((currentSet.round == roundList.Keys.Max()) && currentSet.match == 1 && roundList[i].Count > 1)
                         {
                             if (currentSet.winnerId == currentSet.slots[0].entrant.id)
                             {
@@ -781,7 +783,7 @@ namespace smashgg_to_liquipedia.Liquipedia
                 }
 
                 Player currentPlayer = entrantList[poolData.ElementAt(i).Key].participants[0].player;
-                output += LpStrings.SlotStart + currentPlayer.name +
+                output += LpStrings.SlotStart + currentPlayer.gamerTag +
                           LpStrings.SlotFlag + currentPlayer.country;
                 if ((poolData[poolData.ElementAt(i).Key].MatchesWin + poolData[poolData.ElementAt(i).Key].MatchesLoss > 0) && poolData[poolData.ElementAt(i).Key].matchesActuallyPlayed == 0)
                 {
@@ -860,20 +862,20 @@ namespace smashgg_to_liquipedia.Liquipedia
 
                     if (currentSet.entrant1wins == -1 && currentSet.entrant2wins == 0)
                     {
-                        output += "\r\n|" + LpStrings.P1 + "=" + p1.name + " |" + LpStrings.P1 + LpStrings.Flag + "=" + p1.country + " |" + LpStrings.P1 + LpStrings.Score + "=DQ" +  "\r\n" +
-                              "|" + LpStrings.P2 + "=" + p2.name + " |" + LpStrings.P2 + LpStrings.Flag + "=" + p2.country + " |" + LpStrings.P2 + LpStrings.Score + "=-" + "\r\n" +
+                        output += "\r\n|" + LpStrings.P1 + "=" + p1.gamerTag + " |" + LpStrings.P1 + LpStrings.Flag + "=" + p1.country + " |" + LpStrings.P1 + LpStrings.Score + "=DQ" +  "\r\n" +
+                              "|" + LpStrings.P2 + "=" + p2.gamerTag + " |" + LpStrings.P2 + LpStrings.Flag + "=" + p2.country + " |" + LpStrings.P2 + LpStrings.Score + "=-" + "\r\n" +
                               "|" + LpStrings.Win + "=";
                     }
                     else if (currentSet.entrant1wins == 0 && currentSet.entrant2wins == -1)
                     {
-                        output += "\r\n|" + LpStrings.P1 + "=" + p1.name + " |" + LpStrings.P1 + LpStrings.Flag + "=" + p1.country + " |" + LpStrings.P1 + LpStrings.Score + "=-" + "\r\n" +
-                              "|" + LpStrings.P2 + "=" + p2.name + " |" + LpStrings.P2 + LpStrings.Flag + "=" + p2.country + " |" + LpStrings.P2 + LpStrings.Score + "=DQ" + "\r\n" +
+                        output += "\r\n|" + LpStrings.P1 + "=" + p1.gamerTag + " |" + LpStrings.P1 + LpStrings.Flag + "=" + p1.country + " |" + LpStrings.P1 + LpStrings.Score + "=-" + "\r\n" +
+                              "|" + LpStrings.P2 + "=" + p2.gamerTag + " |" + LpStrings.P2 + LpStrings.Flag + "=" + p2.country + " |" + LpStrings.P2 + LpStrings.Score + "=DQ" + "\r\n" +
                               "|" + LpStrings.Win + "=";
                     }
                     else
                     {
-                        output += "\r\n|" + LpStrings.P1 + "=" + p1.name + " |" + LpStrings.P1 + LpStrings.Flag + "=" + p1.country + " |" + LpStrings.P1 + LpStrings.Score + "=" + currentSet.entrant1wins + "\r\n" +
-                              "|" + LpStrings.P2 + "=" + p2.name + " |" + LpStrings.P2 + LpStrings.Flag + "=" + p2.country + " |" + LpStrings.P2 + LpStrings.Score + "=" + currentSet.entrant2wins + "\r\n" +
+                        output += "\r\n|" + LpStrings.P1 + "=" + p1.gamerTag + " |" + LpStrings.P1 + LpStrings.Flag + "=" + p1.country + " |" + LpStrings.P1 + LpStrings.Score + "=" + currentSet.entrant1wins + "\r\n" +
+                              "|" + LpStrings.P2 + "=" + p2.gamerTag + " |" + LpStrings.P2 + LpStrings.Flag + "=" + p2.country + " |" + LpStrings.P2 + LpStrings.Score + "=" + currentSet.entrant2wins + "\r\n" +
                               "|" + LpStrings.Win + "=";
                     }
 
@@ -998,8 +1000,8 @@ namespace smashgg_to_liquipedia.Liquipedia
 
                     output += LpStrings.MatchStages;
 
-                    output += "|" + LpStrings.P1 + "=" + p1.name + " |" + LpStrings.P1 + LpStrings.Flag + "=" + p1.country + " |" + LpStrings.P1 + LpStrings.Score + "=" + currentSet.entrant1wins + "\r\n" +
-                              "|" + LpStrings.P2 + "=" + p2.name + " |" + LpStrings.P2 + LpStrings.Flag + "=" + p2.country + " |" + LpStrings.P2 + LpStrings.Score + "=" + currentSet.entrant2wins + "\r\n" +
+                    output += "|" + LpStrings.P1 + "=" + p1.gamerTag + " |" + LpStrings.P1 + LpStrings.Flag + "=" + p1.country + " |" + LpStrings.P1 + LpStrings.Score + "=" + currentSet.entrant1wins + "\r\n" +
+                              "|" + LpStrings.P2 + "=" + p2.gamerTag + " |" + LpStrings.P2 + LpStrings.Flag + "=" + p2.country + " |" + LpStrings.P2 + LpStrings.Score + "=" + currentSet.entrant2wins + "\r\n" +
                               "|" + LpStrings.Win + "=";
 
                     if (currentSet.winnerId == currentSet.slots[0].entrant.id) { output += "1\r\n"; }

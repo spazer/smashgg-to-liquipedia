@@ -19,7 +19,7 @@ using smashgg_to_liquipedia.Smashgg;
 
 namespace smashgg_to_liquipedia
 {
-    public partial class FormMain : Form
+    public partial class FormMain : Form, IFormMain
     {
         static string SMASH_DB_URI = "http://liquipedia.net/smash/api.php?action=parse&page=Liquipedia:Players_Regex&prop=revid|wikitext&format=json";
         static string FIGHTERS_DB_URI = "http://liquipedia.net/fighters/api.php?action=parse&page=Liquipedia:Players_Regex&prop=revid|wikitext&format=json";
@@ -103,7 +103,7 @@ namespace smashgg_to_liquipedia
                                                         "|l1placement=4\r\n" +
                                                         "|r2placement=3\r\n" +
                                                         "|r3loserplacement=2\r\n" +
-                                                        "|r3winnerplacement=1\r\n\r\n" + 
+                                                        "|r3winnerplacement=1\r\n\r\n" +
                                                         "<!-- FROM WINNERS -->\r\n" +
                                                         "|r1m1t1p1= |r1m1t1p1flag=\r\n" +
                                                         "|r1m1t1p2= |r1m1t1p2flag= |r1m1t1score=\r\n" +
@@ -136,20 +136,27 @@ namespace smashgg_to_liquipedia
 
         public enum BracketSide { Winners, Losers }
 
+        List<Seed> seedList = new List<Seed>();
         Dictionary<int, Entrant> entrantList = new Dictionary<int, Entrant>();
         List<Set> setList = new List<Set>();
         Dictionary<int, List<Set>> roundList = new Dictionary<int, List<Set>>();
-        List<Phase> phaseList = new List<Phase>();
         Dictionary<int, int> matchOffsetPerRound = new Dictionary<int, int>();
 
         Tournament tournament;
         Event selectedEvent;
         int selectedObjectId;
         Smashgg.TreeNodeData.NodeType selectedObjectType;
-        
+
         PlayerDatabase playerdb;
+        ApiQueries apiQuery;
 
         string authToken = string.Empty;
+
+        public string Log
+        {
+            get { return richTextBoxLog.Text; }
+            set { richTextBoxLog.Text = value; }
+        }
 
         public FormMain()
         {
@@ -181,6 +188,17 @@ namespace smashgg_to_liquipedia
                 playerdb = new PlayerDatabase(PlayerDatabase.DbSource.Fighters);
             }
             UpdateRevID();
+
+            bool success;
+            apiQuery = new ApiQueries(authToken, playerdb, this, out success);
+            if (!success)
+            {
+                richTextBoxLog.Text += "Failed to get API endpoint\r\n";
+            }
+            else
+            {
+                richTextBoxLog.Text += "Set up API query class successfully\r\n";
+            }
         }
 
         #region Buttons
@@ -211,247 +229,256 @@ namespace smashgg_to_liquipedia
                 UnlockControls();
                 return;
             }
-            string slug = textBoxTournamentUrl.Text.Substring(tournamentMarker+11, endtournamentMarker - (tournamentMarker + 11));
+            string slug = textBoxTournamentUrl.Text.Substring(tournamentMarker + 11, endtournamentMarker - (tournamentMarker + 11));
 
-            bool success;
-            string errors;
-            ApiQueries apiQuery = new ApiQueries(authToken, out success);
-            if (!success)
+            // Clear the treeview
+            treeView1.Nodes.Clear();
+
+            tournament = apiQuery.GetEvents(slug);
+            if (tournament.events == null)
             {
-                richTextBoxLog.Text += "Failed to get API endpoint\r\n";
+                richTextBoxLog.Text += "Failed to get tournament\r\n";
+                UnlockControls();
+                return;
             }
-            else
+
+            // Begin updating the treeview
+            treeView1.BeginUpdate();
+            TreeNode root = new TreeNode(tournament.slug);
+            treeView1.Nodes.Add(root);
+
+            // Go through all events in the tournament
+            int waveCount = 0;
+            foreach (Event tournamentEvent in tournament.events)
             {
-                tournament = apiQuery.GetEvents(slug, out errors);
-                if (errors != string.Empty)
+                TreeNode eventNode = new TreeNode(tournamentEvent.name);
+
+                // Save relevant data to event tag
+                TreeNodeData eventNodeTag = new TreeNodeData();
+                eventNodeTag.id = tournamentEvent.id;
+                eventNodeTag.name = tournamentEvent.name;
+                eventNodeTag.nodetype = TreeNodeData.NodeType.Event;
+                eventNode.Tag = eventNodeTag;
+
+
+                // Display number of entrants
+                switch (tournamentEvent.Type)
                 {
-                    richTextBoxLog.Text += errors;
+                    case Event.EventType.Singles:
+                        eventNode.Text = tournamentEvent.name + " (" + tournamentEvent.numEntrants.ToString() + " players)";
+                        break;
+                    case Event.EventType.Doubles:
+                        eventNode.Text = tournamentEvent.name + " (" + tournamentEvent.numEntrants.ToString() + " entrants, " + (2 * tournamentEvent.numEntrants).ToString() + " players)";
+                        break;
+                    default:
+                        eventNode.Text = tournamentEvent.name + " (" + tournamentEvent.numEntrants.ToString() + " entrants)";
+                        break;
                 }
-                else
+
+                // Set the event bg color
+                switch (tournamentEvent.state)
                 {
-                    // Begin updating the treeview
-                    treeView1.BeginUpdate();
-                    TreeNode root = new TreeNode(tournament.slug);
-                    treeView1.Nodes.Add(root);
+                    case Tournament.ActivityState.Completed:
+                        eventNode.BackColor = Color.LightGreen;
+                        break;
+                    case Tournament.ActivityState.Active:
+                        eventNode.BackColor = Color.LightYellow;
+                        break;
+                    default:
+                        eventNode.BackColor = Color.LightPink;
+                        break;
+                }
 
-                    // Go through all events in the tournament
-                    foreach (Event tournamentEvent in tournament.events)
+                root.Nodes.Add(eventNode);
+
+                foreach (Phase phase in tournamentEvent.phases)
+                {
+                    TreeNode phaseNode = new TreeNode(phase.name);
+
+                    // Save relevant data to phase tag
+                    TreeNodeData phaseNodeTag = new TreeNodeData();
+                    phaseNodeTag.id = phase.id;
+                    phaseNodeTag.name = phase.name;
+                    phaseNodeTag.nodetype = TreeNodeData.NodeType.Phase;
+                    phaseNode.Tag = phaseNodeTag;
+
+                    if (phase.waves.Count > 0)
                     {
-                        TreeNode eventNode = new TreeNode(tournamentEvent.name);
-
-                        // Save relevant data to event tag
-                        TreeNodeData eventNodeTag = new TreeNodeData();
-                        eventNodeTag.id = tournamentEvent.id;
-                        eventNodeTag.name = tournamentEvent.name;
-                        eventNodeTag.nodetype = TreeNodeData.NodeType.Event;
-                        eventNode.Tag = eventNodeTag;
-
-
-                        // Display number of entrants
-                        switch (tournamentEvent.Type)
+                        // Add waves for each phase
+                        int waveActive = 0;
+                        int waveComplete = 0;
+                        foreach (KeyValuePair<string, List<PhaseGroup>> wave in phase.waves)
                         {
-                            case Event.EventType.Singles:
-                                eventNode.Text = tournamentEvent.name + " (" + tournamentEvent.numEntrants.ToString() + " players)";
-                                break;
-                            case Event.EventType.Doubles:
-                                eventNode.Text = tournamentEvent.name + " (" + tournamentEvent.numEntrants.ToString() + " entrants, " + (2 * tournamentEvent.numEntrants).ToString() + " players)";
-                                break;
-                            default:
-                                eventNode.Text = tournamentEvent.name + " (" + tournamentEvent.numEntrants.ToString() + " entrants)";
-                                break;
-                        }
+                            TreeNode waveNode = new TreeNode(wave.Key);
 
-                        // Set the event bg color
-                        switch (tournamentEvent.state)
-                        {
-                            case Tournament.ActivityState.Completed:
-                                eventNode.BackColor = Color.LightGreen;
-                                break;
-                            case Tournament.ActivityState.Active:
-                                eventNode.BackColor = Color.LightYellow;
-                                break;
-                            default:
-                                eventNode.BackColor = Color.LightPink;
-                                break;
-                        }
+                            // Save relevant data to wave tag
+                            TreeNodeData waveNodeTag = new TreeNodeData();
+                            waveNodeTag.id = wave.Value[0].waveId ?? 0;
+                            waveNodeTag.name = wave.Key;
+                            waveNodeTag.nodetype = TreeNodeData.NodeType.Wave;
+                            waveNode.Tag = waveNodeTag;
 
-                        root.Nodes.Add(eventNode);
+                            // Set wave text
+                            waveNode.Text = "Wave " + wave.Key + " (" + wave.Value.Count + " groups)";
 
-                        foreach (Phase phase in tournamentEvent.phases)
-                        {
-                            TreeNode phaseNode = new TreeNode(phase.name);
-
-                            // Save relevant data to phase tag
-                            TreeNodeData phaseNodeTag = new TreeNodeData();
-                            phaseNodeTag.id = phase.id;
-                            phaseNodeTag.name = phase.name;
-                            phaseNodeTag.nodetype = TreeNodeData.NodeType.Phase;
-                            phaseNode.Tag = phaseNodeTag;
-
-                            if (phase.waves.Count > 0)
+                            // Add phasegroups associated with each wave
+                            int phasegroupActive = 0;
+                            int phasegroupComplete = 0;
+                            foreach (PhaseGroup phasegroup in wave.Value)
                             {
-                                // Add waves for each phase
-                                int waveActive = 0;
-                                int waveComplete = 0;
-                                foreach (KeyValuePair<string, List<PhaseGroup>> wave in phase.waves)
+                                TreeNode phasegroupNode = new TreeNode(phasegroup.displayIdentifier);
+
+                                // Save relevant data to phasegroup tag
+                                TreeNodeData phasegroupNodeTag = new TreeNodeData();
+                                phasegroupNodeTag.id = phasegroup.id;
+                                phasegroupNodeTag.name = phasegroup.displayIdentifier;
+                                phasegroupNodeTag.nodetype = TreeNodeData.NodeType.PhaseGroup;
+                                phasegroupNode.Tag = phasegroupNodeTag;
+
+                                // Set the phasegroup bg color
+                                switch (phasegroup.State)
                                 {
-                                    TreeNode waveNode = new TreeNode(wave.Key);
-
-                                    // Save relevant data to wave tag
-                                    TreeNodeData waveNodeTag = new TreeNodeData();
-                                    waveNodeTag.nodetype = TreeNodeData.NodeType.Wave;
-                                    waveNode.Tag = waveNodeTag;
-
-                                    // Set wave text
-                                    waveNode.Text = "Wave " + wave.Key + " (" + wave.Value.Count + " groups)";
-
-                                    // Add phasegroups associated with each wave
-                                    int phasegroupActive = 0;
-                                    int phasegroupComplete = 0;
-                                    foreach (PhaseGroup phasegroup in wave.Value)
-                                    {
-                                        TreeNode phasegroupNode = new TreeNode(phasegroup.displayIdentifier + " " + phasegroup.Wave);
-
-                                        // Save relevant data to phasegroup tag
-                                        TreeNodeData phasegroupNodeTag = new TreeNodeData();
-                                        phasegroupNodeTag.id = phasegroup.id;
-                                        phasegroupNodeTag.name = phasegroup.displayIdentifier;
-                                        phasegroupNodeTag.nodetype = TreeNodeData.NodeType.PhaseGroup;
-                                        phasegroupNode.Tag = phasegroupNodeTag;
-
-                                        // Set the phasegroup bg color
-                                        switch (phasegroup.State)
-                                        {
-                                            case Tournament.ActivityState.Completed:
-                                                phasegroupNode.BackColor = Color.LightGreen;
-                                                phasegroupComplete++;
-                                                break;
-                                            case Tournament.ActivityState.Active:
-                                                phasegroupNode.BackColor = Color.LightYellow;
-                                                phasegroupActive++;
-                                                break;
-                                            default:
-                                                phasegroupNode.BackColor = Color.LightPink;
-                                                break;
-                                        }
-
-                                        waveNode.Nodes.Add(phasegroupNode);
-                                    }
-
-                                    if (phasegroupComplete == wave.Value.Count)
-                                    {
-                                        waveNode.BackColor = Color.LightGreen;
-                                        waveComplete++;
-                                    }
-                                    else if (phasegroupActive > 1)
-                                    {
-                                        waveNode.BackColor = Color.LightYellow;
-                                        waveActive++;
-                                    }
-                                    else
-                                    {
-                                        waveNode.BackColor = Color.LightPink;
-                                    }
-
-                                    phaseNode.Nodes.Add(waveNode);
+                                    case Tournament.ActivityState.Completed:
+                                        phasegroupNode.BackColor = Color.LightGreen;
+                                        phasegroupComplete++;
+                                        break;
+                                    case Tournament.ActivityState.Active:
+                                        phasegroupNode.BackColor = Color.LightYellow;
+                                        phasegroupActive++;
+                                        break;
+                                    default:
+                                        phasegroupNode.BackColor = Color.LightPink;
+                                        break;
                                 }
 
-                                if (waveComplete == phase.waves.Count)
-                                {
-                                    phaseNode.BackColor = Color.LightGreen;
+                                waveNode.Nodes.Add(phasegroupNode);
+                            }
 
-                                }
-                                else if (waveActive > 1)
-                                {
-                                    phaseNode.BackColor = Color.LightYellow;
-                                }
-                                else
-                                {
-                                    phaseNode.BackColor = Color.LightPink;
-                                }
+                            if (phasegroupComplete == wave.Value.Count)
+                            {
+                                waveNode.BackColor = Color.LightGreen;
+                                waveComplete++;
+                            }
+                            else if (phasegroupActive > 1)
+                            {
+                                waveNode.BackColor = Color.LightYellow;
+                                waveActive++;
                             }
                             else
                             {
-                                // Add phasegroups associated with each phase
-                                int phasegroupActive = 0;
-                                int phasegroupComplete = 0;
-                                if (phase.phasegroups.Count >= 2)
-                                {
-                                    foreach (PhaseGroup phasegroup in phase.phasegroups)
-                                    {
-                                        TreeNode phasegroupNode = new TreeNode(phasegroup.displayIdentifier + " " + phasegroup.Wave);
-
-                                        // Save relevant data to phasegroup tag
-                                        TreeNodeData phasegroupNodeTag = new TreeNodeData();
-                                        phasegroupNodeTag.id = phasegroup.id;
-                                        phasegroupNodeTag.name = phasegroup.displayIdentifier;
-                                        phasegroupNodeTag.nodetype = TreeNodeData.NodeType.PhaseGroup;
-                                        phasegroupNode.Tag = phasegroupNodeTag;
-
-                                        // Set the phasegroup bg color
-                                        switch (phasegroup.State)
-                                        {
-                                            case Tournament.ActivityState.Completed:
-                                                phasegroupNode.BackColor = Color.LightGreen;
-                                                phasegroupComplete++;
-                                                break;
-                                            case Tournament.ActivityState.Active:
-                                                phasegroupNode.BackColor = Color.LightYellow;
-                                                phasegroupActive++;
-                                                break;
-                                            default:
-                                                phasegroupNode.BackColor = Color.LightPink;
-                                                break;
-                                        }
-
-                                        phaseNode.Nodes.Add(phasegroupNode);
-                                    }
-                                }
-                                else
-                                {
-                                    foreach (PhaseGroup phasegroup in phase.phasegroups)
-                                    {
-                                        switch (phasegroup.State)
-                                        {
-                                            case Tournament.ActivityState.Completed:
-                                                phasegroupComplete++;
-                                                break;
-                                            case Tournament.ActivityState.Active:
-                                                phasegroupActive++;
-                                                break;
-                                            default:
-                                                break;
-                                        }
-                                    }
-                                }
-
-                                // Set bgcolor for phase
-                                if (phasegroupComplete == phase.phasegroups.Count)
-                                {
-                                    phaseNode.BackColor = Color.LightGreen;
-                                }
-                                else if (phasegroupActive > 1)
-                                {
-                                    phaseNode.BackColor = Color.LightYellow;
-                                }
-                                else
-                                {
-                                    phaseNode.BackColor = Color.LightPink;
-                                }
+                                waveNode.BackColor = Color.LightPink;
                             }
 
-                            // Add phase to event
-                            eventNode.Nodes.Add(phaseNode);
+                            phaseNode.Nodes.Add(waveNode);
+                        }
+
+                        if (waveComplete == phase.waves.Count)
+                        {
+                            phaseNode.BackColor = Color.LightGreen;
+
+                        }
+                        else if (waveActive > 1)
+                        {
+                            phaseNode.BackColor = Color.LightYellow;
+                        }
+                        else
+                        {
+                            phaseNode.BackColor = Color.LightPink;
+                        }
+                    }
+                    else
+                    {
+                        // Add phasegroups associated with each phase
+                        int phasegroupActive = 0;
+                        int phasegroupComplete = 0;
+                        if (phase.phasegroups.Count >= 2)
+                        {
+                            foreach (PhaseGroup phasegroup in phase.phasegroups)
+                            {
+                                TreeNode phasegroupNode = new TreeNode(phasegroup.displayIdentifier + " " + phasegroup.Wave);
+
+                                // Save relevant data to phasegroup tag
+                                TreeNodeData phasegroupNodeTag = new TreeNodeData();
+                                phasegroupNodeTag.id = phasegroup.id;
+                                phasegroupNodeTag.name = phasegroup.displayIdentifier;
+                                phasegroupNodeTag.nodetype = TreeNodeData.NodeType.PhaseGroup;
+                                phasegroupNode.Tag = phasegroupNodeTag;
+
+                                // Set the phasegroup bg color
+                                switch (phasegroup.State)
+                                {
+                                    case Tournament.ActivityState.Completed:
+                                        phasegroupNode.BackColor = Color.LightGreen;
+                                        phasegroupComplete++;
+                                        break;
+                                    case Tournament.ActivityState.Active:
+                                        phasegroupNode.BackColor = Color.LightYellow;
+                                        phasegroupActive++;
+                                        break;
+                                    default:
+                                        phasegroupNode.BackColor = Color.LightPink;
+                                        break;
+                                }
+
+                                phaseNode.Nodes.Add(phasegroupNode);
+                            }
+                        }
+                        else
+                        {
+                            foreach (PhaseGroup phasegroup in phase.phasegroups)
+                            {
+                                switch (phasegroup.State)
+                                {
+                                    case Tournament.ActivityState.Completed:
+                                        phasegroupComplete++;
+                                        break;
+                                    case Tournament.ActivityState.Active:
+                                        phasegroupActive++;
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            }
+                        }
+
+                        // Set bgcolor for phase
+                        if (phasegroupComplete == phase.phasegroups.Count)
+                        {
+                            phaseNode.BackColor = Color.LightGreen;
+                        }
+                        else if (phasegroupActive > 1)
+                        {
+                            phaseNode.BackColor = Color.LightYellow;
+                        }
+                        else
+                        {
+                            phaseNode.BackColor = Color.LightPink;
                         }
                     }
 
-                    // Expand the tournament node
-                    root.Expand();
-                    treeView1.EndUpdate();
+                    // Add phase to event
+                    eventNode.Nodes.Add(phaseNode);
                 }
             }
-            
+
+            // Expand the tournament node
+            root.Expand();
+            treeView1.EndUpdate();
+
+
             UnlockControls();
+        }
+
+        private void buttonFill_Click(object sender, EventArgs e)
+        {
+            if (selectedEvent.Type == Event.EventType.Doubles)
+            {
+                FillDoubles();
+            }
+            else
+            {
+                FillSingles();
+            }
         }
 
         /// <summary>
@@ -459,11 +486,11 @@ namespace smashgg_to_liquipedia
         /// </summary>
         /// <param name="sender">N/A</param>
         /// <param name="e">N/A</param>
-        private void buttonFillSingles_Click(object sender, EventArgs e)
+        private void FillSingles()
         {
             string output = string.Empty;
             string finalBracketOutput = string.Empty;
-            Liquipedia.LpOutput lpout = new Liquipedia.LpOutput(selectedEvent.Type, ref entrantList, ref setList, ref roundList);
+            Liquipedia.LpOutput lpout = new Liquipedia.LpOutput(selectedEvent, ref entrantList, ref setList, ref roundList);
 
             if (checkBoxWinners.Checked == true)
             {
@@ -510,55 +537,27 @@ namespace smashgg_to_liquipedia
             {
                 finalBracketOutput = richTextBoxExLpFinalBracket.Text;
 
-                foreach (KeyValuePair<int, List<Set>> gf in roundList)
-                {
-                    // Get grand finals
-                    if (gf.Value[0].isGF == true)
-                    {
-                        // Fill in R3
-                        lpout.fillBracketSingles(gf.Key, gf.Key, 3 - gf.Key, ref finalBracketOutput, matchOffsetPerRound,
-                            checkBoxFillByes.Checked, checkBoxFillByeWins.Checked, checkBoxR1Only.Checked, checkBoxUnfinished.Checked, checkBoxMatchDetails.Checked);
+                // Assume the highest round is grand finals, the lowest round is losers finals, etc.
+                int gfround = roundList.Keys.Max();
+                int wfround = roundList.Keys.Max() + 1;
+                int lfround = roundList.Keys.Min();
+                int lsround = roundList.Keys.Min() + 1;
 
-                        // Get losers finals
-                        foreach (KeyValuePair<int, List<Set>> lf in roundList)
-                        {
-                            if (gf.Value[0].entrant2PrereqId == lf.Value[0].id)
-                            {
-                                // Fill in L2
-                                lpout.fillBracketSingles(lf.Key, lf.Key, 2 - Math.Abs(lf.Key), ref finalBracketOutput, matchOffsetPerRound,
-                                    checkBoxFillByes.Checked, checkBoxFillByeWins.Checked, checkBoxR1Only.Checked, checkBoxUnfinished.Checked, checkBoxMatchDetails.Checked);
+                // Fill in R3
+                lpout.fillBracketSingles(gfround, gfround, 3 - gfround, ref finalBracketOutput, matchOffsetPerRound,
+                    checkBoxFillByes.Checked, checkBoxFillByeWins.Checked, checkBoxR1Only.Checked, checkBoxUnfinished.Checked, checkBoxMatchDetails.Checked);
 
-                                // Get losers semis
-                                foreach (KeyValuePair<int, List<Set>> ls in roundList)
-                                {
-                                    if (lf.Value[0].entrant2PrereqId == ls.Value[0].id)
-                                    {
-                                        // Fill in L1
-                                        lpout.fillBracketSingles(ls.Key, ls.Key, 1 - Math.Abs(ls.Key), ref finalBracketOutput, matchOffsetPerRound,
-                                            checkBoxFillByes.Checked, checkBoxFillByeWins.Checked, checkBoxR1Only.Checked, checkBoxUnfinished.Checked, checkBoxMatchDetails.Checked);
-                                        break;
-                                    }
-                                }
+                // Fill in L2
+                lpout.fillBracketSingles(lfround, lfround, 2 - Math.Abs(lfround), ref finalBracketOutput, matchOffsetPerRound,
+                    checkBoxFillByes.Checked, checkBoxFillByeWins.Checked, checkBoxR1Only.Checked, checkBoxUnfinished.Checked, checkBoxMatchDetails.Checked);
 
-                                break;
-                            }
-                        }
+                // Fill in L1
+                lpout.fillBracketSingles(lsround, lsround, 1 - Math.Abs(lsround), ref finalBracketOutput, matchOffsetPerRound,
+                    checkBoxFillByes.Checked, checkBoxFillByeWins.Checked, checkBoxR1Only.Checked, checkBoxUnfinished.Checked, checkBoxMatchDetails.Checked);
 
-                        // Get winners finals
-                        foreach (KeyValuePair<int, List<Set>> wf in roundList)
-                        {
-                            if (gf.Value[0].entrant1PrereqId == wf.Value[0].id)
-                            {
-                                // Fill in R1
-                                lpout.fillBracketSingles(wf.Key, wf.Key, 1 - wf.Key, ref finalBracketOutput, matchOffsetPerRound,
-                                    checkBoxFillByes.Checked, checkBoxFillByeWins.Checked, checkBoxR1Only.Checked, checkBoxUnfinished.Checked, checkBoxMatchDetails.Checked);
-                                break;
-                            }
-                        }
-
-                        break;
-                    }
-                }
+                // Fill in R1
+                lpout.fillBracketSingles(wfround, wfround, 1 - wfround, ref finalBracketOutput, matchOffsetPerRound,
+                    checkBoxFillByes.Checked, checkBoxFillByeWins.Checked, checkBoxR1Only.Checked, checkBoxUnfinished.Checked, checkBoxMatchDetails.Checked);
 
                 // Replace L2 with R2 because liquipedia markup is inconsistent
                 finalBracketOutput = finalBracketOutput.Replace("l2m", "r2m");
@@ -582,17 +581,17 @@ namespace smashgg_to_liquipedia
         /// </summary>
         /// <param name="sender">N/A</param>
         /// <param name="e">N/A</param>
-        private void buttonFillDoubles_Click(object sender, EventArgs e)
+        private void FillDoubles()
         {
             string output = string.Empty;
             string finalBracketOutput = string.Empty;
-            Liquipedia.LpOutput lpout = new Liquipedia.LpOutput(selectedEvent.Type, ref entrantList, ref setList, ref roundList);
+            Liquipedia.LpOutput lpout = new Liquipedia.LpOutput(selectedEvent, ref entrantList, ref setList, ref roundList);
 
             if (checkBoxWinners.Checked == true)
             {
                 if (richTextBoxExLpWinnersBracket.Text != FormStrings.CuetextLpWinners)
                 {
-                    output += "==Winners Bracket==\r\n" + richTextBoxExLpWinnersBracket.Text + "\r\n";
+                    output += textBoxHeaderWinners.Text + "\r\n" + richTextBoxExLpWinnersBracket.Text + "\r\n";
                 }
             }
 
@@ -600,7 +599,7 @@ namespace smashgg_to_liquipedia
             {
                 if (richTextBoxExLpLosersBracket.Text != FormStrings.CuetextLpLosers)
                 {
-                    output += "==Losers Bracket==\r\n" + richTextBoxExLpLosersBracket.Text + "\r\n";
+                    output += textBoxHeaderLosers.Text + "\r\n" + richTextBoxExLpLosersBracket.Text + "\r\n";
                 }
             }
 
@@ -617,55 +616,27 @@ namespace smashgg_to_liquipedia
             }
             if (checkBoxGuessFinal.Checked)
             {
-                foreach (KeyValuePair<int, List<Set>> gf in roundList)
-                {
-                    // Get grand finals
-                    if (gf.Value[0].isGF == true)
-                    {
-                        // Fill in R3
-                        lpout.fillBracketDoubles(gf.Key, gf.Key, 3 - gf.Key, ref finalBracketOutput, matchOffsetPerRound,
-                            checkBoxFillByes.Checked, checkBoxFillByeWins.Checked, checkBoxR1Only.Checked, checkBoxUnfinished.Checked);
+                int gfround = roundList.Keys.Max();
+                int wfround = roundList.Keys.Max() + 1;
+                int lfround = roundList.Keys.Min();
+                int lsround = roundList.Keys.Min() + 1;
 
-                        // Get losers finals
-                        foreach (KeyValuePair<int, List<Set>> lf in roundList)
-                        {
-                            if (gf.Value[0].entrant2PrereqId == lf.Value[0].id)
-                            {
-                                // Fill in L2
-                                lpout.fillBracketDoubles(lf.Key, lf.Key, 2 - Math.Abs(lf.Key), ref finalBracketOutput, matchOffsetPerRound,
-                                    checkBoxFillByes.Checked, checkBoxFillByeWins.Checked, checkBoxR1Only.Checked, checkBoxUnfinished.Checked);
+                // Fill in R3
+                lpout.fillBracketDoubles(gfround, gfround, 3 - gfround, ref finalBracketOutput, matchOffsetPerRound,
+                    checkBoxFillByes.Checked, checkBoxFillByeWins.Checked, checkBoxR1Only.Checked, checkBoxUnfinished.Checked);
 
-                                // Get losers semis
-                                foreach (KeyValuePair<int, List<Set>> ls in roundList)
-                                {
-                                    if (lf.Value[0].entrant2PrereqId == ls.Value[0].id)
-                                    {
-                                        // Fill in L1
-                                        lpout.fillBracketDoubles(ls.Key, ls.Key, 1 - Math.Abs(ls.Key), ref finalBracketOutput, matchOffsetPerRound,
-                                            checkBoxFillByes.Checked, checkBoxFillByeWins.Checked, checkBoxR1Only.Checked, checkBoxUnfinished.Checked);
-                                        break;
-                                    }
-                                }
+                // Fill in L2
+                lpout.fillBracketDoubles(lfround, lfround, 2 - Math.Abs(lfround), ref finalBracketOutput, matchOffsetPerRound,
+                    checkBoxFillByes.Checked, checkBoxFillByeWins.Checked, checkBoxR1Only.Checked, checkBoxUnfinished.Checked);
 
-                                break;
-                            }
-                        }
+                // Fill in L1
+                lpout.fillBracketDoubles(lsround, lsround, 1 - Math.Abs(lsround), ref finalBracketOutput, matchOffsetPerRound,
+                    checkBoxFillByes.Checked, checkBoxFillByeWins.Checked, checkBoxR1Only.Checked, checkBoxUnfinished.Checked);
 
-                        // Get winners finals
-                        foreach (KeyValuePair<int, List<Set>> wf in roundList)
-                        {
-                            if (gf.Value[0].entrant1PrereqId == wf.Value[0].id)
-                            {
-                                // Fill in R1
-                                lpout.fillBracketDoubles(wf.Key, wf.Key, 1 - wf.Key, ref finalBracketOutput, matchOffsetPerRound,
-                                    checkBoxFillByes.Checked, checkBoxFillByeWins.Checked, checkBoxR1Only.Checked, checkBoxUnfinished.Checked);
-                                break;
-                            }
-                        }
+                // Fill in R1
+                lpout.fillBracketDoubles(wfround, wfround, 1 - wfround, ref finalBracketOutput, matchOffsetPerRound,
+                    checkBoxFillByes.Checked, checkBoxFillByeWins.Checked, checkBoxR1Only.Checked, checkBoxUnfinished.Checked);
 
-                        break;
-                    }
-                }
 
                 // Replace L2 with R2 because liquipedia markup is inconsistent
                 finalBracketOutput = finalBracketOutput.Replace("l2m", "r2m");
@@ -684,123 +655,14 @@ namespace smashgg_to_liquipedia
         /// <param name="e">N/A</param>
         private void buttonPrizePool_Click(object sender, EventArgs e)
         {
-            // Create a copy of roundList since we will be altering it
-            List<SetsByRound> tempRoundList = new List<SetsByRound>();
-
-            foreach (KeyValuePair<int, List<Set>> round in roundList)
+            if (selectedEvent == null)
             {
-                bool roundInserted = false;
-                
-                // Winners bracket matches go at the start from smallest to largest
-                if (round.Key > 0)
-                {
-                    // Iterate through the list and insert the current round before the next larger round
-                    for (int i = 0; i < tempRoundList.Count; i++)
-                    {
-                        if (round.Key < tempRoundList[i].round)
-                        {
-                            tempRoundList.Insert(i, new SetsByRound(round.Key, round.Value));
-                            roundInserted = true;
-                        }
-                    }
-
-                    // If the round is not inserted, add it to the end of the list
-                    if (!roundInserted)
-                    {
-                        tempRoundList.Add(new SetsByRound(round.Key, round.Value));
-                    }
-                }
-
-                // Losers bracket matches go at the end from smallest magnitude to largest magnitude
-                else if (round.Key < 0)
-                {
-                    // Iterate through the list and insert the current round before the next larger magnitude round
-                    for (int i = 0; i < tempRoundList.Count; i++)
-                    {
-                        // Skip winners bracket rounds
-                        if (tempRoundList[i].round > 0) continue;
-
-                        if (Math.Abs(round.Key) < Math.Abs(tempRoundList[i].round))
-                        {
-                            tempRoundList.Insert(i, new SetsByRound(round.Key, round.Value));
-                            roundInserted = true;
-                        }
-                    }
-
-                    // If the round is not inserted, add it to the end of the list
-                    if (!roundInserted)
-                    {
-                        tempRoundList.Add(new SetsByRound(round.Key, round.Value));
-                    }
-                }
+                richTextBoxLog.Text += "No event selected\r\n";
+                return;
             }
 
-            // Move the grand finals set to the end of the list
-            // Don't move anything if the grand finals are already at the end
-            for (int i = 0; i < tempRoundList.Count - 1; i++)
-            {
-                // Only look at the first set in each round
-                if (tempRoundList[i].sets[0].isGF)
-                {
-                    tempRoundList.Add(new SetsByRound(tempRoundList[i].round, tempRoundList[i].sets));
-                    tempRoundList.RemoveAt(i);
-                    break;
-                }
-            }
+            List<Standing> standingList = apiQuery.GetStandings(selectedEvent.id, (int)numericUpDownPrizePool.Value);
 
-            //tempRoundList = tempRoundList.OrderBy(x => x.Key).ToDictionary(x => x.Key, x=> x.Value);
-
-            // Set the number of entrants that the prize pool will have. Check to make sure there are enough entrants to fill the prize pool.
-            int maxEntries = (int)numericUpDownPrizePool.Value;
-            if (maxEntries > entrantList.Count)
-            {
-                richTextBoxLog.Text += "Cannot fill prize pool - Not enough entrants\r\n";
-            }
-
-            Dictionary<int, PoolRecord> record = new Dictionary<int, PoolRecord>();
-
-            // Create a record for each player
-            foreach (KeyValuePair<int, Entrant> entrant in entrantList)
-            {
-                record.Add(entrant.Key, new PoolRecord());
-            }
-
-            // Add data to each record based on set information
-            richTextBoxLog.Text += "Figuring out ranks for each entrant\r\n";
-            foreach (SetsByRound round in tempRoundList)
-            {
-                foreach (Set set in round.sets)
-                {
-                    record[set.slots[0].entrant.id].isinGroup = true;
-                    record[set.slots[1].entrant.id].isinGroup = true;
-
-                    // Find the winner of each match. Assume these are DE Brackets
-                    if (set.winnerId == set.slots[0].entrant.id)
-                    {
-                        record[set.slots[0].entrant.id].rank = set.wPlacement;
-                        record[set.slots[1].entrant.id].rank = set.lPlacement;
-                    }
-                    else if (set.winnerId == set.slots[1].entrant.id)
-                    {
-                        record[set.slots[0].entrant.id].rank = set.lPlacement;
-                        record[set.slots[1].entrant.id].rank = set.wPlacement;
-                    }
-                }
-            }
-
-            // Remove entrants without listed sets (smash.gg seems to list extraneous entrants sometimes)
-            // Also remove the bye entry
-            for (int i = 0; i < record.Count; i++)
-            {
-                if (record.ElementAt(i).Value.isinGroup == false || record.ElementAt(i).Key == -1)
-                {
-                    record.Remove(record.ElementAt(i).Key);
-                    i--;
-                }
-            }
-
-            // Sort the entrants by their rank and W-L records
-            record = record.OrderBy(x => x.Value.rank).ToDictionary(x => x.Key, x => x.Value);
 
             richTextBoxLog.Text += "Outputting results\r\n";
 
@@ -814,18 +676,28 @@ namespace smashgg_to_liquipedia
                 richTextBoxLpOutput.Text = "{{prize pool start doubles}}\r\n";
             }
 
-            // Loop the bracket records to add entries to the prize pool
+            // Loop through the records to remove placements of 0
+            for (int i = 0; i < standingList.Count; i++)
+            {
+                if (standingList[i].standing == 0)
+                {
+                    standingList.RemoveAt(i);
+                    i--;
+                }
+            }
+
+            // Loop through the records to add entries to the prize pool
             int nextRow = 0;
             int startEntry = 0;
-            while (startEntry < maxEntries)
+            while (startEntry < standingList.Count)
             {
                 bool rowSet = false;
-                
+
                 // Look ahead and see if there's entrants of equal rank
-                for (int j = startEntry + 1; j < maxEntries; j++)
+                for (int j = startEntry + 1; j < standingList.Count; j++)
                 {
                     // When a match is found, j is the next entrant with a new rank
-                    if (record.ElementAt(startEntry).Value.rank != record.ElementAt(j).Value.rank)
+                    if (standingList[startEntry].standing != standingList[j].standing)
                     {
                         nextRow = j;
                         rowSet = true;
@@ -833,9 +705,9 @@ namespace smashgg_to_liquipedia
                     }
 
                     // If the end of the entrant list is reached, everything needs to be output, so set nextRow to maxEntries
-                    else if (j == maxEntries - 1)
+                    else if (j == standingList.Count - 1)
                     {
-                        nextRow = maxEntries;
+                        nextRow = standingList.Count;
                         rowSet = true;
                         break;
                     }
@@ -843,11 +715,11 @@ namespace smashgg_to_liquipedia
 
                 if (!rowSet)
                 {
-                    nextRow = maxEntries;
+                    nextRow = standingList.Count;
                 }
 
                 // Ouptut all equal ranking entrants
-                OutputPrizePoolTable(record, startEntry, nextRow - startEntry);
+                OutputPrizePoolTable(standingList, startEntry, nextRow - startEntry);
 
                 // Skip all entrants that have been output
                 startEntry = nextRow;
@@ -869,7 +741,7 @@ namespace smashgg_to_liquipedia
         private void buttonGroupTable_Click(object sender, EventArgs e)
         {
             string output = string.Empty;
-            Liquipedia.LpOutput lpout = new Liquipedia.LpOutput(selectedEvent.Type, ref entrantList, ref setList, ref roundList);
+            Liquipedia.LpOutput lpout = new Liquipedia.LpOutput(selectedEvent, ref entrantList, ref setList, ref roundList);
 
             Dictionary<int, PoolRecord> poolData = new Dictionary<int, PoolRecord>();
 
@@ -886,6 +758,12 @@ namespace smashgg_to_liquipedia
             else
             {
                 richTextBoxLog.Text += "Specify a bracket type.\r\n";
+                return;
+            }
+
+            if (selectedEvent == null)
+            {
+                richTextBoxLog.Text += "Get tournament data and select something first.\r\n";
                 return;
             }
 
@@ -1025,38 +903,15 @@ namespace smashgg_to_liquipedia
         /// <param name="eventType">Bracket type</param>
         private void ProcessBracket(Event.EventType eventType)
         {
-            // Clear data
-            ClearData();
-            checkBoxWinners.Checked = false;
-            checkBoxLosers.Checked = false;
-
             string json = string.Empty;
-
-            // Deserialize json
-
-            // Fill entrant and set lists
-
 
             // Fill round list based on set list
             foreach (Set currentSet in setList)
             {
                 // Check if the round already exists in roundList
-                if (roundList.ContainsKey(currentSet.displayRound))
+                if (roundList.ContainsKey(currentSet.round))
                 {
-                    // Rounds with a larger originalRound take priority
-                    if (Math.Abs(roundList[currentSet.displayRound][0].originalRound) < Math.Abs(currentSet.originalRound))
-                    {
-                        roundList[currentSet.displayRound].Clear();
-                        roundList[currentSet.displayRound].Add(currentSet);
-                    }
-                    else if (Math.Abs(roundList[currentSet.displayRound][0].originalRound) > Math.Abs(currentSet.originalRound))
-                    {
-                        continue;
-                    }
-                    else
-                    {
-                        roundList[currentSet.displayRound].Add(currentSet);
-                    }
+                    roundList[currentSet.round].Add(currentSet);
                 }
                 else    // Make a new entry for the round if it doesn't exist
                 {
@@ -1064,7 +919,91 @@ namespace smashgg_to_liquipedia
                     List<Set> newSetList = new List<Set>();
                     newSetList.Add(currentSet);
 
-                    roundList.Add(currentSet.displayRound, newSetList);
+                    roundList.Add(currentSet.round, newSetList);
+                }
+            }
+
+            // Fill entrant list from seed list
+            foreach (Seed seed in seedList)
+            {
+                // Check if the round already exists in roundList
+                if (seed.entrant != null)
+                {
+                    entrantList.Add(seed.entrant.id, seed.entrant);
+                }
+            }
+
+
+            // Clear out bye rounds in winners
+            if (roundList.Keys.Max() > 0)
+            {
+                for (int i = 1; i <= roundList.Keys.Max(); i++)
+                {
+                    bool actualMatch = false;
+                    for (int j = 0; j < roundList[i].Count; j++)
+                    {
+                        if (roundList[i][j].displayScore == "bye")
+                        {
+                            continue;
+                        }
+                        else
+                        {
+                            actualMatch = true;
+                            break;
+                        }
+                    }
+
+                    // If false, all matches are byes in this round
+                    if (!actualMatch)
+                    {
+                        // Shift all remaining rounds back one
+                        for (int j = i + 1; j <= roundList.Keys.Max(); j++)
+                        {
+                            roundList[j - 1] = roundList[j];
+                        }
+
+                        // Remove the last round and decrement the counter
+                        roundList.Remove(roundList.Keys.Max());
+                        i--;
+                    }
+                }
+            }
+            // Clear out bye rounds in losers
+            if (roundList.Keys.Min() < 0)
+            {
+                for (int i = -1; i >= roundList.Keys.Min(); i--)
+                {
+                    bool actualMatch = false;
+                    for (int j = 0; j < roundList[i].Count; j++)
+                    {
+                        if (roundList[i][j].displayScore == "bye") 
+                        {
+                            continue;
+                        }
+                        else if (roundList[i][j].slots == null || (roundList[i][j].slots[0].entrant == null || roundList[i][j].slots[1].entrant == null))
+                        {
+                            continue;
+                        }
+                        else
+                        {
+                            actualMatch = true;
+                            break;
+                        }
+                    }
+
+                    // If false, all matches are byes in this round
+                    if (!actualMatch)
+                    {
+                        // Shift all remaining rounds back one
+                        for (int j = i; j >= roundList.Keys.Min() + 1; j--)
+                        {
+                            roundList[j] = roundList[j - 1];
+                        }
+
+                        // Remove the last round and decrement the counter
+                        roundList.Remove(roundList.Keys.Min());
+                        i++;
+                    }
                 }
             }
 
@@ -1094,9 +1033,9 @@ namespace smashgg_to_liquipedia
             {
                 foreach (Set set in roundList.ElementAt(i).Value)
                 {
-                    if (entrantList.ContainsKey(set.slots[0].entrant.id))
+                    if (set.slots[0].entrant != null && entrantList.ContainsKey(set.slots[0].entrant.id))
                     {
-                        if (set.originalRound > 0)
+                        if (set.round > 0)
                         {
                             if (entrantList[set.slots[0].entrant.id].participants[0].gamerTag.Length > wPadding)
                             {
@@ -1132,22 +1071,22 @@ namespace smashgg_to_liquipedia
 
                 roundList[roundList.ElementAt(i).Key] = tempList;
             }
-            
+
             // Output sets to textbox
             for (int i = 0; i < roundList.Count; i++)
             {
                 foreach (Set set in roundList.ElementAt(i).Value)
                 {
-                    if (!entrantList.ContainsKey(set.slots[0].entrant.id))
+                    if (set.slots[0].entrant == null || !entrantList.ContainsKey(set.slots[0].entrant.id))
                     {
                         continue;
                     }
-                    if (!entrantList.ContainsKey(set.slots[1].entrant.id))
+                    if (set.slots[1].entrant == null || !entrantList.ContainsKey(set.slots[1].entrant.id))
                     {
                         continue;
                     }
 
-                    if (set.displayRound > 0)
+                    if (set.round > 0)
                     {
                         outputSetToTextBox(ref richTextBoxWinners, set, wPadding);
                     }
@@ -1166,158 +1105,73 @@ namespace smashgg_to_liquipedia
         }
 
         /// <summary>
-        /// Retrieve and process smash.gg json for the singles or doubles phase
-        /// </summary>
-        /// <param name="eventType">Bracket type</param>
-        private void ProcessPhase(Event.EventType eventType)
-        {
-            // Clear data
-            ClearData();
-            checkBoxWinners.Checked = false;
-            checkBoxLosers.Checked = false;
-
-            // Find the matching phase in the tournament structure
-            string json = string.Empty;
-
-            //foreach (Phase phase in phaseList)
-            //{
-            //    if (phase.phaseId == phaseNumber && phase.id.Count > 1)
-            //    {
-            //        // Sort the list by wave and number
-            //        // Assume that if the first element has a wave and number, the rest do too
-            //        if (phase.id[0].identifierType == PhaseGroup.IdentiferType.WaveNumber)
-            //        {
-            //            phase.id = phase.id.OrderBy(c => c.Wave).ThenBy(c => c.Number).ToList();
-            //        }
-            //        else if (phase.id[0].identifierType == PhaseGroup.IdentiferType.NumberOnly)
-            //        {
-            //            phase.id = phase.id.OrderBy(c => Convert.ToInt32(c.DisplayIdentifier)).ToList();
-            //        }
-            //        else
-            //        { 
-            //            phase.id = phase.id.OrderBy(c => c.DisplayIdentifier).ToList();
-            //        }
-
-            //        // Setup progress bar
-            //        progressBar.Minimum = 0;
-            //        progressBar.Maximum = phase.id.Count();
-            //        progressBar.Value = 1;
-            //        progressBar.Step = 1;
-
-            //        // Retrieve pages for each group
-            //        string lastWave = string.Empty;
-            //        List<string> waveHeaders = new List<string>();
-            //        //for (int j = 0; j < phase.id.Count; j++)
-            //        {
-            //            // Increment the progress bar
-            //            progressBar.PerformStep();
-
-            //            Dictionary<int, PoolRecord> poolData = new Dictionary<int, PoolRecord>();
-            //            Tournament.ActivityState groupState = Tournament.ActivityState.Unknown;
-
-            //            // Set the pool type
-            //            PoolRecord.PoolType poolType;
-            //            if (radioButtonBracket.Checked)
-            //            {
-            //                poolType = PoolRecord.PoolType.Bracket;
-            //            }
-            //            else if (radioButtonRR.Checked)
-            //            {
-            //                poolType = PoolRecord.PoolType.RoundRobin;
-            //            }
-            //            else
-            //            {
-            //                richTextBoxLog.Text += "Specify a bracket type.\r\n";
-            //                return;
-            //            }
-
-            //            //if (!GeneratePoolData(phase.id[j].id, parser, poolType, ref poolData, ref groupState)) continue;
-
-            //            //if (eventType == EventType.Singles)
-            //            //{
-            //            //    OutputSinglesPhase(phase, poolData, ref lastWave, j, groupState, poolType);
-            //            //}
-            //            //else
-            //            //{
-            //            //    OutputDoublesPhase(phase, poolData, ref lastWave, j, groupState, poolType);
-            //            //}
-            //        }
-            //    }
-            //}
-        }
-
-        /// <summary>
         /// Acquire, process, and output all data from the singles phase specified in the URL
         /// </summary>
-        /// <param name="phase">Tournament phase to output</param>
+        /// <param name="phasegroups">Tournament phase to output</param>
         /// <param name="poolData">Pool records for each entrant</param>
         /// <param name="lastWave">Final wave in the pool</param>
-        /// <param name="phaseElement">Pool in the phase to output</param>
-        private void OutputSinglesPhase(Phase phase, Dictionary<int, PoolRecord> poolData, ref string lastWave, int phaseElement, Tournament.ActivityState state, PoolRecord.PoolType poolType)
+        /// <param name="currentGroup">Pool in the phase to output</param>
+        private void OutputSinglesPhase(Phase phase, Dictionary<int, PoolRecord> poolData, ref string lastWave, PhaseGroup currentGroup, Tournament.ActivityState state, PoolRecord.PoolType poolType)
         {
-            Liquipedia.LpOutput lpout = new Liquipedia.LpOutput(selectedEvent.Type, ref entrantList, ref setList, ref roundList);
+            Liquipedia.LpOutput lpout = new Liquipedia.LpOutput(selectedEvent, ref entrantList, ref setList, ref roundList);
 
             // Output to textbox
             // Wave headers
-            //if (phase.id[0].identifierType == PhaseGroup.IdentiferType.WaveNumber)
-            //{
-            //    if (lastWave != phase.id[phaseElement].Wave)
-            //    {
-            //        richTextBoxLpOutput.Text += "==Wave " + phase.id[phaseElement].Wave + "==\r\n";
-            //        richTextBoxLpOutput.Text += LpStrings.BoxStart + "\r\n";
+            if (phase.phasegroups[0].identifierType == PhaseGroup.IdentiferType.WaveNumber)
+            {
+                if (lastWave != currentGroup.Wave)
+                {
+                    richTextBoxLpOutput.Text += "==Wave " + currentGroup.Wave + "==\r\n";
+                    richTextBoxLpOutput.Text += LpStrings.BoxStart + "\r\n";
 
-            //        lastWave = phase.id[phaseElement].Wave;
-            //    }
-            //}
-            //else if (phaseElement == 0)    // Start a box at the first element
-            //{
-            //    richTextBoxLpOutput.Text += LpStrings.BoxStart + "\r\n";
-            //}
+                    lastWave = currentGroup.Wave;
+                }
+            }
+            else if (phase.phasegroups.First() == currentGroup)    // Start a box at the first element
+            {
+                richTextBoxLpOutput.Text += LpStrings.BoxStart + "\r\n";
+            }
 
             // Pool headers
             string title = string.Empty;
-            //if (phase.id[0].identifierType == PhaseGroup.IdentiferType.WaveNumber)
-            //{
-            //    richTextBoxLpOutput.Text += "===" + LpStrings.SortStart + phase.id[phaseElement].Wave + phase.id[phaseElement].Number.ToString() + LpStrings.SortEnd + "===\r\n";
-            //    title = phase.id[phaseElement].Wave + phase.id[phaseElement].Number.ToString();
-            //}
-            //else
-            //{
-            //    richTextBoxLpOutput.Text += "===" + LpStrings.SortStart + phase.id[phaseElement].Wave + phase.id[phaseElement].DisplayIdentifier.ToString() + LpStrings.SortEnd + "===\r\n";
-            //    title = phase.id[phaseElement].DisplayIdentifier.ToString();
-            //}
+            if (phase.phasegroups[0].identifierType == PhaseGroup.IdentiferType.WaveNumber)
+            {
+                richTextBoxLpOutput.Text += "===" + LpStrings.SortStart + currentGroup.Wave + currentGroup.Number.ToString() + LpStrings.SortEnd + "===\r\n";
+                title = currentGroup.Wave + currentGroup.Number.ToString();
+            }
+            else
+            {
+                richTextBoxLpOutput.Text += "===" + LpStrings.SortStart + currentGroup.Wave + currentGroup.DisplayIdentifier.ToString() + LpStrings.SortEnd + "===\r\n";
+                title = currentGroup.DisplayIdentifier.ToString();
+            }
 
-            //// Output the group
-            //richTextBoxLpOutput.Text += lpout.OutputSinglesGroup(title, poolData, state, (int)numericUpDownAdvanceWinners.Value, (int)numericUpDownAdvanceLosers.Value, checkBoxMatchDetails.Checked, poolType);
-            //richTextBoxLog.Text += lpout.Log;
+            // Output the group
+            richTextBoxLpOutput.Text += lpout.OutputSinglesGroup(title, poolData, state, (int)numericUpDownAdvanceWinners.Value, (int)numericUpDownAdvanceLosers.Value, checkBoxMatchDetails.Checked, poolType);
+            richTextBoxLog.Text += lpout.Log;
 
-            //// Box handling
-            //if (phase.id[0].identifierType == PhaseGroup.IdentiferType.WaveNumber)     // Waves exist
-            //{
-            //    if (phaseElement + 1 >= phase.id.Count)
-            //    {
-            //        richTextBoxLpOutput.Text += LpStrings.BoxEnd + "\r\n\r\n";
-            //    }
-            //    else if (phase.id[phaseElement + 1].Wave != lastWave)
-            //    {
-            //        richTextBoxLpOutput.Text += LpStrings.BoxEnd + "\r\n\r\n";
-            //    }
-            //    else
-            //    {
-            //        richTextBoxLpOutput.Text += LpStrings.BoxBreak + "\r\n\r\n";
-            //    }
-            //}
-            //else        // Waves don't exist
-            //{
-            //    if (phaseElement == phase.id.Count - 1) // End box at the group end
-            //    {
-            //        richTextBoxLpOutput.Text += LpStrings.BoxEnd + "\r\n\r\n";
-            //    }
-            //    else
-            //    {
-            //        richTextBoxLpOutput.Text += LpStrings.BoxBreak + "\r\n\r\n";
-            //    }
-            //}
+            // Box handling
+            if (phase.phasegroups[0].identifierType == PhaseGroup.IdentiferType.WaveNumber)     // Waves exist
+            {
+                if (currentGroup == phase.waves.Where(q => q.Key == currentGroup.Wave).First().Value.Last())
+                {
+                    richTextBoxLpOutput.Text += LpStrings.BoxEnd + "\r\n\r\n";
+                }
+                else
+                {
+                    richTextBoxLpOutput.Text += LpStrings.BoxBreak + "\r\n\r\n";
+                }
+            }
+            else        // Waves don't exist
+            {
+                if (currentGroup == phase.phasegroups.Last()) // End box at the group end
+                {
+                    richTextBoxLpOutput.Text += LpStrings.BoxEnd + "\r\n\r\n";
+                }
+                else
+                {
+                    richTextBoxLpOutput.Text += LpStrings.BoxBreak + "\r\n\r\n";
+                }
+            }
         }
 
         /// <summary>
@@ -1326,214 +1180,145 @@ namespace smashgg_to_liquipedia
         /// <param name="phase">Phase to be processed</param>
         /// <param name="poolData">Records of each entrant in the pool</param>
         /// <param name="lastWave">Identifier of last wave</param>
-        /// <param name="phaseElement">Element within the phase</param>
-        private void OutputDoublesPhase(Phase phase, Dictionary<int, PoolRecord> poolData, ref string lastWave, int phaseElement, Tournament.ActivityState state, PoolRecord.PoolType poolType)
+        /// <param name="currentGroup">Element within the phase</param>
+        private void OutputDoublesPhase(Phase phase, Dictionary<int, PoolRecord> poolData, ref string lastWave, PhaseGroup currentGroup, Tournament.ActivityState state, PoolRecord.PoolType poolType)
         {
-            Liquipedia.LpOutput lpout = new Liquipedia.LpOutput(selectedEvent.Type, ref entrantList, ref setList, ref roundList);
-            
+            Liquipedia.LpOutput lpout = new Liquipedia.LpOutput(selectedEvent, ref entrantList, ref setList, ref roundList);
+
             // Output to textbox
             // Wave headers
-            //if (phase.id[0].identifierType == PhaseGroup.IdentiferType.WaveNumber)
-            //{
-            //    if (lastWave != phase.id[phaseElement].Wave)
-            //    {
-            //        richTextBoxLpOutput.Text += "==Wave " + phase.id[phaseElement].Wave + "==\r\n";
-            //        richTextBoxLpOutput.Text += LpStrings.BoxStart + "\r\n";
+            if (phase.phasegroups[0].identifierType == PhaseGroup.IdentiferType.WaveNumber)
+            {
+                if (lastWave != currentGroup.Wave)
+                {
+                    richTextBoxLpOutput.Text += "==Wave " + currentGroup.Wave + "==\r\n";
+                    richTextBoxLpOutput.Text += LpStrings.BoxStart + "\r\n";
 
-            //        lastWave = phase.id[phaseElement].Wave;
-            //    }
-            //}
-            //else if (phaseElement == 0)    // Start a box at the first element
-            //{
-            //    richTextBoxLpOutput.Text += LpStrings.BoxStart + "\r\n";
-            //}
+                    lastWave = currentGroup.Wave;
+                }
+            }
+            else if (phase.phasegroups.First() == currentGroup)    // Start a box at the first element
+            {
+                richTextBoxLpOutput.Text += LpStrings.BoxStart + "\r\n";
+            }
 
-            //// Pool headers
-            //string title = string.Empty;
-            //if (phase.id[0].identifierType == PhaseGroup.IdentiferType.WaveNumber)
-            //{
-            //    richTextBoxLpOutput.Text += "===" + LpStrings.SortStart + phase.id[phaseElement].Wave + phase.id[phaseElement].Number.ToString() + LpStrings.SortEnd + "===" + "\r\n";
-            //    title = phase.id[phaseElement].Wave + phase.id[phaseElement].Number.ToString();
-            //}
-            //else
-            //{
-            //    richTextBoxLpOutput.Text += "===" + LpStrings.SortStart + phase.id[phaseElement].Wave + phase.id[phaseElement].DisplayIdentifier.ToString() + LpStrings.SortEnd + "===" + "\r\n";
-            //    title = phase.id[phaseElement].DisplayIdentifier.ToString();
-            //}
+            // Pool headers
+            string title = string.Empty;
+            if (phase.phasegroups[0].identifierType == PhaseGroup.IdentiferType.WaveNumber)
+            {
+                richTextBoxLpOutput.Text += "===" + LpStrings.SortStart + currentGroup.Wave + currentGroup.Number.ToString() + LpStrings.SortEnd + "===" + "\r\n";
+                title = currentGroup.Wave + currentGroup.Number.ToString();
+            }
+            else
+            {
+                richTextBoxLpOutput.Text += "===" + LpStrings.SortStart + currentGroup.Wave + currentGroup.DisplayIdentifier.ToString() + LpStrings.SortEnd + "===" + "\r\n";
+                title = currentGroup.DisplayIdentifier.ToString();
+            }
 
-            //// Output pool
-            //richTextBoxLpOutput.Text += lpout.OutputDoublesGroup(title, poolData, state, (int)numericUpDownAdvanceWinners.Value, (int)numericUpDownAdvanceLosers.Value, checkBoxMatchDetails.Checked, poolType);
-            //richTextBoxLog.Text += lpout.Log;
+            // Output pool
+            richTextBoxLpOutput.Text += lpout.OutputDoublesGroup(title, poolData, state, (int)numericUpDownAdvanceWinners.Value, (int)numericUpDownAdvanceLosers.Value, checkBoxMatchDetails.Checked, poolType);
+            richTextBoxLog.Text += lpout.Log;
 
-            //// Pool footers
-            //if (phase.id[0].identifierType == PhaseGroup.IdentiferType.WaveNumber)     // Waves exist
-            //{
-            //    if (phaseElement + 1 >= phase.id.Count)
-            //    {
-            //        richTextBoxLpOutput.Text += LpStrings.BoxEnd + "\r\n\r\n";
-            //    }
-            //    else if (phase.id[phaseElement + 1].Wave != lastWave)
-            //    {
-            //        richTextBoxLpOutput.Text += LpStrings.BoxEnd + "\r\n\r\n";
-            //    }
-            //    else
-            //    {
-            //        richTextBoxLpOutput.Text += LpStrings.BoxBreak + "\r\n\r\n";
-            //    }
-            //}
-            //else        // Waves don't exist
-            //{
-            //    if (phaseElement == phase.id.Count - 1) // End box at the group end
-            //    {
-            //        richTextBoxLpOutput.Text += LpStrings.BoxEnd + "\r\n\r\n";
-            //    }
-            //    else
-            //    {
-            //        richTextBoxLpOutput.Text += LpStrings.BoxBreak + "\r\n\r\n";
-            //    }
-            //}
+            // Pool footers
+            if (phase.phasegroups[0].identifierType == PhaseGroup.IdentiferType.WaveNumber)     // Waves exist
+            {
+                if (currentGroup == phase.waves.Where(q => q.Key == currentGroup.Wave).First().Value.Last())
+                {
+                    richTextBoxLpOutput.Text += LpStrings.BoxEnd + "\r\n\r\n";
+                }
+                else
+                {
+                    richTextBoxLpOutput.Text += LpStrings.BoxBreak + "\r\n\r\n";
+                }
+            }
+            else        // Waves don't exist
+            {
+                if (currentGroup == phase.phasegroups.Last()) // End box at the group end
+                {
+                    richTextBoxLpOutput.Text += LpStrings.BoxEnd + "\r\n\r\n";
+                }
+                else
+                {
+                    richTextBoxLpOutput.Text += LpStrings.BoxBreak + "\r\n\r\n";
+                }
+            }
         }
 
         /// <summary>
         /// Aggregates set data into data per player in a pool
         /// </summary>
-        /// <param name="phase_group">Phase group number</param>
-        /// <param name="parser">Parser for retrieving/processing json</param>
-        /// <param name="PoolRecord.PoolType">Specifies bracket or round robin</param>
+        /// <param name="poolType">Specifies bracket or round robin</param>
         /// <param name="record">List of player records for the pool</param>
+        /// <param name="standings">A standings object with ranks for each entrant</param>
         /// <returns>True if it completed succesfully, false otherwise</returns>
-        private bool GeneratePoolData(int phase_group, PoolRecord.PoolType poolType, ref Dictionary<int, PoolRecord> record, ref Tournament.ActivityState phaseState)
+        private bool GeneratePoolData(PoolRecord.PoolType poolType, List<Standing> standings, ref Dictionary<int, PoolRecord> record)
         {
             // Clear data
             ClearData();
 
-            // Create a record for each player
-            foreach (KeyValuePair<int, Entrant> entrant in entrantList)
+            // Create a record for each entrant
+            foreach (Seed seed in seedList)
             {
-                record.Add(entrant.Key, new PoolRecord());
-            }
-
-            // Add data to each record based on set information
-            foreach (Set set in setList)
-            {
-                if (entrantList.ContainsKey(set.slots[0].entrant.id))
+                record.Add(seed.entrant.id, new PoolRecord());
+                List<Set> relevantSets = setList.Where(q => q.slots.Any(r => r.entrant.id == seed.entrant.id)).ToList<Set>();
+                foreach (Set set in relevantSets)
                 {
+                    // Ignore byes
+                    if (set.slots[0].prereqType == "bye" || set.slots[1].prereqType == "bye")
+                    {
+                        continue;
+                    }
+
+                    // Mark both players as present
                     record[set.slots[0].entrant.id].isinGroup = true;
-                }
-                else
-                {
-                    continue;
-                }
-
-                if (entrantList.ContainsKey(set.slots[1].entrant.id))
-                {
                     record[set.slots[1].entrant.id].isinGroup = true;
-                }
-                else
-                {
-                    continue;
-                }
 
-                // Record match data for each player's record
-                if (set.winnerId == set.slots[0].entrant.id)
-                {
-                    if (set.slots[1].entrant.id == Consts.PLAYER_BYE) continue;
-
-                    record[set.slots[0].entrant.id].AddMatchWins(1);
-                    record[set.slots[1].entrant.id].AddMatchLosses(1);
-
-                    if (set.entrant2wins != -1) // Ignore W-L for DQs for now
+                    // Tally the result
+                    if (set.winnerId == seed.entrant.id)    // For a win
                     {
-                        record[set.slots[0].entrant.id].AddGameWins(set.entrant1wins);
-                        record[set.slots[1].entrant.id].AddGameWins(set.entrant2wins);
-                        record[set.slots[0].entrant.id].AddGameLosses(set.entrant2wins);
-                        record[set.slots[1].entrant.id].AddGameLosses(set.entrant1wins);
+                        record[seed.entrant.id].AddMatchWins(1);
 
-                        record[set.slots[0].entrant.id].AddMatchesActuallyPlayed(1);
-                        record[set.slots[1].entrant.id].AddMatchesActuallyPlayed(1);
+                        if (set.displayScore != "DQ" && set.displayScore != null) // Ignore W-L for DQs for now
+                        {
+                            if (seed.entrant.id.ToString() == set.slots[0].id)
+                            {
+                                record[seed.entrant.id].AddGameWins(set.entrant1wins);
+                                record[seed.entrant.id].AddGameLosses(set.entrant2wins);
+                            }
+                            else if (seed.entrant.id.ToString() == set.slots[1].id)
+                            {
+                                record[seed.entrant.id].AddGameWins(set.entrant2wins);
+                                record[seed.entrant.id].AddGameLosses(set.entrant1wins);
+                            }
+
+                            record[set.slots[0].entrant.id].AddMatchesActuallyPlayed(1);
+                            record[set.slots[1].entrant.id].AddMatchesActuallyPlayed(1);
+                        }
                     }
-
-                    // DE Brackets will set ranks for players
-                    if (poolType == PoolRecord.PoolType.Bracket)
+                    else if (set.winnerId != null)      // For a loss
                     {
-                        // Player 1 rank
-                        if (record[set.slots[0].entrant.id].rank == 0 || set.wPlacement < record[set.slots[0].entrant.id].rank)
-                        {
-                            if (set.wPlacement != Consts.UNKNOWN)
-                            {
-                                record[set.slots[0].entrant.id].rank = set.wPlacement;
-                            }
-                        }
-                        // Player 2 rank
-                        if (record[set.slots[1].entrant.id].rank == 0 || set.lPlacement < record[set.slots[1].entrant.id].rank)
-                        {
-                            if (set.lPlacement != Consts.UNKNOWN)
-                            {
-                                record[set.slots[1].entrant.id].rank = set.lPlacement;
-                            }
-                        }
+                        record[set.slots[0].entrant.id].AddMatchLosses(1);
 
-                        // Check if player 1 is done playing matches
-                        if (set.wProgressingPhaseGroupId != Consts.UNKNOWN)
+                        if (set.displayScore != "DQ" && set.displayScore != null) // Ignore W-L for DQs for now
                         {
-                            record[set.slots[0].entrant.id].MatchesComplete = true;
-                        }
-                        // Check if player 2 is done playing matches
-                        if (set.lProgressingPhaseGroupId != Consts.UNKNOWN || set.displayRound < 0)
-                        {
-                            record[set.slots[1].entrant.id].MatchesComplete = true;
+                            if (seed.entrant.id.ToString() == set.slots[0].id)
+                            {
+                                record[seed.entrant.id].AddGameWins(set.entrant1wins);
+                                record[seed.entrant.id].AddGameLosses(set.entrant2wins);
+                            }
+                            else if (seed.entrant.id.ToString() == set.slots[1].id)
+                            {
+                                record[seed.entrant.id].AddGameWins(set.entrant2wins);
+                                record[seed.entrant.id].AddGameLosses(set.entrant1wins);
+                            }
+
+                            record[set.slots[0].entrant.id].AddMatchesActuallyPlayed(1);
+                            record[set.slots[1].entrant.id].AddMatchesActuallyPlayed(1);
                         }
                     }
                 }
-                else if (set.winnerId == set.slots[1].entrant.id)
-                {
-                    if (set.slots[0].entrant.id == Consts.PLAYER_BYE) continue;
 
-                    record[set.slots[1].entrant.id].AddMatchWins(1);
-                    record[set.slots[0].entrant.id].AddMatchLosses(1);
-
-                    if (set.entrant1wins != -1)
-                    {
-                        record[set.slots[0].entrant.id].AddGameWins(set.entrant1wins);
-                        record[set.slots[1].entrant.id].AddGameWins(set.entrant2wins);
-                        record[set.slots[0].entrant.id].AddGameLosses(set.entrant2wins);
-                        record[set.slots[1].entrant.id].AddGameLosses(set.entrant1wins);
-
-                        record[set.slots[0].entrant.id].AddMatchesActuallyPlayed(1);
-                        record[set.slots[1].entrant.id].AddMatchesActuallyPlayed(1);
-                    }
-
-                    // DE Brackets will set ranks for players
-                    if (poolType == PoolRecord.PoolType.Bracket)
-                    {
-                        if (record[set.slots[0].entrant.id].rank == 0 || set.lPlacement < record[set.slots[0].entrant.id].rank)
-                        {
-                            if (set.lPlacement != Consts.UNKNOWN)
-                            {
-                                record[set.slots[0].entrant.id].rank = set.lPlacement;
-                            }
-                        }
-
-                        if (record[set.slots[1].entrant.id].rank == 0 || set.wPlacement < record[set.slots[1].entrant.id].rank)
-                        {
-                            if (set.wPlacement != Consts.UNKNOWN)
-                            {
-                                record[set.slots[1].entrant.id].rank = set.wPlacement;
-                            }
-                        }
-
-                        // Check if player 2 is done playing matches
-                        if (set.wProgressingPhaseGroupId != Consts.UNKNOWN)
-                        {
-                            record[set.slots[1].entrant.id].MatchesComplete = true;
-                        }
-                        // Check if player 1 is done playing matches
-                        if (set.lProgressingPhaseGroupId != Consts.UNKNOWN || set.displayRound < 0)
-                        {
-                            record[set.slots[0].entrant.id].MatchesComplete = true;
-                        }
-                    }
-                }
+                record[seed.entrant.id].rank = standings.Where(q => q.entrant.id.Equals(seed.entrant.id)).First().standing;
             }
 
             // Remove entrants without listed sets (smash.gg seems to list extraneous entrants sometimes)
@@ -1549,16 +1334,185 @@ namespace smashgg_to_liquipedia
             // Sort the entrants by their rank and W-L records
             if (poolType == PoolRecord.PoolType.Bracket)
             {
-                record = record.OrderBy(x => x.Value.rank).ThenByDescending(x => x.Value.MatchWinrate).ThenBy(x => x.Value.MatchesLoss).ThenByDescending(x => x.Value.MatchesWin).ThenByDescending(x => x.Value.GameWinrate).ToDictionary(x => x.Key, x => x.Value);
+                record = record.OrderBy(x => x.Value.rank != 0).ThenBy(x => x.Value.rank).ThenByDescending(x => x.Value.MatchWinrate).ThenBy(x => x.Value.MatchesLoss).ThenByDescending(x => x.Value.MatchesWin).ThenByDescending(x => x.Value.GameWinrate).ToDictionary(x => x.Key, x => x.Value);
             }
             else if (poolType == PoolRecord.PoolType.RoundRobin)
             {
-                foreach (int entrant in record.Keys)
+                //foreach (int entrant in record.Keys)
+                //{
+                //    record[entrant].rank = entrantList[entrant].Placement;
+                //}
+
+                record = record.OrderBy(x => x.Value.rank != 0).ThenBy(x => x.Value.rank).ThenByDescending(x => x.Value.MatchWinrate).ThenBy(x => x.Value.MatchesLoss).ThenByDescending(x => x.Value.MatchesWin).ThenByDescending(x => x.Value.GameWinrate).ToDictionary(x => x.Key, x => x.Value);
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Aggregates set data into data per player in a pool. Determines rankings purely from set data
+        /// </summary>
+        /// <param name="poolType">Specifies bracket or round robin</param>
+        /// <param name="record">List of player records for the pool</param>
+        /// <returns>True if it completed succesfully, false otherwise</returns>
+        private bool GeneratePoolData(PoolRecord.PoolType poolType, ref Dictionary<int, PoolRecord> record)
+        {
+            if (seedList == null)
+            {
+                richTextBoxLog.Text += "Null seed list\r\n";
+                return false;
+            }
+
+            // Create a record for each entrant
+            foreach (Seed seed in seedList)
+            {
+                record.Add(seed.entrant.id, new PoolRecord());
+                List<Set> relevantSets = setList.Where(q => q.slots.Any(r => r.entrant != null && r.entrant.id.Equals(seed.entrant.id))).ToList<Set>();
+                foreach (Set set in relevantSets)
                 {
-                    //record[entrant].rank = entrantList[entrant].Placement;
+                    // Ignore byes
+                    if (set.slots[0].prereqType == "bye" || set.slots[1].prereqType == "bye")
+                    {
+                        continue;
+                    }
+
+                    if (set.slots[0].entrant != null && set.slots[1].entrant != null)
+                    {
+                        // Mark both players as present
+                        record[seed.entrant.id].isinGroup = true;
+
+
+                        // Tally the result
+                        if (set.winnerId == seed.entrant.id)    // For a win
+                        {
+                            record[seed.entrant.id].AddMatchWins(1);
+
+                            if (set.displayScore != "DQ" && set.displayScore != null) // Ignore W-L for DQs for now
+                            {
+                                if (seed.entrant.id.ToString() == set.slots[0].id)
+                                {
+                                    record[seed.entrant.id].AddGameWins(set.entrant1wins);
+                                    record[seed.entrant.id].AddGameLosses(set.entrant2wins);
+                                }
+                                else if (seed.entrant.id.ToString() == set.slots[1].id)
+                                {
+                                    record[seed.entrant.id].AddGameWins(set.entrant2wins);
+                                    record[seed.entrant.id].AddGameLosses(set.entrant1wins);
+                                }
+
+                                record[seed.entrant.id].AddMatchesActuallyPlayed(1);
+                            }
+                        }
+                        else if (set.winnerId != null)      // For a loss
+                        {
+                            record[seed.entrant.id].AddMatchLosses(1);
+
+                            if (set.displayScore != "DQ" && set.displayScore != null) // Ignore W-L for DQs for now
+                            {
+                                if (seed.entrant.id.ToString() == set.slots[0].id)
+                                {
+                                    record[seed.entrant.id].AddGameWins(set.entrant1wins);
+                                    record[seed.entrant.id].AddGameLosses(set.entrant2wins);
+                                }
+                                else if (seed.entrant.id.ToString() == set.slots[1].id)
+                                {
+                                    record[seed.entrant.id].AddGameWins(set.entrant2wins);
+                                    record[seed.entrant.id].AddGameLosses(set.entrant1wins);
+                                }
+
+                                record[seed.entrant.id].AddMatchesActuallyPlayed(1);
+                            }
+                        }
+                    }
                 }
 
-                record = record.OrderBy(x => x.Value.rank).ThenByDescending(x => x.Value.MatchWinrate).ThenBy(x => x.Value.MatchesLoss).ThenByDescending(x => x.Value.MatchesWin).ThenByDescending(x => x.Value.GameWinrate).ToDictionary(x => x.Key, x => x.Value);
+                // Figure out what the rankings are
+                record[seed.entrant.id].rank = seed.placement;
+            }
+
+
+            if (poolType == PoolRecord.PoolType.Bracket)
+            {
+                //// Winners
+                //for (int i = 1; i <= roundList.Keys.Max(); i++)
+                //{
+                //    foreach (Set set in roundList[i])
+                //    {
+                //        set.wPlacement = roundList[i].Count + 1;
+                //        set.lPlacement = roundList[i].Count * 2 + 1;
+                //    }
+                //}
+
+                //// Losers
+                //int lastLoser = 2;
+                //int newLoser = 3;
+                //for (int i = roundList.Keys.Min(); i <= -1; i++)
+                //{
+                //    foreach (Set set in roundList[i])
+                //    {
+                //        set.wPlacement = lastLoser;
+                //        set.lPlacement = newLoser;
+                //    }
+                //    lastLoser = newLoser;
+                //    newLoser += roundList[i].Count;
+                //}
+
+                //foreach (List<Set> entry in roundList.Values)
+                //{
+                //    foreach (Set set in entry)
+                //    {
+                //        if (set.displayScore != "bye" && set.winnerId != null)
+                //        {
+                //            if (set.slots[0].entrant != null && set.slots[0].entrant.id == set.winnerId)
+                //            {
+                //                if (set.slots[0].entrant != null && set.wPlacement < record[set.slots[0].entrant.id].rank)
+                //                {
+                //                    record[set.slots[0].entrant.id].rank = set.wPlacement;
+                //                }
+                //                if (set.slots[1].entrant != null && set.lPlacement < record[set.slots[1].entrant.id].rank)
+                //                {
+                //                    record[set.slots[1].entrant.id].rank = set.lPlacement;
+                //                }
+                //            }
+                //            else if (set.slots[1].entrant != null && set.slots[1].entrant.id == set.winnerId)
+                //            {
+                //                if (set.slots[0].entrant != null && set.lPlacement < record[set.slots[0].entrant.id].rank)
+                //                {
+                //                    record[set.slots[0].entrant.id].rank = set.lPlacement;
+                //                }
+                //                if (set.slots[1].entrant != null && set.wPlacement < record[set.slots[1].entrant.id].rank)
+                //                {
+                //                    record[set.slots[1].entrant.id].rank = set.wPlacement;
+                //                }
+                //            }
+                //        }
+                //    }
+                //}
+            }
+
+            // Remove entrants without listed sets (smash.gg seems to list extraneous entrants sometimes)
+            for (int i = 0; i < record.Count; i++)
+            {
+                if (record.ElementAt(i).Value.isinGroup == false)
+                {
+                    record.Remove(record.ElementAt(i).Key);
+                    i--;
+                }
+            }
+
+            // Sort the entrants by their rank and W-L records
+            if (poolType == PoolRecord.PoolType.Bracket)
+            {
+                record = record.OrderBy(x => x.Value.rank != 0).ThenBy(x => x.Value.rank).ThenByDescending(x => x.Value.MatchWinrate).ThenBy(x => x.Value.MatchesLoss).ThenByDescending(x => x.Value.MatchesWin).ThenByDescending(x => x.Value.GameWinrate).ToDictionary(x => x.Key, x => x.Value);
+            }
+            else if (poolType == PoolRecord.PoolType.RoundRobin)
+            {
+                //foreach (int entrant in record.Keys)
+                //{
+                //    record[entrant].rank = entrantList[entrant].Placement;
+                //}
+
+                record = record.OrderBy(x => x.Value.rank != 0).ThenBy(x => x.Value.rank).ThenByDescending(x => x.Value.MatchWinrate).ThenBy(x => x.Value.MatchesLoss).ThenByDescending(x => x.Value.MatchesWin).ThenByDescending(x => x.Value.GameWinrate).ToDictionary(x => x.Key, x => x.Value);
             }
 
             return true;
@@ -1610,11 +1564,11 @@ namespace smashgg_to_liquipedia
                 {
                     if (i == entrant.Value.participants.Count - 1)
                     {
-                        richTextBoxEntrants.Text += entrant.Value.participants[i].contactInfo.country + "\r\n";
+                        richTextBoxEntrants.Text += entrant.Value.participants[i].player.country + "\r\n";
                     }
                     else
                     {
-                        richTextBoxEntrants.Text += entrant.Value.participants[i].contactInfo.country + " / ";
+                        richTextBoxEntrants.Text += entrant.Value.participants[i].player.country + " / ";
                         lastPlayerPadding -= entrant.Value.participants[i].gamerTag.Length;
                     }
                 }
@@ -1631,7 +1585,7 @@ namespace smashgg_to_liquipedia
         {
             // Output the round
             textbox.SelectionFont = new Font(textbox.Font, FontStyle.Regular);
-            textbox.AppendText(set.displayRound.ToString().PadRight(4));
+            textbox.AppendText(set.round.ToString().PadRight(4));
 
             // Highlight font if player 1 is the winner
             if (set.winnerId == set.slots[0].entrant.id)
@@ -1645,7 +1599,7 @@ namespace smashgg_to_liquipedia
 
             // Output player 1
             textbox.AppendText(entrantList[set.slots[0].entrant.id].participants[0].gamerTag.PadRight(p1padding) + "  ");
-            
+
             // Output player 1's score
             textbox.SelectionFont = new Font(textbox.Font, FontStyle.Regular);
             if (set.entrant1wins == -1)
@@ -1693,10 +1647,10 @@ namespace smashgg_to_liquipedia
         /// <summary>
         /// Outputs a prize pool table based on available bracket info
         /// </summary>
-        /// <param name="record">Records of the entrants in the bracket, sorted by rank</param>
+        /// <param name="standings">Standings from smash.gg, sorted by rank</param>
         /// <param name="startEntrant">The first entrant to output in this row</param>
         /// <param name="rows">Number of rows to output</param>
-        private void OutputPrizePoolTable(Dictionary<int, PoolRecord> record, int startEntrant, int rows)
+        private void OutputPrizePoolTable(List<Standing> standings, int startEntrant, int rows)
         {
             // Output the start of the prize pool slot
             if (selectedEvent.Type == Event.EventType.Singles)
@@ -1711,11 +1665,11 @@ namespace smashgg_to_liquipedia
             // Output the place
             if (rows == 1)
             {
-                richTextBoxLpOutput.Text += record.ElementAt(startEntrant).Value.rank;
+                richTextBoxLpOutput.Text += standings[startEntrant].standing;
             }
             else
             {
-                richTextBoxLpOutput.Text += record.ElementAt(startEntrant).Value.rank + "-" + (record.ElementAt(startEntrant).Value.rank + rows - 1);
+                richTextBoxLpOutput.Text += standings[startEntrant].standing + "-" + (standings[startEntrant].standing + rows - 1);
             }
 
             // Ouptut the parameter for prize money
@@ -1728,8 +1682,8 @@ namespace smashgg_to_liquipedia
                 for (int i = 0; i < rows; i++)
                 {
                     // Assume there is only 1 player output their info
-                    richTextBoxLpOutput.Text += "|" + entrantList[record.ElementAt(startEntrant + i).Key].participants[0].gamerTag +
-                                                "|flag" + (i + 1) + "=" + entrantList[record.ElementAt(startEntrant + i).Key].participants[0].contactInfo.country +
+                    richTextBoxLpOutput.Text += "|" + standings[startEntrant + i].entrant.participants[0].gamerTag +
+                                                "|flag" + (i + 1) + "=" + standings[startEntrant + i].entrant.participants[0].player.country +
                                                 "|heads" + (i + 1) + "= |team" + (i + 1) + "=\r\n";
                 }
             }
@@ -1739,11 +1693,11 @@ namespace smashgg_to_liquipedia
                 for (int i = 0; i < rows; i++)
                 {
                     // Assume there are 2 players, and output their info
-                    richTextBoxLpOutput.Text += "|" + entrantList[record.ElementAt(startEntrant + i).Key].participants[0].gamerTag +
-                                                "|flag" + (i + 1) + "p1=" + entrantList[record.ElementAt(startEntrant + i).Key].participants[0].contactInfo.country +
+                    richTextBoxLpOutput.Text += "|" + standings[startEntrant + i].entrant.participants[0].gamerTag +
+                                                "|flag" + (i + 1) + "p1=" + standings[startEntrant + i].entrant.participants[0].player.country +
                                                 "|heads" + (i + 1) + "p1=" +
-                                                "|" + entrantList[record.ElementAt(startEntrant + i).Key].participants[1].gamerTag +
-                                                "|flag" + (i + 1) + "p2=" + entrantList[record.ElementAt(startEntrant + i).Key].participants[1].contactInfo.country +
+                                                "|" + standings[startEntrant + i].entrant.participants[1].gamerTag +
+                                                "|flag" + (i + 1) + "p2=" + standings[startEntrant + i].entrant.participants[1].player.country +
                                                 "|heads" + (i + 1) + "p2=\r\n";
                 }
             }
@@ -1811,6 +1765,7 @@ namespace smashgg_to_liquipedia
             richTextBoxLosers.Clear();
             entrantList.Clear();
             setList.Clear();
+            seedList.Clear();
             roundList.Clear();
             matchOffsetPerRound.Clear();
         }
@@ -1933,8 +1888,6 @@ namespace smashgg_to_liquipedia
             textBoxTournamentUrl.Enabled = false;
 
             buttonFill.Enabled = false;
-            buttonFillDoubles.Enabled = false;
-            buttonGetPhase.Enabled = false;
             buttonGetBracket.Enabled = false;
             buttonPrizePool.Enabled = false;
             buttonWinnerShift.Enabled = false;
@@ -1981,8 +1934,6 @@ namespace smashgg_to_liquipedia
             textBoxTournamentUrl.Enabled = true;
 
             buttonFill.Enabled = true;
-            buttonFillDoubles.Enabled = true;
-            buttonGetPhase.Enabled = true;
             buttonGetBracket.Enabled = true;
             buttonPrizePool.Enabled = true;
             buttonWinnerShift.Enabled = true;
@@ -2081,6 +2032,7 @@ namespace smashgg_to_liquipedia
             Authentication tokenWindow = new Authentication(ref authToken);
             tokenWindow.ShowDialog();
             authToken = tokenWindow.token;
+            apiQuery.SetToken(authToken);
         }
 
         private void FormMain_FormClosing(object sender, FormClosingEventArgs e)
@@ -2127,10 +2079,50 @@ namespace smashgg_to_liquipedia
                 {
                     TreeNodeData tag = (TreeNodeData)e.Node.Tag;
 
-                    // Set checked node properties
+                    // Topmost node will cause an exception
+                    if (e.Node == treeView1.Nodes[0]) return;
+
+                    // Find the event node
                     selectedEvent = FindParentEvent(e.Node);
-                    selectedObjectId = tag.id;
-                    selectedObjectType = tag.nodetype;
+
+                    // Get the wave id
+                    if (tag.nodetype == TreeNodeData.NodeType.Wave)
+                    {
+                        TreeNodeData samplePhaseGroupTag = (TreeNodeData)e.Node.Nodes[0].Tag;
+
+                        selectedObjectId = selectedEvent.phaseGroups.Where(q => q.id == samplePhaseGroupTag.id).First().waveId ?? 0;
+                        selectedObjectType = TreeNodeData.NodeType.Wave;
+                    }
+
+                    // Determine if there is only one phasegroup and select it if there is
+                    if (e.Node.Nodes.Count <= 1)
+                    {
+                        if (tag.nodetype == TreeNodeData.NodeType.Phase)
+                        {
+                            Phase selectedPhase = tournament.events.Where(q => q == selectedEvent).First<Event>().phases
+                                                                   .Where(q => q.id == tag.id).First<Phase>();
+                            if (selectedPhase.phasegroups.Count == 1)
+                            {
+                                selectedObjectId = selectedPhase.phasegroups[0].id;
+                                selectedObjectType = TreeNodeData.NodeType.PhaseGroup;
+                            }
+                            else
+                            {
+                                selectedObjectId = tag.id;
+                                selectedObjectType = tag.nodetype;
+                            }
+                        }
+                        else
+                        {
+                            selectedObjectId = tag.id;
+                            selectedObjectType = tag.nodetype;
+                        }
+                    }
+                    else
+                    {
+                        selectedObjectId = tag.id;
+                        selectedObjectType = tag.nodetype;
+                    }
                 }
                 else
                 {
@@ -2192,14 +2184,188 @@ namespace smashgg_to_liquipedia
 
         private void buttonGetData_Click(object sender, EventArgs e)
         {
+            // Clear data
+            ClearData();
+            checkBoxWinners.Checked = false;
+            checkBoxLosers.Checked = false;
+
+            if (selectedEvent == null)
+            {
+                richTextBoxLog.Text += "Get a tournament and select an object first";
+                return;
+            }
+
+            // Clear data
+            ClearData();
+            checkBoxWinners.Checked = false;
+            checkBoxLosers.Checked = false;
+
             switch (selectedObjectType)
             {
+                // Get all phasegroups in a phase
                 case TreeNodeData.NodeType.Phase:
+                    // Set the pool type
+                    PoolRecord.PoolType poolType;
+                    if (radioButtonBracket.Checked)
+                    {
+                        poolType = PoolRecord.PoolType.Bracket;
+                    }
+                    else if (radioButtonRR.Checked)
+                    {
+                        poolType = PoolRecord.PoolType.RoundRobin;
+                    }
+                    else
+                    {
+                        richTextBoxLog.Text += "Specify a bracket type.\r\n";
+                        return;
+                    }
+
+                    Phase selectedPhase = selectedEvent.phases.Where(q => q.id == selectedObjectId).First<Phase>();
+
+                    // Setup progress bar
+                    progressBar.Minimum = 0;
+                    progressBar.Maximum = selectedPhase.phasegroups.Count;
+                    progressBar.Value = 1;
+                    progressBar.Step = 1;
+
+                    // Retrieve pages for each group
+                    string lastWave = string.Empty;
+                    foreach (PhaseGroup group in selectedPhase.phasegroups)
+                    {
+                        if (setList == null) setList = new List<Set>();
+                        if (seedList == null) seedList = new List<Seed>();
+
+                        // Clear data
+                        ClearData();
+                        setList.Clear();
+                        seedList.Clear();
+
+                        Dictionary<int, PoolRecord> poolData = new Dictionary<int, PoolRecord>();
+
+                        // Get all sets in the phasegroup
+                        apiQuery.GetSets(group.id, out seedList, out setList);
+                        if (seedList == null)
+                        {
+                            richTextBoxLog.Text += string.Format("Seed list not retrieved for {0}\r\n", group.id);
+                            continue;
+                        }
+                        if (setList == null)
+                        {
+                            richTextBoxLog.Text += string.Format("Set list not retrieved for {0}\r\n", group.id);
+                            continue;
+                        }
+
+                        // Generate the round list
+                        ProcessBracket(selectedEvent.Type);
+                        
+                        if (!GeneratePoolData(poolType, ref poolData)) continue;
+
+                        if (selectedEvent.Type == Event.EventType.Singles)
+                        {
+                            OutputSinglesPhase(selectedPhase, poolData, ref lastWave, group, group.State, poolType);
+                        }
+                        else if (selectedEvent.Type == Event.EventType.Doubles)
+                        {
+                            OutputDoublesPhase(selectedPhase, poolData, ref lastWave, group, group.State, poolType);
+                        }
+
+                        // Increment the progress bar
+                        progressBar.PerformStep();
+                    }
                     break;
+
+                // Get a single phasegroup
                 case TreeNodeData.NodeType.PhaseGroup:
+                    apiQuery.GetSets(selectedObjectId, out seedList, out setList);
+                    if (seedList == null)
+                    {
+                        richTextBoxLog.Text += string.Format("Seed list not retrieved\r\n");
+                        return;
+                    }
+                    if (setList == null)
+                    {
+                        richTextBoxLog.Text += string.Format("Set list not retrieved\r\n");
+                        return;
+                    }
+
+                    // Generate the round list
+                    ProcessBracket(selectedEvent.Type);
                     break;
+
+                // Get a single wave in a phase
                 case TreeNodeData.NodeType.Wave:
+                    // Set the pool type
+                    if (radioButtonBracket.Checked)
+                    {
+                        poolType = PoolRecord.PoolType.Bracket;
+                    }
+                    else if (radioButtonRR.Checked)
+                    {
+                        poolType = PoolRecord.PoolType.RoundRobin;
+                    }
+                    else
+                    {
+                        richTextBoxLog.Text += "Specify a bracket type.\r\n";
+                        return;
+                    }
+
+                    selectedPhase = selectedEvent.phases.Where(q => q.phasegroups.Any(r => r.waveId == selectedObjectId)).First();
+                    KeyValuePair<string,List<PhaseGroup>> wave = selectedPhase.waves.Where(q => (int)q.Value[0].waveId == selectedObjectId).First();
+                    lastWave = wave.Key;
+
+                    // Setup progress bar
+                    progressBar.Minimum = 0;
+                    progressBar.Maximum = wave.Value.Count;
+                    progressBar.Value = 1;
+                    progressBar.Step = 1;
+
+                    // Retrieve pages for each group
+                    foreach (PhaseGroup group in wave.Value)
+                    {
+                        if (setList == null) setList = new List<Set>();
+                        if (seedList == null) seedList = new List<Seed>();
+
+                        // Clear data
+                        ClearData();
+                        setList.Clear();
+                        seedList.Clear();
+
+                        Dictionary<int, PoolRecord> poolData = new Dictionary<int, PoolRecord>();
+
+                        // Get all sets in the phasegroup
+                        apiQuery.GetSets(group.id, out seedList, out setList);
+                        if (seedList == null)
+                        {
+                            richTextBoxLog.Text += string.Format("Seed list not retrieved for {0}\r\n", group.id);
+                            continue;
+                        }
+                        if (setList == null)
+                        {
+                            richTextBoxLog.Text += string.Format("Set list not retrieved for {0}\r\n", group.id);
+                            continue;
+                        }
+
+                        // Generate the round list
+                        ProcessBracket(selectedEvent.Type);
+
+                        if (!GeneratePoolData(poolType, ref poolData)) continue;
+
+                        if (selectedEvent.Type == Event.EventType.Singles)
+                        {
+                            OutputSinglesPhase(selectedPhase, poolData, ref lastWave, group, group.State, poolType);
+                        }
+                        else if (selectedEvent.Type == Event.EventType.Doubles)
+                        {
+                            OutputDoublesPhase(selectedPhase, poolData, ref lastWave, group, group.State, poolType);
+                        }
+
+                        // Increment the progress bar
+                        progressBar.PerformStep();
+                    }
+
                     break;
+
+                // Invalid object selected - do nothing
                 default:
                     richTextBoxLog.Text += "Can't do anything with that object\r\n";
                     break;

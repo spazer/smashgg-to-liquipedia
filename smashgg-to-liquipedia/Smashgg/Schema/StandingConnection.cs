@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace smashgg_to_liquipedia.Smashgg.Schema
 {
-    public class Videogame
+    public class StandingConnection
     {
-        public int id { get; set; }
-        public string name { get; set; }
+        public List<Standing> nodes { get; set; }
     }
 }

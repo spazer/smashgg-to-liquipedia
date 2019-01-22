@@ -18,7 +18,7 @@ namespace smashgg_to_liquipedia.Smashgg.Schema
         public Videogame videogame { get; set; }
         public int type { get; set; }
         public Tournament.ActivityState state { get; set; }
-        public List<Standing> standings { get; set; }
+        public StandingConnection standings { get; set; }
 
         public EventType Type
         {
