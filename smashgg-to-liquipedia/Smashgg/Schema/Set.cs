@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Text.RegularExpressions;
+using Newtonsoft.Json;
 
 namespace smashgg_to_liquipedia
 {
@@ -15,7 +16,7 @@ namespace smashgg_to_liquipedia
         public int round { get; set; }
         public int state { get; set; }
         public bool hasPlaceholder { get; set; }
-        public string displayScore { get; set; }
+        private string displayScore;
         public List<Game> games { get; set; }
         public List<SetSlot> slots { get; set; }
         public int? winnerId;
@@ -47,17 +48,28 @@ namespace smashgg_to_liquipedia
             }
         }
 
-        public void ParseScore()
+        [JsonProperty("displayScore")]
+        public string DisplayScore
         {
-            if (displayScore == string.Empty) return;
-
-            Regex rx = new Regex(@".* ([0-9]) - .*([0-9])$");
-            MatchCollection matches = rx.Matches(displayScore);
-
-            if (matches.Count == 2)
+            get
             {
-                int.TryParse(matches[0].Groups[0].Value, out entrant1wins);
-                int.TryParse(matches[0].Groups[1].Value, out entrant2wins);
+                return displayScore;
+            }
+
+            // Parse the string for scores
+            set
+            {
+                displayScore = value;
+                if (value == string.Empty) return;
+
+                Regex rx = new Regex(@".* ([0-9]) - .*([0-9])$");
+                MatchCollection matches = rx.Matches(value);
+
+                if (matches.Count == 1 && matches[0].Groups.Count == 3)
+                {
+                    int.TryParse(matches[0].Groups[1].Value, out entrant1wins);
+                    int.TryParse(matches[0].Groups[2].Value, out entrant2wins);
+                }
             }
         }
     }

@@ -51,6 +51,8 @@ namespace smashgg_to_liquipedia
         /// </summary>
         /// <param name="token">API token</param>
         /// <param name="success">Indicates if the contructor initialized successfully</param>
+        /// <param name="form">Form interface for logging</param>
+        /// <param name="playerdb">Player database object for standardizing player tags and flags</param>
         public ApiQueries(string token, PlayerDatabase playerdb, IFormMain form, out bool success)
         {
             standardization = new Smashgg.Standardization();
@@ -107,7 +109,6 @@ namespace smashgg_to_liquipedia
         /// Sends an API request to smash.gg
         /// Variables should be attached to the request beforehand
         /// </summary>
-        /// <param name="tournamentSlug">Tournament slug</param>
         /// <param name="request">GraphQL request</param>
         /// <returns>JSON data</returns>
         public GraphQLResponse SendRequest(GraphQLRequest request)
@@ -137,7 +138,7 @@ namespace smashgg_to_liquipedia
                 else
                 {
                     WriteLineToLog("No data. Retrying...");
-                    Thread.Sleep(2000);
+                    Thread.Sleep(2500);
                     tries--;
                 }
             }
@@ -264,47 +265,64 @@ namespace smashgg_to_liquipedia
 
         public void GetSets(int phaseGroupId, out List<Seed> seedList, out List<Set> setList)
         {
-            seedList = null;
-            setList = null;
+            seedList = new List<Seed>();
+            setList = new List<Set>();
 
+            int page = 1;
             GraphQLRequest setsRequest = new GraphQLRequest
             {
                 Query = @"
-                query GetSets($phaseGroupId: Int) {
+                query GetSets($phaseGroupId: Int, $page: Int) {
                     phaseGroup(id: $phaseGroupId) {
-                        sets{
-                          id
-                          round
-                          displayScore
-                          winnerId                          
-                          slots {
-                            entrant{
-                              id
+                        paginatedSets(perPage:60, page:$page) {
+                            pageInfo {
+                                page
+                                totalPages
                             }
-                          }
+                            nodes {
+                                id
+                                round
+                                displayScore
+                                winnerId
+                                state
+                                slots {
+                                    entrant{
+                                        id
+                                    }
+                                }
+                            }
                         }
                     }
                 }",
-                OperationName = "GetSets",
-                Variables = new
-                {
-                    phaseGroupId = phaseGroupId
-                }
+                OperationName = "GetSets"                
             };
 
-            GraphQLResponse setsResponse = SendRequest(setsRequest);
-            if (setsResponse != null)
+            // Retrieve pages while there are more paginated sets
+            PhaseGroup tempPhaseGroup = new PhaseGroup();
+            do
             {
-                // Parse the json response
-                PhaseGroup tempPhaseGroup = JsonConvert.DeserializeObject<PhaseGroup>(setsResponse.Data.phaseGroup.ToString());
-                setList = tempPhaseGroup.sets;
-            }
-            else
-            {
-                WriteLineToLog("Could not retrieve any data");
-                return;
-            }
+                setsRequest.Variables = new
+                {
+                    phaseGroupId = phaseGroupId,
+                    page = page
+                };
 
+                GraphQLResponse setsResponse = SendRequest(setsRequest);
+                if (setsResponse != null)
+                {
+                    // Parse the json response
+                    tempPhaseGroup = JsonConvert.DeserializeObject<PhaseGroup>(setsResponse.Data.phaseGroup.ToString());
+                    setList.AddRange(tempPhaseGroup.paginatedSets.nodes);
+
+                    // Increase the page count
+                    page++;
+                }
+                else
+                {
+                    WriteLineToLog("Could not retrieve any data");
+                    return;
+                }
+            } while (page <= tempPhaseGroup.paginatedSets.pageInfo.totalPages);
 
             GraphQLRequest seedsRequest = new GraphQLRequest
             {
@@ -337,7 +355,7 @@ namespace smashgg_to_liquipedia
             if (seedsResponse != null)
             {
                 // Parse the json response
-                PhaseGroup tempPhaseGroup = JsonConvert.DeserializeObject<PhaseGroup>(seedsResponse.Data.phaseGroup.ToString());
+                tempPhaseGroup = JsonConvert.DeserializeObject<PhaseGroup>(seedsResponse.Data.phaseGroup.ToString());
                 seedList = tempPhaseGroup.seeds;
 
                 // Standardize participant information

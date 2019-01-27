@@ -12,7 +12,6 @@ namespace smashgg_to_liquipedia.Smashgg.Schema
         public string gamerTag { get; set; }
         public Player player { get; set; }
         public int playerId { get; set; }
-        public ContactInfo contactInfo { get; set; }
         public bool verified { get; set; }
     }
 }

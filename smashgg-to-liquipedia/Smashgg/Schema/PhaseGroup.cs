@@ -17,6 +17,8 @@ namespace smashgg_to_liquipedia
         public int? waveId { get; set; }
         public List<Seed> seeds { get; set; }
         public List<Set> sets { get; set; }
+        public SetConnection paginatedSets { get; set; }
+        public SeedConnection paginatedSeeds { get; set; }
 
         // Internal fields
         public enum IdentiferType { WaveNumber, NumberOnly, Other };

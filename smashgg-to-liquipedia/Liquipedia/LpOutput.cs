@@ -337,8 +337,9 @@ namespace smashgg_to_liquipedia.Liquipedia
         /// <param name="offset">Shift the round by this integer. Left is negative. Right is positive.</param>
         /// <param name="side">Side of the bracket to fill in</param>
         /// <param name="bracketText">Liquipedia markup</param>
+        /// <param name="flipSide">Change L to R</param>
         public void fillBracketSingles(int startRound, int endRound, int offset, ref string bracketText, Dictionary<int, int> matchOffsetPerRound, 
-                                       bool fillByes, bool fillByeWins, bool r1Only, bool includeUnfinished, bool matchDetails)
+                                       bool fillByes, bool fillByeWins, bool r1Only, bool includeUnfinished, bool matchDetails, bool flipSide)
         {
             int increment;
             string bracketSide;
@@ -346,6 +347,11 @@ namespace smashgg_to_liquipedia.Liquipedia
             if (startRound > 0)
             {
                 increment = 1;
+                bracketSide = LpStrings.WRound;
+            }
+            else if (startRound < 0 && flipSide)    // For DEFinalBracket since L2 is R2
+            {
+                increment = -1;
                 bracketSide = LpStrings.WRound;
             }
             else
@@ -393,7 +399,7 @@ namespace smashgg_to_liquipedia.Liquipedia
 
                         // Fill player 2 info
                         FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P2, entrantList[currentSet.slots[1].entrant.id].participants[0].gamerTag);
-                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P2 + LpStrings.Flag, entrantList[currentSet.slots[1].entrant.id].participants[0].contactInfo.country);
+                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P2 + LpStrings.Flag, entrantList[currentSet.slots[1].entrant.id].participants[0].player.country);
 
                         // Give player 2 a checkmark
                         if (fillByeWins == true)
@@ -418,7 +424,7 @@ namespace smashgg_to_liquipedia.Liquipedia
 
                         // Fill player 1 info
                         FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P1, entrantList[currentSet.slots[0].entrant.id].participants[0].gamerTag);
-                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P1 + LpStrings.Flag, entrantList[currentSet.slots[0].entrant.id].participants[0].contactInfo.country);
+                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P1 + LpStrings.Flag, entrantList[currentSet.slots[0].entrant.id].participants[0].player.country);
 
                         // Give player 1 a checkmark
                         if (fillByeWins == true)
@@ -434,9 +440,9 @@ namespace smashgg_to_liquipedia.Liquipedia
                     {
                         // Fill in the set normally
                         FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P1, entrantList[currentSet.slots[0].entrant.id].participants[0].gamerTag);
-                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P1 + LpStrings.Flag, entrantList[currentSet.slots[0].entrant.id].participants[0].contactInfo.country);
+                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P1 + LpStrings.Flag, entrantList[currentSet.slots[0].entrant.id].participants[0].player.country);
                         FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P2, entrantList[currentSet.slots[1].entrant.id].participants[0].gamerTag);
-                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P2 + LpStrings.Flag, entrantList[currentSet.slots[1].entrant.id].participants[0].contactInfo.country);
+                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P2 + LpStrings.Flag, entrantList[currentSet.slots[1].entrant.id].participants[0].player.country);
 
                         // Check for DQs
                         if (currentSet.entrant1wins == -1)
@@ -553,14 +559,20 @@ namespace smashgg_to_liquipedia.Liquipedia
         /// <param name="endRound">End round</param>
         /// <param name="offset">Offset round by this integer</param>
         /// <param name="bracketText">Liquipedia markup</param>
+        /// <param name="flipSide">Change L to R</param>
         public void fillBracketDoubles(int startRound, int endRound, int offset, ref string bracketText, Dictionary<int, int> matchOffsetPerRound, 
-                                       bool fillByes, bool fillByeWins, bool r1Only, bool includeUnfinished)
+                                       bool fillByes, bool fillByeWins, bool r1Only, bool includeUnfinished, bool flipSide)
         {
             int increment;
             string bracketSide;
             if (startRound > 0)
             {
                 increment = 1;
+                bracketSide = LpStrings.WRound;
+            }
+            else if (startRound < 0 && flipSide)    // For DEFinalBracket since L2 is R2
+            {
+                increment = -1;
                 bracketSide = LpStrings.WRound;
             }
             else
@@ -608,9 +620,9 @@ namespace smashgg_to_liquipedia.Liquipedia
 
                         // Give team 2 a checkmark
                         FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.T2 + LpStrings.P1, entrantList[currentSet.slots[1].entrant.id].participants[0].gamerTag);
-                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.T2 + LpStrings.P1 + LpStrings.Flag, entrantList[currentSet.slots[1].entrant.id].participants[0].contactInfo.country);
+                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.T2 + LpStrings.P1 + LpStrings.Flag, entrantList[currentSet.slots[1].entrant.id].participants[0].player.country);
                         FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.T2 + LpStrings.P2, entrantList[currentSet.slots[1].entrant.id].participants[1].gamerTag);
-                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.T2 + LpStrings.P2 + LpStrings.Flag, entrantList[currentSet.slots[1].entrant.id].participants[1].contactInfo.country);
+                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.T2 + LpStrings.P2 + LpStrings.Flag, entrantList[currentSet.slots[1].entrant.id].participants[1].player.country);
 
                         if (fillByeWins == true)
                         {
@@ -629,9 +641,9 @@ namespace smashgg_to_liquipedia.Liquipedia
 
                         // Give team 1 a checkmark
                         FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.T1 + LpStrings.P1, entrantList[currentSet.slots[0].entrant.id].participants[0].gamerTag);
-                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.T1 + LpStrings.P1 + LpStrings.Flag, entrantList[currentSet.slots[0].entrant.id].participants[0].contactInfo.country);
+                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.T1 + LpStrings.P1 + LpStrings.Flag, entrantList[currentSet.slots[0].entrant.id].participants[0].player.country);
                         FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.T1 + LpStrings.P2, entrantList[currentSet.slots[0].entrant.id].participants[1].gamerTag);
-                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.T1 + LpStrings.P2 + LpStrings.Flag, entrantList[currentSet.slots[0].entrant.id].participants[1].contactInfo.country);
+                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.T1 + LpStrings.P2 + LpStrings.Flag, entrantList[currentSet.slots[0].entrant.id].participants[1].player.country);
 
                         if (fillByeWins == true)
                         {
@@ -643,13 +655,13 @@ namespace smashgg_to_liquipedia.Liquipedia
                     {
                         // Fill in the currentSet normally
                         FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.T1 + LpStrings.P1, entrantList[currentSet.slots[0].entrant.id].participants[0].gamerTag);
-                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.T1 + LpStrings.P1 + LpStrings.Flag, entrantList[currentSet.slots[0].entrant.id].participants[0].contactInfo.country);
+                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.T1 + LpStrings.P1 + LpStrings.Flag, entrantList[currentSet.slots[0].entrant.id].participants[0].player.country);
                         FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.T1 + LpStrings.P2, entrantList[currentSet.slots[0].entrant.id].participants[1].gamerTag);
-                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.T1 + LpStrings.P2 + LpStrings.Flag, entrantList[currentSet.slots[0].entrant.id].participants[1].contactInfo.country);
+                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.T1 + LpStrings.P2 + LpStrings.Flag, entrantList[currentSet.slots[0].entrant.id].participants[1].player.country);
                         FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.T2 + LpStrings.P1, entrantList[currentSet.slots[1].entrant.id].participants[0].gamerTag);
-                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.T2 + LpStrings.P1 + LpStrings.Flag, entrantList[currentSet.slots[1].entrant.id].participants[0].contactInfo.country);
+                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.T2 + LpStrings.P1 + LpStrings.Flag, entrantList[currentSet.slots[1].entrant.id].participants[0].player.country);
                         FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.T2 + LpStrings.P2, entrantList[currentSet.slots[1].entrant.id].participants[1].gamerTag);
-                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.T2 + LpStrings.P2 + LpStrings.Flag, entrantList[currentSet.slots[1].entrant.id].participants[1].contactInfo.country);
+                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.T2 + LpStrings.P2 + LpStrings.Flag, entrantList[currentSet.slots[1].entrant.id].participants[1].player.country);
 
                         // Check for DQs
                         if (currentSet.entrant1wins == -1)
@@ -921,9 +933,9 @@ namespace smashgg_to_liquipedia.Liquipedia
                 // Output players
                 output += LpStrings.DoublesSlotStart +
                           LpStrings.DoublesSlotP1 + entrantList[poolData.ElementAt(i).Key].participants[0].gamerTag +
-                          LpStrings.DoublesSlotP1Flag + entrantList[poolData.ElementAt(i).Key].participants[0].contactInfo.country +
+                          LpStrings.DoublesSlotP1Flag + entrantList[poolData.ElementAt(i).Key].participants[0].player.country +
                           LpStrings.DoublesSlotP2 + entrantList[poolData.ElementAt(i).Key].participants[1].gamerTag +
-                          LpStrings.DoublesSlotP2Flag + entrantList[poolData.ElementAt(i).Key].participants[1].contactInfo.country;
+                          LpStrings.DoublesSlotP2Flag + entrantList[poolData.ElementAt(i).Key].participants[1].player.country;
 
                 if ((poolData[poolData.ElementAt(i).Key].MatchesWin + poolData[poolData.ElementAt(i).Key].MatchesLoss > 0) && poolData[poolData.ElementAt(i).Key].matchesActuallyPlayed == 0)
                 {
