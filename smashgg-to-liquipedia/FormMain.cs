@@ -390,9 +390,9 @@ namespace smashgg_to_liquipedia
                         // Add phasegroups associated with each phase
                         int phasegroupActive = 0;
                         int phasegroupComplete = 0;
-                        if (phase.phasegroups.Count >= 2)
+                        if (phase.phasegroups.nodes.Count >= 2)
                         {
-                            foreach (PhaseGroup phasegroup in phase.phasegroups)
+                            foreach (PhaseGroup phasegroup in phase.phasegroups.nodes)
                             {
                                 TreeNode phasegroupNode = new TreeNode(phasegroup.displayIdentifier + " " + phasegroup.Wave);
 
@@ -424,7 +424,7 @@ namespace smashgg_to_liquipedia
                         }
                         else
                         {
-                            foreach (PhaseGroup phasegroup in phase.phasegroups)
+                            foreach (PhaseGroup phasegroup in phase.phasegroups.nodes)
                             {
                                 switch (phasegroup.State)
                                 {
@@ -441,7 +441,7 @@ namespace smashgg_to_liquipedia
                         }
 
                         // Set bgcolor for phase
-                        if (phasegroupComplete == phase.phasegroups.Count)
+                        if (phasegroupComplete == phase.phasegroups.nodes.Count)
                         {
                             phaseNode.BackColor = Color.LightGreen;
                         }
@@ -766,6 +766,8 @@ namespace smashgg_to_liquipedia
             Tournament.ActivityState phaseGroupState = Tournament.ActivityState.Invalid;
             string title = string.Empty;
 
+            if (!GeneratePoolData(poolType, ref poolData)) richTextBoxLog.Text += "Error generating group table\r\n";
+
             if (selectedEvent.Type == Event.EventType.Singles)
             {
                 output = lpout.OutputSinglesGroup(title, poolData, phaseGroupState, (int)numericUpDownAdvanceWinners.Value, (int)numericUpDownAdvanceLosers.Value, checkBoxMatchDetails.Checked, poolType);
@@ -916,6 +918,21 @@ namespace smashgg_to_liquipedia
             // Clear out bye rounds in winners
             if (roundList.Keys.Max() > 0)
             {
+                // Lower all round numbers so they start at 1
+                if (!roundList.ContainsKey(1))
+                {
+                    int lastRound = 1;
+                    for (int i = 1; i <= roundList.Keys.Max(); i++)
+                    {
+                        if (roundList.ContainsKey(i))
+                        {
+                            roundList[lastRound] = roundList[i];
+                            roundList.Remove(i);
+                            lastRound++;
+                        }
+                    }
+                }
+
                 for (int i = 1; i <= roundList.Keys.Max(); i++)
                 {
                     bool actualMatch = false;
@@ -950,6 +967,21 @@ namespace smashgg_to_liquipedia
             // Clear out bye rounds in losers
             if (roundList.Keys.Min() < 0)
             {
+                // Lower all round numbers so they start at -1
+                if (!roundList.ContainsKey(-1))
+                {
+                    int lastRound = -1;
+                    for (int i = -1; i >= roundList.Keys.Min(); i--)
+                    {
+                        if (roundList.ContainsKey(i))
+                        {
+                            roundList[lastRound] = roundList[i];
+                            roundList.Remove(i);
+                            lastRound--;
+                        }
+                    }
+                }
+
                 for (int i = -1; i >= roundList.Keys.Min(); i--)
                 {
                     bool actualMatch = false;
@@ -1096,7 +1128,7 @@ namespace smashgg_to_liquipedia
 
             // Output to textbox
             // Wave headers
-            if (phase.phasegroups[0].identifierType == PhaseGroup.IdentiferType.WaveNumber)
+            if (phase.phasegroups.nodes[0].identifierType == PhaseGroup.IdentiferType.WaveNumber)
             {
                 if (lastWave != currentGroup.Wave)
                 {
@@ -1106,14 +1138,14 @@ namespace smashgg_to_liquipedia
                     lastWave = currentGroup.Wave;
                 }
             }
-            else if (phase.phasegroups.First() == currentGroup)    // Start a box at the first element
+            else if (phase.phasegroups.nodes.First() == currentGroup)    // Start a box at the first element
             {
                 richTextBoxLpOutput.Text += LpStrings.BoxStart + "\r\n";
             }
 
             // Pool headers
             string title = string.Empty;
-            if (phase.phasegroups[0].identifierType == PhaseGroup.IdentiferType.WaveNumber)
+            if (phase.phasegroups.nodes[0].identifierType == PhaseGroup.IdentiferType.WaveNumber)
             {
                 richTextBoxLpOutput.Text += "===" + LpStrings.SortStart + currentGroup.Wave + currentGroup.Number.ToString() + LpStrings.SortEnd + "===\r\n";
                 title = currentGroup.Wave + currentGroup.Number.ToString();
@@ -1129,7 +1161,7 @@ namespace smashgg_to_liquipedia
             richTextBoxLog.Text += lpout.Log;
 
             // Box handling
-            if (phase.phasegroups[0].identifierType == PhaseGroup.IdentiferType.WaveNumber)     // Waves exist
+            if (phase.phasegroups.nodes[0].identifierType == PhaseGroup.IdentiferType.WaveNumber)     // Waves exist
             {
                 if (currentGroup == phase.waves.Where(q => q.Key == currentGroup.Wave).First().Value.Last())
                 {
@@ -1142,7 +1174,7 @@ namespace smashgg_to_liquipedia
             }
             else        // Waves don't exist
             {
-                if (currentGroup == phase.phasegroups.Last()) // End box at the group end
+                if (currentGroup == phase.phasegroups.nodes.Last()) // End box at the group end
                 {
                     richTextBoxLpOutput.Text += LpStrings.BoxEnd + "\r\n\r\n";
                 }
@@ -1166,7 +1198,7 @@ namespace smashgg_to_liquipedia
 
             // Output to textbox
             // Wave headers
-            if (phase.phasegroups[0].identifierType == PhaseGroup.IdentiferType.WaveNumber)
+            if (phase.phasegroups.nodes[0].identifierType == PhaseGroup.IdentiferType.WaveNumber)
             {
                 if (lastWave != currentGroup.Wave)
                 {
@@ -1176,14 +1208,14 @@ namespace smashgg_to_liquipedia
                     lastWave = currentGroup.Wave;
                 }
             }
-            else if (phase.phasegroups.First() == currentGroup)    // Start a box at the first element
+            else if (phase.phasegroups.nodes.First() == currentGroup)    // Start a box at the first element
             {
                 richTextBoxLpOutput.Text += LpStrings.BoxStart + "\r\n";
             }
 
             // Pool headers
             string title = string.Empty;
-            if (phase.phasegroups[0].identifierType == PhaseGroup.IdentiferType.WaveNumber)
+            if (phase.phasegroups.nodes[0].identifierType == PhaseGroup.IdentiferType.WaveNumber)
             {
                 richTextBoxLpOutput.Text += "===" + LpStrings.SortStart + currentGroup.Wave + currentGroup.Number.ToString() + LpStrings.SortEnd + "===" + "\r\n";
                 title = currentGroup.Wave + currentGroup.Number.ToString();
@@ -1199,7 +1231,7 @@ namespace smashgg_to_liquipedia
             richTextBoxLog.Text += lpout.Log;
 
             // Pool footers
-            if (phase.phasegroups[0].identifierType == PhaseGroup.IdentiferType.WaveNumber)     // Waves exist
+            if (phase.phasegroups.nodes[0].identifierType == PhaseGroup.IdentiferType.WaveNumber)     // Waves exist
             {
                 if (currentGroup == phase.waves.Where(q => q.Key == currentGroup.Wave).First().Value.Last())
                 {
@@ -1212,7 +1244,7 @@ namespace smashgg_to_liquipedia
             }
             else        // Waves don't exist
             {
-                if (currentGroup == phase.phasegroups.Last()) // End box at the group end
+                if (currentGroup == phase.phasegroups.nodes.Last()) // End box at the group end
                 {
                     richTextBoxLpOutput.Text += LpStrings.BoxEnd + "\r\n\r\n";
                 }
@@ -1386,6 +1418,12 @@ namespace smashgg_to_liquipedia
                         {
                             record[seed.entrant.id].AddMatchLosses(1);
 
+                            // If in losers bracket
+                            if (set.round < 0)
+                            {
+                                record[seed.entrant.id].MatchesComplete = true;
+                            }
+
                             if (set.DisplayScore != "DQ" && set.DisplayScore != null) // Ignore W-L for DQs for now
                             {
                                 if (seed.entrant.id.ToString() == set.slots[0].id)
@@ -1406,7 +1444,7 @@ namespace smashgg_to_liquipedia
                 }
 
                 // Figure out what the rankings are
-                record[seed.entrant.id].rank = seed.placement;
+                record[seed.entrant.id].rank = (int)seed.Placement;
             }
 
 
@@ -1738,7 +1776,6 @@ namespace smashgg_to_liquipedia
         /// </summary>
         private void ClearData()
         {
-            richTextBoxLog.Clear();
             richTextBoxEntrants.Clear();
             richTextBoxWinners.Clear();
             richTextBoxLosers.Clear();
@@ -1747,6 +1784,11 @@ namespace smashgg_to_liquipedia
             seedList.Clear();
             roundList.Clear();
             matchOffsetPerRound.Clear();
+        }
+
+        private void ClearLog()
+        {
+            richTextBoxLog.Clear();
         }
 
         /// <summary>
@@ -2080,9 +2122,9 @@ namespace smashgg_to_liquipedia
                         {
                             Phase selectedPhase = tournament.events.Where(q => q == selectedEvent).First<Event>().phases
                                                                    .Where(q => q.id == tag.id).First<Phase>();
-                            if (selectedPhase.phasegroups.Count == 1)
+                            if (selectedPhase.phasegroups.nodes.Count == 1)
                             {
-                                selectedObjectId = selectedPhase.phasegroups[0].id;
+                                selectedObjectId = selectedPhase.phasegroups.nodes[0].id;
                                 selectedObjectType = TreeNodeData.NodeType.PhaseGroup;
                             }
                             else
@@ -2203,13 +2245,13 @@ namespace smashgg_to_liquipedia
 
                     // Setup progress bar
                     progressBar.Minimum = 0;
-                    progressBar.Maximum = selectedPhase.phasegroups.Count;
+                    progressBar.Maximum = selectedPhase.phasegroups.nodes.Count;
                     progressBar.Value = 1;
                     progressBar.Step = 1;
 
                     // Retrieve pages for each group
                     string lastWave = string.Empty;
-                    foreach (PhaseGroup group in selectedPhase.phasegroups)
+                    foreach (PhaseGroup group in selectedPhase.phasegroups.nodes)
                     {
                         if (setList == null) setList = new List<Set>();
                         if (seedList == null) seedList = new List<Seed>();
@@ -2222,7 +2264,7 @@ namespace smashgg_to_liquipedia
                         Dictionary<int, PoolRecord> poolData = new Dictionary<int, PoolRecord>();
 
                         // Get all sets in the phasegroup
-                        apiQuery.GetSets(group.id, out seedList, out setList);
+                        apiQuery.GetSets(group.id, out seedList, out setList, checkBoxMatchDetails.Checked);
                         if (seedList == null)
                         {
                             richTextBoxLog.Text += string.Format("Seed list not retrieved for {0}\r\n", group.id);
@@ -2255,7 +2297,7 @@ namespace smashgg_to_liquipedia
 
                 // Get a single phasegroup
                 case TreeNodeData.NodeType.PhaseGroup:
-                    apiQuery.GetSets(selectedObjectId, out seedList, out setList);
+                    apiQuery.GetSets(selectedObjectId, out seedList, out setList, checkBoxMatchDetails.Checked);
                     if (seedList == null)
                     {
                         richTextBoxLog.Text += string.Format("Seed list not retrieved\r\n");
@@ -2288,7 +2330,7 @@ namespace smashgg_to_liquipedia
                         return;
                     }
 
-                    selectedPhase = selectedEvent.phases.Where(q => q.phasegroups.Any(r => r.waveId == selectedObjectId)).First();
+                    selectedPhase = selectedEvent.phases.Where(q => q.phasegroups.nodes.Any(r => r.waveId == selectedObjectId)).First();
                     KeyValuePair<string,List<PhaseGroup>> wave = selectedPhase.waves.Where(q => (int)q.Value[0].waveId == selectedObjectId).First();
                     lastWave = wave.Key;
 
@@ -2312,7 +2354,7 @@ namespace smashgg_to_liquipedia
                         Dictionary<int, PoolRecord> poolData = new Dictionary<int, PoolRecord>();
 
                         // Get all sets in the phasegroup
-                        apiQuery.GetSets(group.id, out seedList, out setList);
+                        apiQuery.GetSets(group.id, out seedList, out setList, checkBoxMatchDetails.Checked);
                         if (seedList == null)
                         {
                             richTextBoxLog.Text += string.Format("Seed list not retrieved for {0}\r\n", group.id);

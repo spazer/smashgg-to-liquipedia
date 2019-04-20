@@ -130,6 +130,7 @@
     <Compile Include="Smashgg\Schema\PhaseGroup.cs" />
     <Compile Include="JsonExtensions.cs" />
     <Compile Include="Smashgg\Schema\Phase.cs" />
+    <Compile Include="Smashgg\Schema\PhaseGroupConnection.cs" />
     <Compile Include="Smashgg\Schema\Player.cs" />
     <Compile Include="Liquipedia\PlayerDatabase.cs" />
     <Compile Include="Liquipedia\PlayerInfo.cs" />

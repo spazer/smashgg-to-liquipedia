@@ -59,7 +59,7 @@ namespace smashgg_to_liquipedia
             this.playerdb = playerdb;
             this.form = form;
 
-            bucket = TokenBuckets.Construct().WithCapacity(10).WithFixedIntervalRefillStrategy(10, TimeSpan.FromSeconds(10.5)).Build();
+            bucket = TokenBuckets.Construct().WithCapacity(80).WithFixedIntervalRefillStrategy(80, TimeSpan.FromSeconds(60)).Build();
 
             // Get the endpoint
             string endpoint = string.Empty;
@@ -168,13 +168,15 @@ namespace smashgg_to_liquipedia
                             phases {
                                 id
                                 name
-                            }
-                            phaseGroups {
-                                id
-                                displayIdentifier
-                                state
-                                phaseId
-                                waveId
+                                phaseGroups {
+                                    nodes {
+                                        id
+                                        displayIdentifier
+                                        state
+                                        phaseId
+                                        waveId
+                                    }
+                                }
                             }
                             videogame{
                                 name
@@ -202,32 +204,36 @@ namespace smashgg_to_liquipedia
                 // For each event
                 for (int i = 0; i < tournament.events.Count; i++)
                 {
-                    // For each phasegroup in the event
-                    for (int j = 0; j < tournament.events[i].phaseGroups.Count; j++)
+                    // For each phase in the event
+                    for (int j = 0; j < tournament.events[i].phases.Count; j++)
                     {
-                        // Generate waves for the phasegroup if relevant
-                        tournament.events[i].phaseGroups[j].GenerateWave();
-
-                        // For each phase in the event
-                        for (int k = 0; k < tournament.events[i].phases.Count; k++)
+                        // Only work on phases that contain more than one phasegroup
+                        if (tournament.events[i].phases[j].phasegroups.nodes.Count > 1)
                         {
-                            // Check if the phasegroup phase is equal to the selected phase and add it if true
-                            if (tournament.events[i].phases[k].id == tournament.events[i].phaseGroups[j].phaseId)
+                            // For each phasegroup in the phase
+                            for (int k = 0; k < tournament.events[i].phases[j].phasegroups.nodes.Count; k++)
                             {
-                                tournament.events[i].phases[k].phasegroups.Add(tournament.events[i].phaseGroups[j]);
+                                var currentPhaseGroup = tournament.events[i].phases[j].phasegroups.nodes[k];
+
+
+
+                                // Generate waves for the phasegroup if relevant
+                                currentPhaseGroup.GenerateWave();
 
                                 // If the phasegroup has a wave, add it to the wave dictionary
-                                if (tournament.events[i].phaseGroups[j].Wave != string.Empty && tournament.events[i].phases[k].waves.ContainsKey(tournament.events[i].phaseGroups[j].Wave))
+                                if (currentPhaseGroup.Wave != string.Empty && tournament.events[i].phases[j].waves.ContainsKey(currentPhaseGroup.Wave))
                                 {
-                                    tournament.events[i].phases[k].waves[tournament.events[i].phaseGroups[j].Wave].Add(tournament.events[i].phaseGroups[j]);
+                                    tournament.events[i].phases[j].waves[currentPhaseGroup.Wave].Add(currentPhaseGroup);
                                 }
-                                else if (tournament.events[i].phaseGroups[j].Wave != string.Empty)
+                                else if (currentPhaseGroup.Wave != string.Empty)
                                 {
-                                    tournament.events[i].phases[k].waves.Add(tournament.events[i].phaseGroups[j].Wave, new List<PhaseGroup>());
-                                    tournament.events[i].phases[k].waves[tournament.events[i].phaseGroups[j].Wave].Add(tournament.events[i].phaseGroups[j]);
+                                    tournament.events[i].phases[j].waves.Add(currentPhaseGroup.Wave, new List<PhaseGroup>());
+                                    tournament.events[i].phases[j].waves[currentPhaseGroup.Wave].Add(currentPhaseGroup);
                                 }
-                                    
-                                break;
+                                else
+                                {
+                                    break;
+                                }
                             }
                         }
                     }
@@ -244,13 +250,13 @@ namespace smashgg_to_liquipedia
                             }
                         }
 
-                        if (tournament.events[i].phases[j].phasegroups[0].identifierType == PhaseGroup.IdentiferType.WaveNumber)
+                        if (tournament.events[i].phases[j].phasegroups.nodes[0].identifierType == PhaseGroup.IdentiferType.WaveNumber)
                         {
-                            tournament.events[i].phases[j].phasegroups = tournament.events[i].phases[j].phasegroups.OrderBy(q => q.Wave).ThenBy(q => q.Number).ToList();
+                            tournament.events[i].phases[j].phasegroups.nodes = tournament.events[i].phases[j].phasegroups.nodes.OrderBy(q => q.Wave).ThenBy(q => q.Number).ToList();
                         }
-                        else if (tournament.events[i].phases[j].phasegroups[0].identifierType == PhaseGroup.IdentiferType.NumberOnly)
+                        else if (tournament.events[i].phases[j].phasegroups.nodes[0].identifierType == PhaseGroup.IdentiferType.NumberOnly)
                         {
-                            tournament.events[i].phases[j].phasegroups = tournament.events[i].phases[j].phasegroups.OrderBy(q => q.Number).ToList();
+                            tournament.events[i].phases[j].phasegroups.nodes = tournament.events[i].phases[j].phasegroups.nodes.OrderBy(q => q.Number).ToList();
                         }
                     }
                 }
@@ -263,20 +269,18 @@ namespace smashgg_to_liquipedia
             return tournament;
         }
 
-        public void GetSets(int phaseGroupId, out List<Seed> seedList, out List<Set> setList)
+        public void GetSets(int phaseGroupId, out List<Seed> seedList, out List<Set> setList, bool includeDetails)
         {
             seedList = new List<Seed>();
             setList = new List<Set>();
 
             int page = 1;
-            GraphQLRequest setsRequest = new GraphQLRequest
-            {
-                Query = @"
-                query GetSets($phaseGroupId: Int, $page: Int) {
+            string setsWithoutDetails = @"
+                query GetSets($phaseGroupId: ID!, $page: Int) {
                     phaseGroup(id: $phaseGroupId) {
-                        paginatedSets(perPage:60, page:$page) {
+                        sets(perPage:60, page:$page) {
                             pageInfo {
-                                page
+                                total
                                 totalPages
                             }
                             nodes {
@@ -293,9 +297,52 @@ namespace smashgg_to_liquipedia
                             }
                         }
                     }
-                }",
-                OperationName = "GetSets"                
-            };
+                }";
+
+            string setsWithDetails = @"
+                query GetSetsWithDetails($phaseGroupId: ID!, $page: Int) {
+                    phaseGroup(id: $phaseGroupId) {
+                        sets(perPage:60, page:$page) {
+                            pageInfo {
+                                total
+                                totalPages
+                            }
+                            nodes {
+                                id
+                                round
+                                displayScore
+                                winnerId
+                                state
+                                wPlacement
+                                lPlacement
+                                slots {
+                                    entrant{
+                                        id
+                                    }
+                                }
+                                games {
+                                    setId
+                                    selections {
+                                        selectionType
+                                        selectionValue
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }";
+
+            GraphQLRequest setsRequest = new GraphQLRequest();
+            if (includeDetails)
+            {
+                setsRequest.Query = setsWithDetails;
+                setsRequest.OperationName = "GetSetsWithDetails";
+            }
+            else
+            {
+                setsRequest.Query = setsWithoutDetails;
+                setsRequest.OperationName = "GetSets";
+            }
 
             // Retrieve pages while there are more paginated sets
             PhaseGroup tempPhaseGroup = new PhaseGroup();
@@ -357,6 +404,15 @@ namespace smashgg_to_liquipedia
                 // Parse the json response
                 tempPhaseGroup = JsonConvert.DeserializeObject<PhaseGroup>(seedsResponse.Data.phaseGroup.ToString());
                 seedList = tempPhaseGroup.seeds;
+
+                for(int i=0; i<seedList.Count; i++)
+                {
+                    if (seedList[i].entrant == null)
+                    {
+                        seedList.RemoveAt(i);
+                        i--;
+                    }
+                }
 
                 // Standardize participant information
                 foreach (Seed seed in seedList)

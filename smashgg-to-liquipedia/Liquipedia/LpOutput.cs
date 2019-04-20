@@ -373,6 +373,8 @@ namespace smashgg_to_liquipedia.Liquipedia
                     Set currentSet = roundList[i][j];
 
                     // Skip rounds with missing entrants
+                    if (currentSet.slots[0].entrant == null) continue;
+                    if (currentSet.slots[1].entrant == null) continue;
                     if (!entrantList.ContainsKey(currentSet.slots[0].entrant.id)) continue;
                     if (!entrantList.ContainsKey(currentSet.slots[1].entrant.id)) continue;
 
@@ -445,12 +447,12 @@ namespace smashgg_to_liquipedia.Liquipedia
                         FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P2 + LpStrings.Flag, entrantList[currentSet.slots[1].entrant.id].participants[0].player.country);
 
                         // Check for DQs
-                        if (currentSet.entrant1wins == -1)
+                        if (currentSet.DisplayScore == "DQ" && currentSet.winnerId == currentSet.slots[1].entrant.id)
                         {
                             FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P1 + LpStrings.Score, "DQ");
                             FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P2 + LpStrings.Score, LpStrings.Checkmark);
                         }
-                        else if (currentSet.entrant2wins == -1)
+                        else if (currentSet.DisplayScore == "DQ" && currentSet.winnerId == currentSet.slots[0].entrant.id)
                         {
                             FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P2 + LpStrings.Score, "DQ");
                             FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P1 + LpStrings.Score, LpStrings.Checkmark);
@@ -458,7 +460,7 @@ namespace smashgg_to_liquipedia.Liquipedia
                         else
                         {
                             // smash.gg switches P1 and P2 in the event of a bracket reset
-                            if ((currentSet.round == roundList.Keys.Max()) && currentSet.match == 2)
+                            if ((currentSet.round == roundList.Keys.Max()) && currentSet.match == 2 && currentSet.wPlacement == 1)
                             {
                                 if (includeUnfinished || currentSet.State == Tournament.ActivityState.Completed)
                                 {
@@ -505,7 +507,7 @@ namespace smashgg_to_liquipedia.Liquipedia
                         }
 
                         // Set the winner
-                        if ((currentSet.round == roundList.Keys.Max()) && currentSet.match == 2)
+                        if ((currentSet.round == roundList.Keys.Max()) && currentSet.match == 2 && currentSet.wPlacement == 1)
                         {
                             if (currentSet.winnerId == currentSet.slots[0].entrant.id)
                             {
@@ -516,7 +518,7 @@ namespace smashgg_to_liquipedia.Liquipedia
                                 FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + 1 + LpStrings.Win, "1");
                             }
                         }
-                        else if ((currentSet.round == roundList.Keys.Max()) && currentSet.match == 1 && roundList[i].Count > 1)
+                        else if ((currentSet.round == roundList.Keys.Max()) && currentSet.match == 1 && roundList[i].Count > 1 && currentSet.wPlacement == 1)
                         {
                             if (currentSet.winnerId == currentSet.slots[0].entrant.id)
                             {
@@ -538,10 +540,12 @@ namespace smashgg_to_liquipedia.Liquipedia
                         // Fill in match details if available
                         if (includeUnfinished || currentSet.State == Tournament.ActivityState.Completed)
                         {
+                            // For bracket reset
                             if ((currentSet.round == roundList.Keys.Max()) && currentSet.match == 2 && currentSet.games != null && matchDetails)
                             {
                                 FillMatchDetailsSingles(bracketSide, outputRound, outputSet, currentSet, ref bracketText, true);
                             }
+                            // For all other matches
                             else if (currentSet.games != null && matchDetails)
                             {
                                 FillMatchDetailsSingles(bracketSide, outputRound, outputSet, currentSet, ref bracketText, false);

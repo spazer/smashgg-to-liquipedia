@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace smashgg_to_liquipedia
+namespace smashgg_to_liquipedia.Smashgg.Schema
 {
     public class Player
     {

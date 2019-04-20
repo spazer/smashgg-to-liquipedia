@@ -7,12 +7,12 @@ using System.Threading.Tasks;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 
-namespace smashgg_to_liquipedia
+namespace smashgg_to_liquipedia.Smashgg.Schema
 {
     public class Set
     {
         #region GraphQL fields
-        public int id;
+        public string id;
         public int round { get; set; }
         public int state { get; set; }
         public bool hasPlaceholder { get; set; }
@@ -20,15 +20,14 @@ namespace smashgg_to_liquipedia
         public List<Game> games { get; set; }
         public List<SetSlot> slots { get; set; }
         public int? winnerId;
+        public int wPlacement;
+        public int lPlacement;
         #endregion
 
         public int match;
 
         public int entrant1wins = 0;
         public int entrant2wins = 0;
-
-        public int wPlacement;
-        public int lPlacement;
 
         public Tournament.ActivityState State
         {
@@ -60,15 +59,24 @@ namespace smashgg_to_liquipedia
             set
             {
                 displayScore = value;
-                if (value == string.Empty) return;
-
-                Regex rx = new Regex(@".* ([0-9]) - .*([0-9])$");
-                MatchCollection matches = rx.Matches(value);
-
-                if (matches.Count == 1 && matches[0].Groups.Count == 3)
+                if (value == string.Empty || value == null)
                 {
-                    int.TryParse(matches[0].Groups[1].Value, out entrant1wins);
-                    int.TryParse(matches[0].Groups[2].Value, out entrant2wins);
+                    return;
+                }
+                else if (value == "DQ")
+                {
+                    return;
+                }
+                else
+                {
+                    Regex rx = new Regex(@".* ([0-9]) - .*([0-9])$");
+                    MatchCollection matches = rx.Matches(value);
+
+                    if (matches.Count == 1 && matches[0].Groups.Count == 3)
+                    {
+                        int.TryParse(matches[0].Groups[1].Value, out entrant1wins);
+                        int.TryParse(matches[0].Groups[2].Value, out entrant2wins);
+                    }
                 }
             }
         }

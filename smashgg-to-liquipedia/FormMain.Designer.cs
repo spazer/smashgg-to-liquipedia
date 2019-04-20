@@ -399,6 +399,7 @@
             this.checkBoxMatchDetails.TabIndex = 25;
             this.checkBoxMatchDetails.Text = "Match Details";
             this.checkBoxMatchDetails.UseVisualStyleBackColor = true;
+            this.checkBoxMatchDetails.Visible = false;
             // 
             // checkBoxUnfinished
             // 
