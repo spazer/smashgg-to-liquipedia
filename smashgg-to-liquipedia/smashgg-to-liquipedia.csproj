@@ -96,6 +96,7 @@
     </Compile>
     <Compile Include="Consts.cs" />
     <Compile Include="DataProtectionExtensions.cs" />
+    <Compile Include="FileIO.cs" />
     <Compile Include="FormMatchShift.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -114,6 +115,7 @@
       <DependentUpon>FormMain.cs</DependentUpon>
     </Compile>
     <Compile Include="Smashgg\Schema\ContactInfo.cs" />
+    <Compile Include="Smashgg\Schema\EntrantConnection.cs" />
     <Compile Include="Smashgg\Schema\Event.cs" />
     <Compile Include="Smashgg\Schema\Game.cs" />
     <Compile Include="IFormMain.cs" />

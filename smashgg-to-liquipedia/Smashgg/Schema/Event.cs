@@ -13,6 +13,7 @@ namespace smashgg_to_liquipedia.Smashgg.Schema
         public int id { get; set; }
         public string name { get; set; }
         public int? numEntrants { get; set; }
+        public EntrantConnection entrants { get; set; }
         public List<Phase> phases { get; set; }
         public List<PhaseGroup> phaseGroups { get; set; }
         public Videogame videogame { get; set; }

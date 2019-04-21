@@ -14,6 +14,7 @@ using smashgg_to_liquipedia.Smashgg.Schema;
 using smashgg_to_liquipedia.Smashgg;
 using Esendex.TokenBucket;
 using System.Threading;
+using System.IO;
 
 namespace smashgg_to_liquipedia
 {
@@ -25,6 +26,9 @@ namespace smashgg_to_liquipedia
 
         private ITokenBucket bucket;
         private readonly IFormMain form;
+
+        private const int PER_PAGE_SETS = 60;
+        private const int PER_PAGE_ENTRANTS = 490;
 
         #region Smash.gg Enumerations
         public enum ActivityState
@@ -127,7 +131,10 @@ namespace smashgg_to_liquipedia
                 // Write errors
                 if (response.Errors != null)
                 {
-                    WriteLineToLog(response.Errors.ToString());
+                    foreach (var error in response.Errors)
+                    {
+                        WriteLineToLog(error.Message + "/" + error.Locations);
+                    }
                 }
 
                 // Check for data
@@ -269,16 +276,15 @@ namespace smashgg_to_liquipedia
             return tournament;
         }
 
-        public void GetSets(int phaseGroupId, out List<Seed> seedList, out List<Set> setList, bool includeDetails)
+        public void GetSets(int phaseGroupId, out List<Set> setList, bool includeDetails)
         {
-            seedList = new List<Seed>();
             setList = new List<Set>();
 
             int page = 1;
             string setsWithoutDetails = @"
-                query GetSets($phaseGroupId: ID!, $page: Int) {
+                query GetSets($phaseGroupId: ID!, $page: Int, $perPage: Int) {
                     phaseGroup(id: $phaseGroupId) {
-                        sets(perPage:60, page:$page) {
+                        sets(perPage:$perPage, page:$page) {
                             pageInfo {
                                 total
                                 totalPages
@@ -300,9 +306,9 @@ namespace smashgg_to_liquipedia
                 }";
 
             string setsWithDetails = @"
-                query GetSetsWithDetails($phaseGroupId: ID!, $page: Int) {
+                query GetSetsWithDetails($phaseGroupId: ID!, $page: Int, $perPage: Int) {
                     phaseGroup(id: $phaseGroupId) {
-                        sets(perPage:60, page:$page) {
+                        sets(perPage:$perPage, page:$page) {
                             pageInfo {
                                 total
                                 totalPages
@@ -351,7 +357,8 @@ namespace smashgg_to_liquipedia
                 setsRequest.Variables = new
                 {
                     phaseGroupId = phaseGroupId,
-                    page = page
+                    page = page,
+                    perPage = PER_PAGE_SETS
                 };
 
                 GraphQLResponse setsResponse = SendRequest(setsRequest);
@@ -359,7 +366,7 @@ namespace smashgg_to_liquipedia
                 {
                     // Parse the json response
                     tempPhaseGroup = JsonConvert.DeserializeObject<PhaseGroup>(setsResponse.Data.phaseGroup.ToString());
-                    setList.AddRange(tempPhaseGroup.paginatedSets.nodes);
+                    setList.AddRange(tempPhaseGroup.sets.nodes);
 
                     // Increase the page count
                     page++;
@@ -369,61 +376,102 @@ namespace smashgg_to_liquipedia
                     WriteLineToLog("Could not retrieve any data");
                     return;
                 }
-            } while (page <= tempPhaseGroup.paginatedSets.pageInfo.totalPages);
+            } while (page <= tempPhaseGroup.sets.pageInfo.totalPages);
+        }
 
-            GraphQLRequest seedsRequest = new GraphQLRequest
+        public void GetEventEntrants(int eventId, out Dictionary<int,Entrant> entrants)
+        {
+            // Will contain the full entrants list
+            List<Entrant> entrantList = new List<Entrant>();
+
+            // First check to see if we have the data stored on disk
+            string path = Path.Combine("EventEntrants", eventId.ToString() + ".txt");
+            if (File.Exists(path))
             {
-                Query = @"
-                query GetSeeds($phaseGroupId: Int) {
-                    phaseGroup(id: $phaseGroupId) {
-    					seeds {
-                          placement
-                          entrant {
-                            id
-                            participants {
-                              playerId
-                              gamerTag
-                              player {
-                                country
-                              }
+                // Determine if file is 1 day old
+                DateTime creation = File.GetCreationTime(path);
+                if (DateTime.Compare(creation, DateTime.Now.AddDays(-1)) < 0)
+                {
+                    // Delete file if it's old
+                    File.Delete(path);
+                }
+                else
+                {
+                    // Read entrants from file
+                    entrantList = FileIO.ReadFromJsonFile<List<Entrant>>(path);
+                    WriteLineToLog("Read entrants from file");
+                }
+            }
+            
+            if (entrantList.Count == 0)
+            {
+                int page = 1;
+                GraphQLRequest entrantsRequest = new GraphQLRequest
+                {
+                    Query = @"
+                    query GetEventEntrants($eventId: ID!, $perPage: Int, $page: Int) {
+                        event(id: $eventId) {
+                            entrants (query:{perPage: $perPage, page: $page}) {
+                                pageInfo {
+                                    total
+                                    totalPages
+                                }
+                                nodes {
+                                    id
+                                    participants {
+                                        playerId
+                                        gamerTag
+                                        player {
+                                            country
+                                        }
+                                    }
+                                }
                             }
-                          }
                         }
-                    }
-                }",
-                OperationName = "GetSeeds",
-                Variables = new
-                {
-                    phaseGroupId = phaseGroupId
-                }
-            };
+                    }",
+                    OperationName = "GetEventEntrants"
+                };
 
-            GraphQLResponse seedsResponse = SendRequest(seedsRequest);
-            if (seedsResponse != null)
-            {
-                // Parse the json response
-                tempPhaseGroup = JsonConvert.DeserializeObject<PhaseGroup>(seedsResponse.Data.phaseGroup.ToString());
-                seedList = tempPhaseGroup.seeds;
-
-                for(int i=0; i<seedList.Count; i++)
+                // Retrieve pages while there are more paginated sets
+                Event tempEvent = new Event();
+                do
                 {
-                    if (seedList[i].entrant == null)
+                    entrantsRequest.Variables = new
                     {
-                        seedList.RemoveAt(i);
-                        i--;
-                    }
-                }
+                        eventId = eventId,
+                        page = page,
+                        perPage = PER_PAGE_ENTRANTS
+                    };
 
-                // Standardize participant information
-                foreach (Seed seed in seedList)
+                    GraphQLResponse entrantsResponse = SendRequest(entrantsRequest);
+                    if (entrantsResponse != null)
+                    {
+                        // Parse the json response
+                        tempEvent = JsonConvert.DeserializeObject<Event>(entrantsResponse.Data["event"].ToString());
+                        entrantList.AddRange(tempEvent.entrants.nodes);
+                        WriteLineToLog("Read page " + page + " of entrants");
+
+                        // Increase the page count
+                        page++;
+                    }
+                    else
+                    {
+                        WriteLineToLog("Could not retrieve any entrant data");
+                        entrants = new Dictionary<int, Entrant>();
+                        return;
+                    }
+                } while (page <= tempEvent.entrants.pageInfo.totalPages);
+
+                // Save entrants to file
+                if (entrantList.Count > 0)
                 {
-                    ParticipantStandardization(seed.entrant.participants);
+                    Directory.CreateDirectory(@"EventEntrants");
+                    FileIO.WriteToJsonFile<List<Entrant>>(@"EventEntrants\" + eventId + @".txt", entrantList, false);
                 }
             }
-            else
-            {
-                WriteLineToLog("Could not retrieve any data");
-            }
+
+            // Reformat list into dictionary
+            entrants = entrantList.ToDictionary(x => x.id, x => x);
         }
 
         public List<Standing> GetStandings(int eventId, int lastPlacement)

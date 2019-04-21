@@ -16,9 +16,7 @@ namespace smashgg_to_liquipedia.Smashgg.Schema
         public int phaseId { get; set; }
         public int? waveId { get; set; }
         public List<Seed> seeds { get; set; }
-        public List<Set> sets { get; set; }
-        public SetConnection paginatedSets { get; set; }
-        public SeedConnection paginatedSeeds { get; set; }
+        public SetConnection sets { get; set; }
 
         // Internal fields
         public enum IdentiferType { WaveNumber, NumberOnly, Other };
