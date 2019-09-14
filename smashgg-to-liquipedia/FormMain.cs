@@ -1677,7 +1677,31 @@ namespace smashgg_to_liquipedia
                 }
             }
 
-            // Both methods have failed
+            // Get the phase as a fallback method #3
+            index = url.IndexOf("filter=%7B");
+            if (index != -1)
+            {
+                if (url.IndexOf("phaseId\"") != -1)
+                {
+                    int startPos = url.IndexOf("phaseId\"%3A", index);
+                    if (startPos != -1)
+                    {
+                        startPos += "phaseId\"%3A".Length;
+                        int endPos = url.IndexOf("%2C", startPos);
+
+                        if (endPos != -1)
+                        {
+                            // Take the number
+                            if (int.TryParse(url.Substring(startPos, endPos - startPos), out output))
+                            {
+                                return UrlNumberType.Phase;
+                            }
+                        }
+                    }
+                }
+            }
+
+            // All methods have failed
             output = -1;
             return UrlNumberType.None;
         }
