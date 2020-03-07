@@ -29,6 +29,9 @@ namespace smashgg_to_liquipedia.Smashgg.Schema
         public int entrant1wins = 0;
         public int entrant2wins = 0;
 
+        /// <summary>
+        /// The current state of the object
+        /// </summary>
         public Tournament.ActivityState State
         {
             get

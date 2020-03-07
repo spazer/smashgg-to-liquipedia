@@ -445,7 +445,7 @@ namespace smashgg_to_liquipedia
                         {
                             phaseNode.BackColor = Color.LightGreen;
                         }
-                        else if (phasegroupActive > 1)
+                        else if (phasegroupActive >= 1)
                         {
                             phaseNode.BackColor = Color.LightYellow;
                         }
@@ -2221,6 +2221,9 @@ namespace smashgg_to_liquipedia
             checkBoxWinners.Checked = false;
             checkBoxLosers.Checked = false;
 
+            // Get entrants in the event
+            apiQuery.GetEventEntrants(selectedEvent.id, out entrantList);
+
             switch (selectedObjectType)
             {
                 // Get all phasegroups in a phase
@@ -2264,7 +2267,7 @@ namespace smashgg_to_liquipedia
                         Dictionary<int, PoolRecord> poolData = new Dictionary<int, PoolRecord>();
 
                         // Get all sets in the phasegroup
-                        apiQuery.GetSets(group.id, out seedList, out setList, checkBoxMatchDetails.Checked);
+                        apiQuery.GetSets(group.id, out setList, checkBoxMatchDetails.Checked);
                         if (seedList == null)
                         {
                             richTextBoxLog.Text += string.Format("Seed list not retrieved for {0}\r\n", group.id);
@@ -2297,7 +2300,7 @@ namespace smashgg_to_liquipedia
 
                 // Get a single phasegroup
                 case TreeNodeData.NodeType.PhaseGroup:
-                    apiQuery.GetSets(selectedObjectId, out seedList, out setList, checkBoxMatchDetails.Checked);
+                    apiQuery.GetSets(selectedObjectId, out setList, checkBoxMatchDetails.Checked);
                     if (seedList == null)
                     {
                         richTextBoxLog.Text += string.Format("Seed list not retrieved\r\n");
@@ -2354,7 +2357,7 @@ namespace smashgg_to_liquipedia
                         Dictionary<int, PoolRecord> poolData = new Dictionary<int, PoolRecord>();
 
                         // Get all sets in the phasegroup
-                        apiQuery.GetSets(group.id, out seedList, out setList, checkBoxMatchDetails.Checked);
+                        apiQuery.GetSets(group.id, out setList, checkBoxMatchDetails.Checked);
                         if (seedList == null)
                         {
                             richTextBoxLog.Text += string.Format("Seed list not retrieved for {0}\r\n", group.id);
@@ -2391,6 +2394,17 @@ namespace smashgg_to_liquipedia
                     richTextBoxLog.Text += "Can't do anything with that object\r\n";
                     break;
             }
+        }
+
+        private void buttonTEST_Click(object sender, EventArgs e)
+        {
+            apiQuery.GetEventEntrants(119796, out entrantList);
+
+            foreach(KeyValuePair<int,Entrant> entry in entrantList)
+            {
+                richTextBoxLpOutput.Text += entry.Key.ToString() + " || " + entry.Value.participants[0].gamerTag;
+            }
+            
         }
     }
 }

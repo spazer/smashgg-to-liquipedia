@@ -94,6 +94,7 @@
             this.richTextBoxExLpWinnersBracket = new RichTextBoxEx();
             this.richTextBoxExLpFinalBracket = new RichTextBoxEx();
             this.richTextBoxExLpLosersBracket = new RichTextBoxEx();
+            this.buttonTEST = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAdvanceWinners)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAdvanceLosers)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPrizePool)).BeginInit();
@@ -772,6 +773,16 @@
             this.richTextBoxExLpLosersBracket.TabIndex = 13;
             this.richTextBoxExLpLosersBracket.Text = "";
             // 
+            // buttonTEST
+            // 
+            this.buttonTEST.Location = new System.Drawing.Point(725, 324);
+            this.buttonTEST.Name = "buttonTEST";
+            this.buttonTEST.Size = new System.Drawing.Size(75, 23);
+            this.buttonTEST.TabIndex = 27;
+            this.buttonTEST.Text = "Test";
+            this.buttonTEST.UseVisualStyleBackColor = true;
+            this.buttonTEST.Click += new System.EventHandler(this.buttonTEST_Click);
+            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -779,6 +790,7 @@
             this.ClientSize = new System.Drawing.Size(948, 566);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.label7);
+            this.Controls.Add(this.buttonTEST);
             this.Controls.Add(this.buttonGroupTable);
             this.Controls.Add(this.textBoxTournamentUrl);
             this.Controls.Add(this.textBoxHeaderWinners);
@@ -896,6 +908,7 @@
         private System.Windows.Forms.NumericUpDown numericUpDownWinnersEnd;
         private System.Windows.Forms.TreeView treeView1;
         private System.Windows.Forms.Button buttonGetData;
+        private System.Windows.Forms.Button buttonTEST;
     }
 }
 

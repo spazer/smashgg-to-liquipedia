@@ -379,6 +379,11 @@ namespace smashgg_to_liquipedia
             } while (page <= tempPhaseGroup.sets.pageInfo.totalPages);
         }
 
+        /// <summary>
+        /// Gets entrants
+        /// </summary>
+        /// <param name="eventId">ID of the event to query</param>
+        /// <param name="entrants">Entrants object for the event</param>
         public void GetEventEntrants(int eventId, out Dictionary<int,Entrant> entrants)
         {
             // Will contain the full entrants list
@@ -388,9 +393,9 @@ namespace smashgg_to_liquipedia
             string path = Path.Combine("EventEntrants", eventId.ToString() + ".txt");
             if (File.Exists(path))
             {
-                // Determine if file is 1 day old
+                // Determine if file is old
                 DateTime creation = File.GetCreationTime(path);
-                if (DateTime.Compare(creation, DateTime.Now.AddDays(-1)) < 0)
+                if (DateTime.Compare(creation, DateTime.Now.AddDays(-2)) < 0)
                 {
                     // Delete file if it's old
                     File.Delete(path);
@@ -467,6 +472,16 @@ namespace smashgg_to_liquipedia
                 {
                     Directory.CreateDirectory(@"EventEntrants");
                     FileIO.WriteToJsonFile<List<Entrant>>(@"EventEntrants\" + eventId + @".txt", entrantList, false);
+                }
+            }
+
+            // Convert country to abbreviations
+            for (int i = 0; i < entrantList.Count; i++)
+            {
+                Standardization standards = new Standardization();
+                for (int j = 0; j < entrantList[i].participants.Count; j++)
+                {
+                    entrantList[i].participants[j].player.country = standards.CountryAbbreviation(entrantList[i].participants[j].player.country);
                 }
             }
 
