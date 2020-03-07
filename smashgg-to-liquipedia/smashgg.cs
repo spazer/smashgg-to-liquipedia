@@ -89,8 +89,8 @@ namespace smashgg_to_liquipedia
                         country = string.Empty;
                     }
                 }
-                
 
+                name = name.Replace("|", "{{!}}");
                 Player newPlayer = new Player(id, name, country);
                 playerList.Add(id, newPlayer);
             }
