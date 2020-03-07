@@ -142,6 +142,7 @@ namespace smashgg_to_liquipedia
         enum EventType { Singles, Doubles, None }
         public enum BracketSide { Winners, Losers }
 
+        Dictionary<int, Player> playerList = new Dictionary<int, Player>();
         Dictionary<int, Entrant> entrantList = new Dictionary<int, Entrant>();
         List<Set> setList = new List<Set>();
         Dictionary<int, List<Set>> roundList = new Dictionary<int, List<Set>>();
@@ -910,7 +911,12 @@ namespace smashgg_to_liquipedia
 
             // Fill entrant and set lists
             smashgg parser = new smashgg();
-            if (!parser.GetEntrants(bracketJson.SelectToken(SmashggStrings.Entities + "." + SmashggStrings.Entrants), ref entrantList, playerdb, entrantType))
+            if (!parser.GetPlayers(bracketJson.SelectToken(SmashggStrings.Entities + "." + SmashggStrings.Players), ref playerList, playerdb))
+            {
+                richTextBoxLog.Text += "No players detected.\r\n";
+                return;
+            }
+            if (!parser.GetEntrants(bracketJson.SelectToken(SmashggStrings.Entities + "." + SmashggStrings.Entrants), ref entrantList, ref playerList, playerdb, entrantType))
             {
                 richTextBoxLog.Text += "No entrants detected.\r\n";
                 return;
@@ -1319,7 +1325,8 @@ namespace smashgg_to_liquipedia
             JObject bracketJson = JsonConvert.DeserializeObject<JObject>(json);
 
             // Parse entrant and set data
-            parser.GetEntrants(bracketJson.SelectToken("entities.entrants"), ref entrantList, playerdb, entrantType);
+            parser.GetPlayers(bracketJson.SelectToken("entities.player"), ref playerList, playerdb);
+            parser.GetEntrants(bracketJson.SelectToken("entities.entrants"), ref entrantList, ref playerList, playerdb, entrantType);
             parser.GetSets(bracketJson.SelectToken("entities.sets"), ref setList, checkBoxMatchDetails.Checked);
             phaseState = parser.GetPhaseGroupState(bracketJson.SelectToken("entities.groups"));
 
@@ -1979,6 +1986,7 @@ namespace smashgg_to_liquipedia
             richTextBoxEntrants.Clear();
             richTextBoxWinners.Clear();
             richTextBoxLosers.Clear();
+            playerList.Clear();
             entrantList.Clear();
             setList.Clear();
             roundList.Clear();

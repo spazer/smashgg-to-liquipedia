@@ -430,7 +430,7 @@ namespace smashgg_to_liquipedia {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to players.
+        ///   Looks up a localized string similar to player.
         /// </summary>
         internal static string Players {
             get {

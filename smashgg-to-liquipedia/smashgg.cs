@@ -37,12 +37,75 @@ namespace smashgg_to_liquipedia
 
         #region Public Methods
         /// <summary>
+        /// Appends players from the json input into playerList
+        /// </summary>
+        /// <param name="input">json of the player token</param>
+        /// <param name="playerList">List of players to be outputted to</param>
+        /// <returns>Returns true if successful, false otherwise</returns>
+        public bool GetPlayers(JToken input, ref Dictionary<int, Player> playerList, PlayerDatabase playerdb)
+        {
+            if (input == null) return false;
+
+            // Add bye info
+            playerList.Add(-1, new Player(0, "Bye", string.Empty));
+
+            // Divide input into manageable chunks
+            foreach (JToken player in input.Children())
+            {
+                // Get entrant ID
+                if (player[SmashggStrings.ID].IsNullOrEmpty()) { continue; }
+                int id = GetIntParameter(player, SmashggStrings.ID);
+                string name = string.Empty;
+                string country = string.Empty;
+
+
+                // Check the AKA database to see if this player is in it. Fill information if they are found
+                bool foundInDatabase = false;
+                foreach (PlayerInfo info in playerdb.players)
+                {
+                    if (id == info.smashggID)
+                    {
+                        name = info.name;
+                        country = info.flag;
+                        foundInDatabase = true;
+                        break;
+                    }
+                }
+                if (!foundInDatabase)
+                {
+                    // Get player tag
+                    name = player.SelectToken(SmashggStrings.Gamertag).Value<string>();
+
+                    // Get player country
+                    country = player.SelectToken(SmashggStrings.Country).Value<string>();
+
+                    // Get player country. Leave empty if null
+                    if (country != null && country != string.Empty)
+                    {
+                       country = CountryAbbreviation(country);
+                    }
+                    else
+                    {
+                        country = string.Empty;
+                    }
+                }
+                
+
+                Player newPlayer = new Player(id, name, country);
+                playerList.Add(id, newPlayer);
+            }
+
+            return true;
+        }
+
+
+        /// <summary>
         /// Appends entrants from the json input into entrantList
         /// </summary>
         /// <param name="input">json of the entrants token</param>
         /// <param name="entrantList">List of entrants to be outputted to</param>
         /// <returns>Returns true if successful, false otherwise</returns>
-        public bool GetEntrants(JToken input, ref Dictionary<int, Entrant> entrantList, PlayerDatabase playerdb, Entrant.EntrantType assumedType)
+        public bool GetEntrants(JToken input, ref Dictionary<int, Entrant> entrantList, ref Dictionary<int, Player> playerList, PlayerDatabase playerdb, Entrant.EntrantType assumedType)
         {
             if (input == null) return false;
             
@@ -58,52 +121,60 @@ namespace smashgg_to_liquipedia
                 string name = entrant.SelectToken(SmashggStrings.Name).Value<string>();
 
                 // Get participant IDs
-                SortedList<int, Player> pIds = new SortedList<int, Player>();
+                SortedList<int, Player> partIds = new SortedList<int, Player>();
                 foreach (int participant in entrant[SmashggStrings.ParticipantIds])
                 {
                     Player newPlayer = new Player();
-                    pIds.Add(participant, newPlayer);
+                    partIds.Add(participant, newPlayer);
                 }
 
-                foreach (KeyValuePair<int, Player> participant in pIds) 
+                foreach (KeyValuePair<int, Player> participant in partIds) 
                 {
                     // Get player ID based off participant ID
                     participant.Value.playerID = entrant.SelectToken(SmashggStrings.PlayerIds + "." + participant.Key).Value<int>();
 
-                    // Check the AKA database to see if this player is in it. Fill information if they are found
-                    bool foundInDatabase = false;
-                    foreach (PlayerInfo info in playerdb.players)
+                    if (playerList.ContainsKey(participant.Value.playerID))
                     {
-                        if (participant.Value.playerID == info.smashggID)
-                        {
-                            participant.Value.name = info.name;
-                            participant.Value.country = info.flag;
-                            foundInDatabase = true;
-                            break;
-                        }
+                        participant.Value.name = playerList[participant.Value.playerID].name;
+                        participant.Value.country = playerList[participant.Value.playerID].country;
                     }
-                    if (!foundInDatabase)
+                    else
                     {
-                        // Select player token based off player ID
-                        JToken playerInfo = entrant.SelectToken("mutations.players" + "." + participant.Value.playerID);
-
-                        // Get player tag
-                        pIds[participant.Key].name = playerInfo[SmashggStrings.Gamertag].Value<string>();
-                        pIds[participant.Key].name = pIds[participant.Key].name.Replace("|", "{{!}}");
-
-                        // Get player country. Leave empty if null
-                        if (!playerInfo[SmashggStrings.Country].IsNullOrEmpty())
+                        // Check the AKA database to see if this player is in it. Fill information if they are found
+                        bool foundInDatabase = false;
+                        foreach (PlayerInfo info in playerdb.players)
                         {
-                            pIds[participant.Key].country = CountryAbbreviation(playerInfo[SmashggStrings.Country].Value<string>());
+                            if (participant.Value.playerID == info.smashggID)
+                            {
+                                participant.Value.name = info.name;
+                                participant.Value.country = info.flag;
+                                foundInDatabase = true;
+                                break;
+                            }
                         }
-                        else
+                        if (!foundInDatabase)
                         {
-                            pIds[participant.Key].country = string.Empty;
+                            // Select player token based off player ID
+                            JToken playerInfo = entrant.SelectToken("mutations.players" + "." + participant.Value.playerID);
+
+                            // Get player tag
+                            partIds[participant.Key].name = playerInfo[SmashggStrings.Gamertag].Value<string>();
+                            partIds[participant.Key].name = partIds[participant.Key].name.Replace("|", "{{!}}");
+
+                            // Get player country. Leave empty if null
+                            if (!playerInfo[SmashggStrings.Country].IsNullOrEmpty())
+                            {
+                                partIds[participant.Key].country = CountryAbbreviation(playerInfo[SmashggStrings.Country].Value<string>());
+                            }
+                            else
+                            {
+                                partIds[participant.Key].country = string.Empty;
+                            }
                         }
                     }
                 }
 
-                Entrant newEntrant = new Entrant(pIds.Values.ToList<Player>());
+                Entrant newEntrant = new Entrant(partIds.Values.ToList<Player>());
                 newEntrant.Name = name;
                 entrantList.Add(id, newEntrant);
             }
