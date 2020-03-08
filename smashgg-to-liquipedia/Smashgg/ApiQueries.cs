@@ -28,7 +28,7 @@ namespace smashgg_to_liquipedia
         private readonly IFormMain form;
 
         private const int PER_PAGE_SETS = 60;
-        private const int PER_PAGE_ENTRANTS = 490;
+        private const int PER_PAGE_ENTRANTS = 200;
 
         #region Smash.gg Enumerations
         public enum ActivityState
@@ -180,8 +180,9 @@ namespace smashgg_to_liquipedia
                                         id
                                         displayIdentifier
                                         state
-                                        phaseId
-                                        waveId
+                                        wave {
+                                            identifier
+                                        }
                                     }
                                 }
                             }
@@ -228,14 +229,14 @@ namespace smashgg_to_liquipedia
                                 currentPhaseGroup.GenerateWave();
 
                                 // If the phasegroup has a wave, add it to the wave dictionary
-                                if (currentPhaseGroup.Wave != string.Empty && tournament.events[i].phases[j].waves.ContainsKey(currentPhaseGroup.Wave))
+                                if (currentPhaseGroup.WaveLetter != string.Empty && tournament.events[i].phases[j].waves.ContainsKey(currentPhaseGroup.WaveLetter))
                                 {
-                                    tournament.events[i].phases[j].waves[currentPhaseGroup.Wave].Add(currentPhaseGroup);
+                                    tournament.events[i].phases[j].waves[currentPhaseGroup.WaveLetter].Add(currentPhaseGroup);
                                 }
-                                else if (currentPhaseGroup.Wave != string.Empty)
+                                else if (currentPhaseGroup.WaveLetter != string.Empty)
                                 {
-                                    tournament.events[i].phases[j].waves.Add(currentPhaseGroup.Wave, new List<PhaseGroup>());
-                                    tournament.events[i].phases[j].waves[currentPhaseGroup.Wave].Add(currentPhaseGroup);
+                                    tournament.events[i].phases[j].waves.Add(currentPhaseGroup.WaveLetter, new List<PhaseGroup>());
+                                    tournament.events[i].phases[j].waves[currentPhaseGroup.WaveLetter].Add(currentPhaseGroup);
                                 }
                                 else
                                 {
@@ -259,7 +260,7 @@ namespace smashgg_to_liquipedia
 
                         if (tournament.events[i].phases[j].phasegroups.nodes[0].identifierType == PhaseGroup.IdentiferType.WaveNumber)
                         {
-                            tournament.events[i].phases[j].phasegroups.nodes = tournament.events[i].phases[j].phasegroups.nodes.OrderBy(q => q.Wave).ThenBy(q => q.Number).ToList();
+                            tournament.events[i].phases[j].phasegroups.nodes = tournament.events[i].phases[j].phasegroups.nodes.OrderBy(q => q.WaveLetter).ThenBy(q => q.Number).ToList();
                         }
                         else if (tournament.events[i].phases[j].phasegroups.nodes[0].identifierType == PhaseGroup.IdentiferType.NumberOnly)
                         {
@@ -306,9 +307,9 @@ namespace smashgg_to_liquipedia
                 }";
 
             string setsWithDetails = @"
-                query GetSetsWithDetails($phaseGroupId: ID!, $page: Int, $perPage: Int) {
+                query GetSetsWithDetails($phaseGroupId: ID!, $page: Int) {
                     phaseGroup(id: $phaseGroupId) {
-                        sets(perPage:$perPage, page:$page) {
+                        sets(perPage:60, page:$page) {
                             pageInfo {
                                 total
                                 totalPages
@@ -327,7 +328,6 @@ namespace smashgg_to_liquipedia
                                     }
                                 }
                                 games {
-                                    setId
                                     selections {
                                         selectionType
                                         selectionValue
@@ -414,26 +414,30 @@ namespace smashgg_to_liquipedia
                 GraphQLRequest entrantsRequest = new GraphQLRequest
                 {
                     Query = @"
-                    query GetEventEntrants($eventId: ID!, $perPage: Int, $page: Int) {
-                        event(id: $eventId) {
-                            entrants (query:{perPage: $perPage, page: $page}) {
-                                pageInfo {
-                                    total
-                                    totalPages
-                                }
-                                nodes {
-                                    id
-                                    participants {
-                                        playerId
-                                        gamerTag
-                                        player {
-                                            country
+                        query GetEventEntrants($eventId: ID!, $perPage: Int, $page: Int) {
+                            event(id: $eventId) {
+                                entrants (query:{perPage: $perPage, page: $page}) {
+                                    pageInfo {
+                                        total
+                                        totalPages
+                                    }
+                                    nodes {
+                                        id
+                                        participants {
+                                            gamerTag
+                                            player {
+                                              	id
+                                            }
+                                          	user {
+                                              location {
+                                                country
+                                              }
+                                            }
                                         }
                                     }
                                 }
                             }
-                        }
-                    }",
+                        }",
                     OperationName = "GetEventEntrants"
                 };
 
@@ -481,7 +485,7 @@ namespace smashgg_to_liquipedia
                 Standardization standards = new Standardization();
                 for (int j = 0; j < entrantList[i].participants.Count; j++)
                 {
-                    entrantList[i].participants[j].player.country = standards.CountryAbbreviation(entrantList[i].participants[j].player.country);
+                    entrantList[i].participants[j].user.location.country = standards.CountryAbbreviation(entrantList[i].participants[j].user.location.country);
                 }
             }
 
@@ -494,29 +498,39 @@ namespace smashgg_to_liquipedia
             GraphQLRequest standingsRequest = new GraphQLRequest
             {
                 Query = @"
-                query GetStandings($eventId: Int, $lastPlacement: Int) {
-                    event(id: $eventId) {
-                        name
-                        standings(query: {
-                            page: 1
-                            perPage: $lastPlacement
-                        }) {
-                            nodes{
-                                standing
-                                entrant {
-                                    id
-                                    participants {
-                                        playerId
-                                        gamerTag
-                                        player {
-                                            country
+                    query GetStandings($eventId: ID, $lastPlacement: Int) {
+                        event(id: $eventId) {
+                            name
+                            standings(query: {
+                                page: 1
+                                perPage: $lastPlacement
+                            }) {
+                                nodes{
+                                  	stats {
+                                      	score {
+                                          	label
+                                          	value
+                                        }
+                                    }
+                                    placement
+                                    entrant {
+                                        id
+                                        participants {
+                                            gamerTag
+                                            player {
+                                              	id
+                                            }
+                                          	user {
+                                              	location {
+                                                  	country
+                                                }
+                                            }
                                         }
                                     }
                                 }
                             }
                         }
-                    }
-                }",
+                    }",
                 OperationName = "GetStandings",
                 Variables = new
                 {
@@ -556,33 +570,33 @@ namespace smashgg_to_liquipedia
             {
                 foreach (PlayerInfo info in playerdb.players)
                 {
-                    if (participant.playerId == info.smashggID || participant.player.id == info.smashggID)
+                    if (participant.player.id == info.smashggID || participant.player.id == info.smashggID)
                     {
                         participant.gamerTag = info.name;
-                        participant.player.gamerTag = info.name;
-                        participant.player.country = info.flag;
+                        participant.gamerTag = info.name;
+                        participant.user.location.country = info.flag;
                         break;
                     }
                 }
 
-                participant.player.country = standardization.CountryAbbreviation(participant.player.country);
+                participant.user.location.country = standardization.CountryAbbreviation(participant.user.location.country);
 
-                if (participant.playerId != 0)
+                if (participant.player.id != 0)
                 {
-                    participant.player.id = participant.playerId;
+                    participant.player.id = participant.player.id;
                 }
                 else if (participant.player.id != 0)
                 {
-                    participant.playerId = participant.player.id;
+                    participant.player.id = participant.player.id;
                 }
 
                 if (participant.gamerTag != string.Empty)
                 {
-                    participant.player.gamerTag = participant.gamerTag;
+                    participant.gamerTag = participant.gamerTag;
                 }
-                else if (participant.player.gamerTag != string.Empty)
+                else if (participant.gamerTag != string.Empty)
                 {
-                    participant.gamerTag = participant.player.gamerTag;
+                    participant.gamerTag = participant.gamerTag;
                 }
             }
         }

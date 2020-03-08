@@ -6,34 +6,27 @@ using System.Threading.Tasks;
 
 namespace smashgg_to_liquipedia.Smashgg.Schema
 {
-    public class Participant
+    public class User
     {
         // GraphQL fields
-        public int id { get; set; }
-        public string gamerTag { get; set; }
-        public Player player { get; set; }
-        public bool verified { get; set; }
-        public User user
+        public Location location
         {
             get
             {
-                return userInfo;
+                return locationInfo;
             }
             set
             {
                 if (value != null)
                 {
-                    userInfo = value;
+                    locationInfo = value;
                 }
             }
         }
 
-        public Participant()
-        {
-            userInfo = new User();
-        }
+        public User() { locationInfo = new Location(); }
 
         // Internal fields
-        public User userInfo;
+        public Location locationInfo;
     }
 }

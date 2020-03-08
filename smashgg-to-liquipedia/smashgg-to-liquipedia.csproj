@@ -127,6 +127,7 @@
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
     </Compile>
+    <Compile Include="Smashgg\Schema\Location.cs" />
     <Compile Include="Smashgg\Schema\PageInfo.cs" />
     <Compile Include="Smashgg\Schema\Participant.cs" />
     <Compile Include="Smashgg\Schema\PhaseGroup.cs" />
@@ -150,6 +151,8 @@
     <Compile Include="Smashgg\ApiQueries.cs" />
     <Compile Include="Smashgg\Schema\SetConnection.cs" />
     <Compile Include="Smashgg\Schema\StandingConnection.cs" />
+    <Compile Include="Smashgg\Schema\User.cs" />
+    <Compile Include="Smashgg\Schema\Wave.cs" />
     <Compile Include="Smashgg\SmashggStrings.Designer.cs">
       <DependentUpon>SmashggStrings.resx</DependentUpon>
       <DesignTime>True</DesignTime>

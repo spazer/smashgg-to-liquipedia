@@ -14,7 +14,7 @@ namespace smashgg_to_liquipedia.Smashgg.Schema
         public string displayIdentifier { get; set; }
         public int state { get; set; }
         public int phaseId { get; set; }
-        public int? waveId { get; set; }
+        public Wave wave { get; set; }
         public List<Seed> seeds { get; set; }
         public SetConnection sets { get; set; }
 
@@ -138,7 +138,7 @@ namespace smashgg_to_liquipedia.Smashgg.Schema
             }
         }
 
-        public string Wave
+        public string WaveLetter
         {
             get
             {

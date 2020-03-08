@@ -24,116 +24,6 @@ namespace smashgg_to_liquipedia
         static string SMASH_DB_URI = "http://liquipedia.net/smash/api.php?action=parse&page=Liquipedia:Players_Regex&prop=revid|wikitext&format=json";
         static string FIGHTERS_DB_URI = "http://liquipedia.net/fighters/api.php?action=parse&page=Liquipedia:Players_Regex&prop=revid|wikitext&format=json";
 
-        #region Bracket Template Contants
-        static string deFinalBracketTemplateReset = "{{DEFinalBracket\r\n" +
-                                                    "<!-- FROM WINNERS -->\r\n" +
-                                                    "|r1m1p1= |r1m1p1flag= |r1m1p1score=\r\n" +
-                                                    "|r1m1p2= |r1m1p2flag= |r1m1p2score=\r\n" +
-                                                    "|r1m1win=\r\n\r\n" +
-                                                    "<!-- FROM LOSERS -->\r\n" +
-                                                    "|l1m1p1= |l1m1p1flag= |l1m1p1score=\r\n" +
-                                                    "|l1m1p2= |l1m1p2flag= |l1m1p2score=\r\n" +
-                                                    "|l1m1win=\r\n\r\n" +
-                                                    "<!-- LOSERS FINALS -->\r\n" +
-                                                    "|l2m1p1= |l2m1p1flag= |l2m1p1score=\r\n" +
-                                                    "|l2m1p2= |l2m1p2flag= |l2m1p2score=\r\n" +
-                                                    "|l2m1win=\r\n\r\n" +
-                                                    "<!-- GRAND FINALS -->\r\n" +
-                                                    "|r3m1p1= |r3m1p1flag= |r3m1p1score= |r3m2p1score=\r\n" +
-                                                    "|r3m1p2= |r3m1p2flag= |r3m1p2score= |r3m2p2score=\r\n" +
-                                                    "|r3m1win=\r\n" +
-                                                    "}}";
-
-        static string deFinalSmwBracketTemplateReset = "{{DEFinalSmwBracket\r\n" +
-                                                    "|l1placement=4\r\n" +
-                                                    "|r2placement=3\r\n" +
-                                                    "|r3loserplacement=2\r\n" +
-                                                    "|r3winnerplacement=1\r\n\r\n" +
-                                                    "<!-- FROM WINNERS -->\r\n" +
-                                                    "|r1m1p1= |r1m1p1flag= |r1m1p1score=\r\n" +
-                                                    "|r1m1p2= |r1m1p2flag= |r1m1p2score=\r\n" +
-                                                    "|r1m1win=\r\n\r\n" +
-                                                    "<!-- FROM LOSERS -->\r\n" +
-                                                    "|l1m1p1= |l1m1p1flag= |l1m1p1score=\r\n" +
-                                                    "|l1m1p2= |l1m1p2flag= |l1m1p2score=\r\n" +
-                                                    "|l1m1win=\r\n\r\n" +
-                                                    "<!-- LOSERS FINALS -->\r\n" +
-                                                    "|l2m1p1= |l2m1p1flag= |l2m1p1score=\r\n" +
-                                                    "|l2m1p2= |l2m1p2flag= |l2m1p2score=\r\n" +
-                                                    "|l2m1win=\r\n\r\n" +
-                                                    "<!-- GRAND FINALS -->\r\n" +
-                                                    "|r3m1p1= |r3m1p1flag= |r3m1p1score= |r3m2p1score=\r\n" +
-                                                    "|r3m1p2= |r3m1p2flag= |r3m1p2score= |r3m2p2score=\r\n" +
-                                                    "|r3m1win=\r\n" +
-                                                    "}}";
-
-        static string deFinalDoublesBracketTemplateReset = "{{DEFinalDoublesBracket\r\n" +
-                                                        "<!-- FROM WINNERS -->\r\n" +
-                                                        "|r1m1t1p1= |r1m1t1p1flag=\r\n" +
-                                                        "|r1m1t1p2= |r1m1t1p2flag= |r1m1t1score=\r\n" +
-                                                        "|r1m1t2p1= |r1m1t2p1flag=\r\n" +
-                                                        "|r1m1t2p2= |r1m1t2p2flag= |r1m1t2score=\r\n" +
-                                                        "|r1m1win=\r\n" +
-                                                        "\r\n" +
-                                                        "<!-- FROM LOSERS -->\r\n" +
-                                                        "|l1m1t1p1= |l1m1t1p1flag=\r\n" +
-                                                        "|l1m1t1p2= |l1m1t1p2flag= |l1m1t1score=\r\n" +
-                                                        "|l1m1t2p1= |l1m1t2p1flag=\r\n" +
-                                                        "|l1m1t2p2= |l1m1t2p2flag= |l1m1t2score=\r\n" +
-                                                        "|l1m1win=\r\n" +
-                                                        "\r\n" +
-                                                        "<!-- LOSERS FINALS -->\r\n" +
-                                                        "|l2m1t1p1= |l2m1t1p1flag=\r\n" +
-                                                        "|l2m1t1p2= |l2m1t1p2flag= |l2m1t1score=\r\n" +
-                                                        "|l2m1t2p1= |l2m1t2p1flag=\r\n" +
-                                                        "|l2m1t2p2= |l2m1t2p2flag= |l2m1t2score=\r\n" +
-                                                        "|l2m1win=\r\n" +
-                                                        "\r\n" +
-                                                        "<!-- GRAND FINALS -->\r\n" +
-                                                        "|r3m1t1p1= |r3m1t1p1flag=\r\n" +
-                                                        "|r3m1t1p2= |r3m1t1p2flag= |r3m1t1score= |r3m2t1score=\r\n" +
-                                                        "|r3m1t2p1= |r3m1t2p1flag=\r\n" +
-                                                        "|r3m1t2p2= |r3m1t2p2flag= |r3m1t2score= |r3m2t2score=\r\n" +
-                                                        "|r3m1win=\r\n" +
-                                                        "}}";
-
-        static string deFinalDoublesSmwBracketTemplateReset = "{{DEFinalDoublesSmwBracket\r\n" +
-                                                        "|tourneylink=\r\n" +
-                                                        "|tourneyname=\r\n" +
-                                                        "|l1placement=4\r\n" +
-                                                        "|r2placement=3\r\n" +
-                                                        "|r3loserplacement=2\r\n" +
-                                                        "|r3winnerplacement=1\r\n\r\n" +
-                                                        "<!-- FROM WINNERS -->\r\n" +
-                                                        "|r1m1t1p1= |r1m1t1p1flag=\r\n" +
-                                                        "|r1m1t1p2= |r1m1t1p2flag= |r1m1t1score=\r\n" +
-                                                        "|r1m1t2p1= |r1m1t2p1flag=\r\n" +
-                                                        "|r1m1t2p2= |r1m1t2p2flag= |r1m1t2score=\r\n" +
-                                                        "|r1m1win=\r\n" +
-                                                        "\r\n" +
-                                                        "<!-- FROM LOSERS -->\r\n" +
-                                                        "|l1m1t1p1= |l1m1t1p1flag=\r\n" +
-                                                        "|l1m1t1p2= |l1m1t1p2flag= |l1m1t1score=\r\n" +
-                                                        "|l1m1t2p1= |l1m1t2p1flag=\r\n" +
-                                                        "|l1m1t2p2= |l1m1t2p2flag= |l1m1t2score=\r\n" +
-                                                        "|l1m1win=\r\n" +
-                                                        "\r\n" +
-                                                        "<!-- LOSERS FINALS -->\r\n" +
-                                                        "|l2m1t1p1= |l2m1t1p1flag=\r\n" +
-                                                        "|l2m1t1p2= |l2m1t1p2flag= |l2m1t1score=\r\n" +
-                                                        "|l2m1t2p1= |l2m1t2p1flag=\r\n" +
-                                                        "|l2m1t2p2= |l2m1t2p2flag= |l2m1t2score=\r\n" +
-                                                        "|l2m1win=\r\n" +
-                                                        "\r\n" +
-                                                        "<!-- GRAND FINALS -->\r\n" +
-                                                        "|r3m1t1p1= |r3m1t1p1flag=\r\n" +
-                                                        "|r3m1t1p2= |r3m1t1p2flag= |r3m1t1score= |r3m2t1score=\r\n" +
-                                                        "|r3m1t2p1= |r3m1t2p1flag=\r\n" +
-                                                        "|r3m1t2p2= |r3m1t2p2flag= |r3m1t2score= |r3m2t2score=\r\n" +
-                                                        "|r3m1win=\r\n" +
-                                                        "}}";
-        #endregion
-
         public enum BracketSide { Winners, Losers }
 
         List<Seed> seedList = new List<Seed>();
@@ -312,7 +202,15 @@ namespace smashgg_to_liquipedia
 
                             // Save relevant data to wave tag
                             TreeNodeData waveNodeTag = new TreeNodeData();
-                            waveNodeTag.id = wave.Value[0].waveId ?? 0;
+                            if (wave.Value[0].wave == null)
+                            {
+                                waveNodeTag.id = 0;
+                            }
+                            else
+                            {
+                                waveNodeTag.id = wave.Value[0].Number;
+                            }
+  
                             waveNodeTag.name = wave.Key;
                             waveNodeTag.nodetype = TreeNodeData.NodeType.Wave;
                             waveNode.Tag = waveNodeTag;
@@ -394,7 +292,7 @@ namespace smashgg_to_liquipedia
                         {
                             foreach (PhaseGroup phasegroup in phase.phasegroups.nodes)
                             {
-                                TreeNode phasegroupNode = new TreeNode(phasegroup.displayIdentifier + " " + phasegroup.Wave);
+                                TreeNode phasegroupNode = new TreeNode(phasegroup.displayIdentifier + " " + phasegroup.WaveLetter);
 
                                 // Save relevant data to phasegroup tag
                                 TreeNodeData phasegroupNodeTag = new TreeNodeData();
@@ -1130,12 +1028,12 @@ namespace smashgg_to_liquipedia
             // Wave headers
             if (phase.phasegroups.nodes[0].identifierType == PhaseGroup.IdentiferType.WaveNumber)
             {
-                if (lastWave != currentGroup.Wave)
+                if (lastWave != currentGroup.WaveLetter)
                 {
-                    richTextBoxLpOutput.Text += "==Wave " + currentGroup.Wave + "==\r\n";
+                    richTextBoxLpOutput.Text += "==Wave " + currentGroup.WaveLetter + "==\r\n";
                     richTextBoxLpOutput.Text += LpStrings.BoxStart + "\r\n";
 
-                    lastWave = currentGroup.Wave;
+                    lastWave = currentGroup.WaveLetter;
                 }
             }
             else if (phase.phasegroups.nodes.First() == currentGroup)    // Start a box at the first element
@@ -1147,12 +1045,12 @@ namespace smashgg_to_liquipedia
             string title = string.Empty;
             if (phase.phasegroups.nodes[0].identifierType == PhaseGroup.IdentiferType.WaveNumber)
             {
-                richTextBoxLpOutput.Text += "===" + LpStrings.SortStart + currentGroup.Wave + currentGroup.Number.ToString() + LpStrings.SortEnd + "===\r\n";
-                title = currentGroup.Wave + currentGroup.Number.ToString();
+                richTextBoxLpOutput.Text += "===" + LpStrings.SortStart + currentGroup.WaveLetter + currentGroup.Number.ToString() + LpStrings.SortEnd + "===\r\n";
+                title = currentGroup.WaveLetter + currentGroup.Number.ToString();
             }
             else
             {
-                richTextBoxLpOutput.Text += "===" + LpStrings.SortStart + currentGroup.Wave + currentGroup.DisplayIdentifier.ToString() + LpStrings.SortEnd + "===\r\n";
+                richTextBoxLpOutput.Text += "===" + LpStrings.SortStart + currentGroup.WaveLetter + currentGroup.DisplayIdentifier.ToString() + LpStrings.SortEnd + "===\r\n";
                 title = currentGroup.DisplayIdentifier.ToString();
             }
 
@@ -1163,7 +1061,7 @@ namespace smashgg_to_liquipedia
             // Box handling
             if (phase.phasegroups.nodes[0].identifierType == PhaseGroup.IdentiferType.WaveNumber)     // Waves exist
             {
-                if (currentGroup == phase.waves.Where(q => q.Key == currentGroup.Wave).First().Value.Last())
+                if (currentGroup == phase.waves.Where(q => q.Key == currentGroup.WaveLetter).First().Value.Last())
                 {
                     richTextBoxLpOutput.Text += LpStrings.BoxEnd + "\r\n\r\n";
                 }
@@ -1200,12 +1098,12 @@ namespace smashgg_to_liquipedia
             // Wave headers
             if (phase.phasegroups.nodes[0].identifierType == PhaseGroup.IdentiferType.WaveNumber)
             {
-                if (lastWave != currentGroup.Wave)
+                if (lastWave != currentGroup.WaveLetter)
                 {
-                    richTextBoxLpOutput.Text += "==Wave " + currentGroup.Wave + "==\r\n";
+                    richTextBoxLpOutput.Text += "==Wave " + currentGroup.WaveLetter + "==\r\n";
                     richTextBoxLpOutput.Text += LpStrings.BoxStart + "\r\n";
 
-                    lastWave = currentGroup.Wave;
+                    lastWave = currentGroup.WaveLetter;
                 }
             }
             else if (phase.phasegroups.nodes.First() == currentGroup)    // Start a box at the first element
@@ -1217,12 +1115,12 @@ namespace smashgg_to_liquipedia
             string title = string.Empty;
             if (phase.phasegroups.nodes[0].identifierType == PhaseGroup.IdentiferType.WaveNumber)
             {
-                richTextBoxLpOutput.Text += "===" + LpStrings.SortStart + currentGroup.Wave + currentGroup.Number.ToString() + LpStrings.SortEnd + "===" + "\r\n";
-                title = currentGroup.Wave + currentGroup.Number.ToString();
+                richTextBoxLpOutput.Text += "===" + LpStrings.SortStart + currentGroup.WaveLetter + currentGroup.Number.ToString() + LpStrings.SortEnd + "===" + "\r\n";
+                title = currentGroup.WaveLetter + currentGroup.Number.ToString();
             }
             else
             {
-                richTextBoxLpOutput.Text += "===" + LpStrings.SortStart + currentGroup.Wave + currentGroup.DisplayIdentifier.ToString() + LpStrings.SortEnd + "===" + "\r\n";
+                richTextBoxLpOutput.Text += "===" + LpStrings.SortStart + currentGroup.WaveLetter + currentGroup.DisplayIdentifier.ToString() + LpStrings.SortEnd + "===" + "\r\n";
                 title = currentGroup.DisplayIdentifier.ToString();
             }
 
@@ -1233,7 +1131,7 @@ namespace smashgg_to_liquipedia
             // Pool footers
             if (phase.phasegroups.nodes[0].identifierType == PhaseGroup.IdentiferType.WaveNumber)     // Waves exist
             {
-                if (currentGroup == phase.waves.Where(q => q.Key == currentGroup.Wave).First().Value.Last())
+                if (currentGroup == phase.waves.Where(q => q.Key == currentGroup.WaveLetter).First().Value.Last())
                 {
                     richTextBoxLpOutput.Text += LpStrings.BoxEnd + "\r\n\r\n";
                 }
@@ -1550,11 +1448,11 @@ namespace smashgg_to_liquipedia
 
                 if (entrant.Value.participants.Count == 1)
                 {
-                    richTextBoxEntrants.Text += entrant.Value.participants[0].playerId.ToString().PadRight(7);
+                    richTextBoxEntrants.Text += entrant.Value.participants[0].player.id.ToString().PadRight(9);
                 }
                 else if (entrant.Value.participants.Count == 2)
                 {
-                    richTextBoxEntrants.Text += entrant.Value.participants[0].playerId.ToString().PadRight(7) + "/" + entrant.Value.participants[1].playerId.ToString().PadRight(7);
+                    richTextBoxEntrants.Text += entrant.Value.participants[0].player.id.ToString().PadRight(9) + "/" + entrant.Value.participants[1].player.id.ToString().PadRight(9);
                 }
                 else return;
 
@@ -1581,11 +1479,11 @@ namespace smashgg_to_liquipedia
                 {
                     if (i == entrant.Value.participants.Count - 1)
                     {
-                        richTextBoxEntrants.Text += entrant.Value.participants[i].player.country + "\r\n";
+                        richTextBoxEntrants.Text += entrant.Value.participants[i].user.location.country + "\r\n";
                     }
                     else
                     {
-                        richTextBoxEntrants.Text += entrant.Value.participants[i].player.country + " / ";
+                        richTextBoxEntrants.Text += entrant.Value.participants[i].user.location.country + " / ";
                         lastPlayerPadding -= entrant.Value.participants[i].gamerTag.Length;
                     }
                 }
@@ -1700,7 +1598,7 @@ namespace smashgg_to_liquipedia
                 {
                     // Assume there is only 1 player output their info
                     richTextBoxLpOutput.Text += "|" + standings[startEntrant + i].entrant.participants[0].gamerTag +
-                                                "|flag" + (i + 1) + "=" + standings[startEntrant + i].entrant.participants[0].player.country +
+                                                "|flag" + (i + 1) + "=" + standings[startEntrant + i].entrant.participants[0].user.location.country +
                                                 "|heads" + (i + 1) + "= |team" + (i + 1) + "=\r\n";
                 }
             }
@@ -1711,10 +1609,10 @@ namespace smashgg_to_liquipedia
                 {
                     // Assume there are 2 players, and output their info
                     richTextBoxLpOutput.Text += "|" + standings[startEntrant + i].entrant.participants[0].gamerTag +
-                                                "|flag" + (i + 1) + "p1=" + standings[startEntrant + i].entrant.participants[0].player.country +
+                                                "|flag" + (i + 1) + "p1=" + standings[startEntrant + i].entrant.participants[0].user.location.country +
                                                 "|heads" + (i + 1) + "p1=" +
                                                 "|" + standings[startEntrant + i].entrant.participants[1].gamerTag +
-                                                "|flag" + (i + 1) + "p2=" + standings[startEntrant + i].entrant.participants[1].player.country +
+                                                "|flag" + (i + 1) + "p2=" + standings[startEntrant + i].entrant.participants[1].user.location.country +
                                                 "|heads" + (i + 1) + "p2=\r\n";
                 }
             }
@@ -2111,7 +2009,7 @@ namespace smashgg_to_liquipedia
                     {
                         TreeNodeData samplePhaseGroupTag = (TreeNodeData)e.Node.Nodes[0].Tag;
 
-                        selectedObjectId = selectedEvent.phaseGroups.Where(q => q.id == samplePhaseGroupTag.id).First().waveId ?? 0;
+                        selectedObjectId = selectedEvent.phaseGroups.Where(q => q.id == samplePhaseGroupTag.id).First().wave.id;
                         selectedObjectType = TreeNodeData.NodeType.Wave;
                     }
 
@@ -2333,8 +2231,8 @@ namespace smashgg_to_liquipedia
                         return;
                     }
 
-                    selectedPhase = selectedEvent.phases.Where(q => q.phasegroups.nodes.Any(r => r.waveId == selectedObjectId)).First();
-                    KeyValuePair<string,List<PhaseGroup>> wave = selectedPhase.waves.Where(q => (int)q.Value[0].waveId == selectedObjectId).First();
+                    selectedPhase = selectedEvent.phases.Where(q => q.phasegroups.nodes.Any(r => r.wave.id== selectedObjectId)).First();
+                    KeyValuePair<string,List<PhaseGroup>> wave = selectedPhase.waves.Where(q => (int)q.Value[0].wave.id == selectedObjectId).First();
                     lastWave = wave.Key;
 
                     // Setup progress bar

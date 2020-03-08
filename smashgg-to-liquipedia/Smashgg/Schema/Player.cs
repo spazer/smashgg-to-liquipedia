@@ -8,8 +8,6 @@ namespace smashgg_to_liquipedia.Smashgg.Schema
 {
     public class Player
     {
-        public string gamerTag;
-        public string country;
         public int id;
 
         // Blank constructor
@@ -19,8 +17,6 @@ namespace smashgg_to_liquipedia.Smashgg.Schema
         public Player(int inputID, string inputName, string inputCountry)
         {
             id = inputID;
-            gamerTag = inputName;
-            country = inputCountry;
         }
     }
 }
