@@ -77,7 +77,10 @@ namespace smashgg_to_liquipedia
                     name = player.SelectToken(SmashggStrings.Gamertag).Value<string>();
 
                     // Get player country
-                    country = player.SelectToken(SmashggStrings.Country).Value<string>();
+                    if (!player.SelectToken(SmashggStrings.Country).IsNullOrEmpty())
+                    {
+                        country = player.SelectToken(SmashggStrings.Country).Value<string>();
+                    }
 
                     // Get player country. Leave empty if null
                     if (country != null && country != string.Empty)
