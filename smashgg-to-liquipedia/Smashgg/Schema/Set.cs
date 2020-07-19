@@ -20,8 +20,8 @@ namespace smashgg_to_liquipedia.Smashgg.Schema
         public List<Game> games { get; set; }
         public List<SetSlot> slots { get; set; }
         public int? winnerId;
-        public int wPlacement;
-        public int lPlacement;
+        public int? wPlacement { get; set; }
+        public int? lPlacement { get; set; }
         #endregion
 
         public int match;

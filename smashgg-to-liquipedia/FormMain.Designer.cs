@@ -94,7 +94,6 @@
             this.richTextBoxExLpWinnersBracket = new RichTextBoxEx();
             this.richTextBoxExLpFinalBracket = new RichTextBoxEx();
             this.richTextBoxExLpLosersBracket = new RichTextBoxEx();
-            this.buttonTEST = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAdvanceWinners)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAdvanceLosers)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPrizePool)).BeginInit();
@@ -400,7 +399,6 @@
             this.checkBoxMatchDetails.TabIndex = 25;
             this.checkBoxMatchDetails.Text = "Match Details";
             this.checkBoxMatchDetails.UseVisualStyleBackColor = true;
-            this.checkBoxMatchDetails.Visible = false;
             // 
             // checkBoxUnfinished
             // 
@@ -773,16 +771,6 @@
             this.richTextBoxExLpLosersBracket.TabIndex = 13;
             this.richTextBoxExLpLosersBracket.Text = "";
             // 
-            // buttonTEST
-            // 
-            this.buttonTEST.Location = new System.Drawing.Point(725, 324);
-            this.buttonTEST.Name = "buttonTEST";
-            this.buttonTEST.Size = new System.Drawing.Size(75, 23);
-            this.buttonTEST.TabIndex = 27;
-            this.buttonTEST.Text = "Test";
-            this.buttonTEST.UseVisualStyleBackColor = true;
-            this.buttonTEST.Click += new System.EventHandler(this.buttonTEST_Click);
-            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -790,7 +778,6 @@
             this.ClientSize = new System.Drawing.Size(948, 566);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.label7);
-            this.Controls.Add(this.buttonTEST);
             this.Controls.Add(this.buttonGroupTable);
             this.Controls.Add(this.textBoxTournamentUrl);
             this.Controls.Add(this.textBoxHeaderWinners);
@@ -817,7 +804,7 @@
             this.Controls.Add(this.tabControl);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "FormMain";
-            this.Text = "Smash.gg to Liquipedia v3.2.0";
+            this.Text = "Smash.gg to Liquipedia v4.0.0";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormMain_FormClosing);
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAdvanceWinners)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAdvanceLosers)).EndInit();
@@ -908,7 +895,6 @@
         private System.Windows.Forms.NumericUpDown numericUpDownWinnersEnd;
         private System.Windows.Forms.TreeView treeView1;
         private System.Windows.Forms.Button buttonGetData;
-        private System.Windows.Forms.Button buttonTEST;
     }
 }
 

@@ -187,6 +187,7 @@ namespace smashgg_to_liquipedia
                                 }
                             }
                             videogame{
+                                id
                                 name
                             }
                         }
@@ -285,7 +286,9 @@ namespace smashgg_to_liquipedia
             string setsWithoutDetails = @"
                 query GetSets($phaseGroupId: ID!, $page: Int, $perPage: Int) {
                     phaseGroup(id: $phaseGroupId) {
-                        sets(perPage:$perPage, page:$page) {
+                        sets(perPage:$perPage, page:$page, filters: {
+                            showByes:true
+                        }) {
                             pageInfo {
                                 total
                                 totalPages
@@ -309,7 +312,9 @@ namespace smashgg_to_liquipedia
             string setsWithDetails = @"
                 query GetSetsWithDetails($phaseGroupId: ID!, $page: Int) {
                     phaseGroup(id: $phaseGroupId) {
-                        sets(perPage:60, page:$page) {
+                        sets(perPage:60, page:$page, filters: {
+                            showByes:true
+                        }) {
                             pageInfo {
                                 total
                                 totalPages
@@ -323,12 +328,21 @@ namespace smashgg_to_liquipedia
                                 wPlacement
                                 lPlacement
                                 slots {
+                                    slotIndex
                                     entrant{
                                         id
                                     }
                                 }
                                 games {
+                                    orderNum
+                                    stage {
+                                        id
+                                    }
+                                    winnerId
                                     selections {
+                                        entrant{
+                                            id
+                                        }
                                         selectionType
                                         selectionValue
                                     }

@@ -60,60 +60,60 @@ namespace smashgg_to_liquipedia.Liquipedia
 
             // Insert character for player 1
             string character;
-            if (gameCharacterList.ContainsKey(game.entrant1p1char))
+            if (gameCharacterList.ContainsKey(game.EntrantChar(set.slots[0].entrant.id)))
             {
-                character = gameCharacterList[game.entrant1p1char];
+                character = gameCharacterList[game.EntrantChar(set.slots[0].entrant.id)];
             }
-            else if (game.entrant1p1char == Consts.UNKNOWN || game.entrant1p1char == 0)
+            else if (game.EntrantChar(set.slots[0].entrant.id) == Consts.UNKNOWN || game.EntrantChar(set.slots[0].entrant.id) == 0)
             {
                 character = string.Empty;
             }
             else
             {
-                character = game.entrant1p1char.ToString();
+                character = game.EntrantChar(set.slots[0].entrant.id).ToString();
                 log += "No character entry for number: " + character + "\r\n";
             }
 
-            insertiontext += "|" + identifier + LpStrings.P1 + LpStrings.Character + game.gameOrder + "=" + character;
+            insertiontext += "|" + identifier + LpStrings.P1 + LpStrings.Character + game.orderNum + "=" + character;
 
             // Insert character for player 2
-            if (gameCharacterList.ContainsKey(game.entrant2p1char))
+            if (gameCharacterList.ContainsKey(game.EntrantChar(set.slots[1].entrant.id)))
             {
-                character = gameCharacterList[game.entrant2p1char];
+                character = gameCharacterList[game.EntrantChar(set.slots[1].entrant.id)];
             }
-            else if (game.entrant2p1char == Consts.UNKNOWN || game.entrant2p1char == 0)
+            else if (game.EntrantChar(set.slots[1].entrant.id) == Consts.UNKNOWN || game.EntrantChar(set.slots[1].entrant.id) == 0)
             {
                 character = string.Empty;
             }
             else
             {
-                character = game.entrant2p1char.ToString();
+                character = game.EntrantChar(set.slots[1].entrant.id).ToString();
                 log += "No character entry for number: " + character + "\r\n";
             }
 
-            insertiontext += " |" + identifier + LpStrings.P2 + LpStrings.Character + game.gameOrder + "=" + character;
+            insertiontext += " |" + identifier + LpStrings.P2 + LpStrings.Character + game.orderNum + "=" + character;
 
             // Insert stock counts
             if (game.entrant1p1stocks == Consts.UNKNOWN)
             {
-                insertiontext += " |" + identifier + LpStrings.P1 + LpStrings.Stock + game.gameOrder + "=";
+                insertiontext += " |" + identifier + LpStrings.P1 + LpStrings.Stock + game.orderNum + "=";
             }
             else
             {
-                insertiontext += " |" + identifier + LpStrings.P1 + LpStrings.Stock + game.gameOrder + "=" + game.entrant1p1stocks;
+                insertiontext += " |" + identifier + LpStrings.P1 + LpStrings.Stock + game.orderNum + "=" + game.entrant1p1stocks;
             }
 
             if (game.entrant2p1stocks == Consts.UNKNOWN)
             {
-                insertiontext += " |" + identifier + LpStrings.P2 + LpStrings.Stock + game.gameOrder + "=";
+                insertiontext += " |" + identifier + LpStrings.P2 + LpStrings.Stock + game.orderNum + "=";
             }
             else
             {
-                insertiontext += " |" + identifier + LpStrings.P2 + LpStrings.Stock + game.gameOrder + "=" + game.entrant2p1stocks;
+                insertiontext += " |" + identifier + LpStrings.P2 + LpStrings.Stock + game.orderNum + "=" + game.entrant2p1stocks;
             }
 
             // Insert game winner
-            insertiontext += " |" + identifier + LpStrings.Win + game.gameOrder + "=";
+            insertiontext += " |" + identifier + LpStrings.Win + game.orderNum + "=";
             if (game.winner == set.slots[0].entrant.id)
             {
                 insertiontext += "1";
@@ -125,21 +125,21 @@ namespace smashgg_to_liquipedia.Liquipedia
 
             // Insert stage
             string stage = string.Empty;
-            if (gameStageList.ContainsKey(game.stage))
+            if (gameStageList.ContainsKey(game.stage.id))
             {
-                stage = gameStageList[game.stage];
+                stage = gameStageList[game.stage.id];
             }
-            else if (game.stage == Consts.UNKNOWN || game.stage == 0)
+            else if (game.stage.id == Consts.UNKNOWN || game.stage.id == 0)
             {
                 stage = string.Empty;
             }
             else
             {
-                stage = game.stage.ToString();
+                stage = game.stage.id.ToString();
                 log += "No stage entry for number: " + stage + "\r\n";
             }
 
-            insertiontext += " |" + identifier + LpStrings.Stage + game.gameOrder + "=" + stage + "\r\n";
+            insertiontext += " |" + identifier + LpStrings.Stage + game.orderNum + "=" + stage + "\r\n";
 
             return insertiontext;
         }
@@ -239,60 +239,60 @@ namespace smashgg_to_liquipedia.Liquipedia
                     {
                         // Insert character for player 1
                         string character;
-                        if (gameCharacterList.ContainsKey(game.entrant2p1char))
+                        if (gameCharacterList.ContainsKey(game.EntrantChar(setData.slots[1].entrant.id)))
                         {
-                            character = gameCharacterList[game.entrant2p1char];
+                            character = gameCharacterList[game.EntrantChar(setData.slots[1].entrant.id)];
                         }
-                        else if (game.entrant2p1char == Consts.UNKNOWN)
+                        else if (game.EntrantChar(setData.slots[1].entrant.id) == Consts.UNKNOWN)
                         {
                             character = string.Empty;
                         }
                         else
                         {
-                            character = game.entrant2p1char.ToString();
+                            character = game.EntrantChar(setData.slots[1].entrant.id).ToString();
                             log += "No character entry for number: " + character + "\r\n";
                         }
 
-                        insertiontext += "|" + identifier + LpStrings.P1 + LpStrings.Character + game.gameOrder + "=" + character;
+                        insertiontext += "|" + identifier + LpStrings.P1 + LpStrings.Character + game.orderNum + "=" + character;
 
                         // Insert character for player 2
-                        if (gameCharacterList.ContainsKey(game.entrant1p1char))
+                        if (gameCharacterList.ContainsKey(game.EntrantChar(setData.slots[0].entrant.id)))
                         {
-                            character = gameCharacterList[game.entrant1p1char];
+                            character = gameCharacterList[game.EntrantChar(setData.slots[0].entrant.id)];
                         }
-                        else if (game.entrant1p1char == Consts.UNKNOWN)
+                        else if (game.EntrantChar(setData.slots[0].entrant.id) == Consts.UNKNOWN)
                         {
                             character = string.Empty;
                         }
                         else
                         {
-                            character = game.entrant1p1char.ToString();
+                            character = game.EntrantChar(setData.slots[0].entrant.id).ToString();
                             log += "No character entry for number: " + character + "\r\n";
                         }
 
-                        insertiontext += " |" + identifier + LpStrings.P2 + LpStrings.Character + game.gameOrder + "=" + character;
+                        insertiontext += " |" + identifier + LpStrings.P2 + LpStrings.Character + game.orderNum + "=" + character;
 
                         // Insert stock counts
                         if (game.entrant2p1stocks == Consts.UNKNOWN)
                         {
-                            insertiontext += " |" + identifier + LpStrings.P1 + LpStrings.Stock + game.gameOrder + "=";
+                            insertiontext += " |" + identifier + LpStrings.P1 + LpStrings.Stock + game.orderNum + "=";
                         }
                         else
                         {
-                            insertiontext += " |" + identifier + LpStrings.P1 + LpStrings.Stock + game.gameOrder + "=" + game.entrant2p1stocks;
+                            insertiontext += " |" + identifier + LpStrings.P1 + LpStrings.Stock + game.orderNum + "=" + game.entrant2p1stocks;
                         }
 
                         if (game.entrant1p1stocks == Consts.UNKNOWN)
                         {
-                            insertiontext += " |" + identifier + LpStrings.P2 + LpStrings.Stock + game.gameOrder + "=";
+                            insertiontext += " |" + identifier + LpStrings.P2 + LpStrings.Stock + game.orderNum + "=";
                         }
                         else
                         {
-                            insertiontext += " |" + identifier + LpStrings.P2 + LpStrings.Stock + game.gameOrder + "=" + game.entrant1p1stocks;
+                            insertiontext += " |" + identifier + LpStrings.P2 + LpStrings.Stock + game.orderNum + "=" + game.entrant1p1stocks;
                         }
 
                         // Insert game winner
-                        insertiontext += " |" + identifier + LpStrings.Win + game.gameOrder + "=";
+                        insertiontext += " |" + identifier + LpStrings.Win + game.orderNum + "=";
                         if (game.winner == setData.slots[0].entrant.id)
                         {
                             insertiontext += "2";
@@ -304,21 +304,21 @@ namespace smashgg_to_liquipedia.Liquipedia
 
                         // Insert stage
                         string stage = string.Empty;
-                        if (gameStageList.ContainsKey(game.stage))
+                        if (gameStageList.ContainsKey(game.stage.id))
                         {
-                            stage = gameStageList[game.stage];
+                            stage = gameStageList[game.stage.id];
                         }
-                        else if (game.stage == Consts.UNKNOWN)
+                        else if (game.stage.id == Consts.UNKNOWN)
                         {
                             stage = string.Empty;
                         }
                         else
                         {
-                            stage = game.stage.ToString();
+                            stage = game.stage.id.ToString();
                             log += "No stage entry for number: " + stage + "\r\n";
                         }
 
-                        insertiontext += " |" + identifier + LpStrings.Stage + game.gameOrder + "=" + stage + "\r\n";
+                        insertiontext += " |" + identifier + LpStrings.Stage + game.orderNum + "=" + stage + "\r\n";
                     }
                 }
 
@@ -464,7 +464,7 @@ namespace smashgg_to_liquipedia.Liquipedia
                             {
                                 if (includeUnfinished || currentSet.State == Tournament.ActivityState.Completed)
                                 {
-                                    if (currentSet.entrant1wins != Consts.UNKNOWN && currentSet.entrant2wins != Consts.UNKNOWN)
+                                    if (currentSet.entrant1wins != 0 && currentSet.entrant2wins != 0)
                                     {
                                         FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P2 + LpStrings.Score, currentSet.entrant1wins.ToString());
                                         FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P1 + LpStrings.Score, currentSet.entrant2wins.ToString());
@@ -473,11 +473,11 @@ namespace smashgg_to_liquipedia.Liquipedia
                                     {
                                         if (currentSet.winnerId == currentSet.slots[0].entrant.id)
                                         {
-                                            FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P2 + LpStrings.Score, "{{win}}");
+                                            FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P2 + LpStrings.Score, LpStrings.Checkmark);
                                         }
                                         else if (currentSet.winnerId == currentSet.slots[1].entrant.id)
                                         {
-                                            FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P1 + LpStrings.Score, "{{win}}");
+                                            FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P1 + LpStrings.Score, LpStrings.Checkmark);
                                         }
                                     }
                                 }
@@ -486,7 +486,7 @@ namespace smashgg_to_liquipedia.Liquipedia
                             {
                                 if (includeUnfinished || currentSet.State == Tournament.ActivityState.Completed)
                                 {
-                                    if (currentSet.entrant1wins != Consts.UNKNOWN && currentSet.entrant2wins != Consts.UNKNOWN)
+                                    if (currentSet.entrant1wins != 0 && currentSet.entrant2wins != 0)
                                     {
                                         FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P1 + LpStrings.Score, currentSet.entrant1wins.ToString());
                                         FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P2 + LpStrings.Score, currentSet.entrant2wins.ToString());
@@ -495,11 +495,11 @@ namespace smashgg_to_liquipedia.Liquipedia
                                     {
                                         if (currentSet.winnerId == currentSet.slots[0].entrant.id)
                                         {
-                                            FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P1 + LpStrings.Score, "{{win}}");
+                                            FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P1 + LpStrings.Score, LpStrings.Checkmark);
                                         }
                                         else if (currentSet.winnerId == currentSet.slots[1].entrant.id)
                                         {
-                                            FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P2 + LpStrings.Score, "{{win}}");
+                                            FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P2 + LpStrings.Score, LpStrings.Checkmark);
                                         }
                                     }
                                 }
@@ -872,6 +872,7 @@ namespace smashgg_to_liquipedia.Liquipedia
                 output += LpStrings.MatchListStart + LpStrings.GroupStartWidth + "\r\n";
                 foreach (Set currentSet in setList)
                 {
+                    if (currentSet.slots[0].entrant == null || currentSet.slots[1].entrant == null) continue;
                     Participant p1 = entrantList[currentSet.slots[0].entrant.id].participants[0];
                     Participant p2 = entrantList[currentSet.slots[1].entrant.id].participants[0];
 

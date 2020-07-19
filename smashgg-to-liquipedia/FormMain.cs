@@ -2293,16 +2293,5 @@ namespace smashgg_to_liquipedia
                     break;
             }
         }
-
-        private void buttonTEST_Click(object sender, EventArgs e)
-        {
-            apiQuery.GetEventEntrants(119796, out entrantList);
-
-            foreach(KeyValuePair<int,Entrant> entry in entrantList)
-            {
-                richTextBoxLpOutput.Text += entry.Key.ToString() + " || " + entry.Value.participants[0].gamerTag;
-            }
-            
-        }
     }
 }

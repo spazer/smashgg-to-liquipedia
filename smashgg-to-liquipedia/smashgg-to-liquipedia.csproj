@@ -114,6 +114,8 @@
     <Compile Include="FormMain.Designer.cs">
       <DependentUpon>FormMain.cs</DependentUpon>
     </Compile>
+    <Compile Include="Smashgg\Schema\GameSelection.cs" />
+    <Compile Include="Smashgg\Schema\Stage.cs" />
     <Compile Include="Smashgg\Schema\ContactInfo.cs" />
     <Compile Include="Smashgg\Schema\EntrantConnection.cs" />
     <Compile Include="Smashgg\Schema\Event.cs" />
