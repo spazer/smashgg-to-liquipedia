@@ -193,6 +193,11 @@ namespace smashgg_to_liquipedia
                 playerdb = new PlayerDatabase(PlayerDatabase.DbSource.Fighters);
             }
             UpdateRevID();
+
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls
+                                                   | SecurityProtocolType.Tls11
+                                                   | SecurityProtocolType.Tls12
+                                                   | SecurityProtocolType.Ssl3;
         }
 
         #region Buttons
