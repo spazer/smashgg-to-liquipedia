@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using GraphQL.Common.Request;
 using GraphQL.Client;
-using System.Net.Http.Headers;
+using System.Net;
 using System.Xml;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
@@ -93,6 +93,8 @@ namespace smashgg_to_liquipedia
             // Make a new client, set the endpoint, set the token
             graphQLClient = new GraphQLClient(endpoint);
             graphQLClient.DefaultRequestHeaders.Add("Authorization", $"Bearer " + token);
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+            
 
             // Constructor finished succesfully
             success = true;
