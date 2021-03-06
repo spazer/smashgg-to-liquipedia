@@ -15,8 +15,9 @@ namespace smashgg_to_liquipedia.Smashgg.Schema
         public int state { get; set; }
         public int phaseId { get; set; }
         public Wave wave { get; set; }
-        public List<Seed> seeds { get; set; }
+        public SeedConnection seeds { get; set; }
         public SetConnection sets { get; set; }
+        public StandingConnection standings { get; set; }
 
         // Internal fields
         public enum IdentiferType { WaveNumber, NumberOnly, Other };

@@ -177,7 +177,10 @@ namespace smashgg_to_liquipedia
                             phases {
                                 id
                                 name
-                                phaseGroups {
+                                phaseGroups(query: {
+                                  page: 1
+                                  perPage: 256
+                                }) {
                                     nodes {
                                         id
                                         displayIdentifier
@@ -574,6 +577,55 @@ namespace smashgg_to_liquipedia
             }
 
             return eventResults.standings.nodes;
+        }
+
+        public List<Seed> GetSeedStandings(int phaseGroupId)
+        {
+            GraphQLRequest pgStandingsRequest = new GraphQLRequest
+            {
+                Query = @"
+                    query GetPhaseGroupStandings($phaseGroupId: ID) {
+                        phaseGroup(id: $phaseGroupId) {
+                            seeds(query: {
+                                page: 1
+                                perPage: 100
+                            }) {
+                                nodes{
+                                  	entrant {
+                                      	id
+                                        name
+                                    }
+                                    placement
+                                }
+                            }
+                        }
+                    }",
+                OperationName = "GetPhaseGroupStandings",
+                Variables = new
+                {
+                    phaseGroupId = phaseGroupId
+                }
+            };
+
+            GraphQLResponse response = SendRequest(pgStandingsRequest);
+            PhaseGroup phaseGroupResults = new PhaseGroup();
+            if (response != null)
+            {
+                // Parse the json response
+                phaseGroupResults = JsonConvert.DeserializeObject<PhaseGroup>(response.Data.@phaseGroup.ToString());
+            }
+            else
+            {
+                WriteLineToLog("Could not retrieve any data");
+            }
+
+            // Standardize participant information
+            foreach (Seed seed in phaseGroupResults.seeds.nodes)
+            {
+                ParticipantStandardization(seed.entrant.participants);
+            }
+
+            return phaseGroupResults.seeds.nodes;
         }
 
         /// <summary>

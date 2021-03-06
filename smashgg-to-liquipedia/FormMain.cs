@@ -29,6 +29,7 @@ namespace smashgg_to_liquipedia
         List<Seed> seedList = new List<Seed>();
         Dictionary<int, Entrant> entrantList = new Dictionary<int, Entrant>();
         List<Set> setList = new List<Set>();
+        //List<Standing> groupStandings = new List<Standing>();
         Dictionary<int, List<Set>> roundList = new Dictionary<int, List<Set>>();
         Dictionary<int, int> matchOffsetPerRound = new Dictionary<int, int>();
 
@@ -573,7 +574,7 @@ namespace smashgg_to_liquipedia
             // Loop through the records to remove placements of 0
             for (int i = 0; i < standingList.Count; i++)
             {
-                if (standingList[i].standing == 0)
+                if (standingList[i].placement == 0)
                 {
                     standingList.RemoveAt(i);
                     i--;
@@ -591,7 +592,7 @@ namespace smashgg_to_liquipedia
                 for (int j = startEntry + 1; j < standingList.Count; j++)
                 {
                     // When a match is found, j is the next entrant with a new rank
-                    if (standingList[startEntry].standing != standingList[j].standing)
+                    if (standingList[startEntry].placement != standingList[j].placement)
                     {
                         nextRow = j;
                         rowSet = true;
@@ -803,14 +804,14 @@ namespace smashgg_to_liquipedia
             }
 
             // Fill entrant list from seed list
-            foreach (Seed seed in seedList)
-            {
-                // Check if the round already exists in roundList
-                if (seed.entrant != null)
-                {
-                    entrantList.Add(seed.entrant.id, seed.entrant);
-                }
-            }
+            //foreach (Seed seed in seedList)
+            //{
+            //    // Check if the round already exists in roundList
+            //    if (seed.entrant != null)
+            //    {
+            //        entrantList.Add(seed.entrant.id, seed.entrant);
+            //    }
+            //}
 
 
             // Clear out bye rounds in winners
@@ -1227,7 +1228,7 @@ namespace smashgg_to_liquipedia
                     }
                 }
 
-                record[seed.entrant.id].rank = standings.Where(q => q.entrant.id.Equals(seed.entrant.id)).First().standing;
+                record[seed.entrant.id].rank = standings.Where(q => q.entrant.id.Equals(seed.entrant.id)).First().placement;
             }
 
             // Remove entrants without listed sets (smash.gg seems to list extraneous entrants sometimes)
@@ -1580,11 +1581,11 @@ namespace smashgg_to_liquipedia
             // Output the place
             if (rows == 1)
             {
-                richTextBoxLpOutput.Text += standings[startEntrant].standing;
+                richTextBoxLpOutput.Text += standings[startEntrant].placement;
             }
             else
             {
-                richTextBoxLpOutput.Text += standings[startEntrant].standing + "-" + (standings[startEntrant].standing + rows - 1);
+                richTextBoxLpOutput.Text += standings[startEntrant].placement + "-" + (standings[startEntrant].placement + rows - 1);
             }
 
             // Ouptut the parameter for prize money
@@ -1677,7 +1678,7 @@ namespace smashgg_to_liquipedia
             richTextBoxEntrants.Clear();
             richTextBoxWinners.Clear();
             richTextBoxLosers.Clear();
-            entrantList.Clear();
+            //entrantList.Clear();
             setList.Clear();
             seedList.Clear();
             roundList.Clear();
@@ -2155,31 +2156,27 @@ namespace smashgg_to_liquipedia
                     foreach (PhaseGroup group in selectedPhase.phasegroups.nodes)
                     {
                         if (setList == null) setList = new List<Set>();
-                        if (seedList == null) seedList = new List<Seed>();
 
                         // Clear data
                         ClearData();
                         setList.Clear();
-                        seedList.Clear();
 
                         Dictionary<int, PoolRecord> poolData = new Dictionary<int, PoolRecord>();
 
                         // Get all sets in the phasegroup
                         apiQuery.GetSets(group.id, out setList, checkBoxMatchDetails.Checked);
-                        if (seedList == null)
-                        {
-                            richTextBoxLog.Text += string.Format("Seed list not retrieved for {0}\r\n", group.id);
-                            continue;
-                        }
                         if (setList == null)
                         {
                             richTextBoxLog.Text += string.Format("Set list not retrieved for {0}\r\n", group.id);
                             continue;
                         }
 
+                        // Get standings
+                        seedList = apiQuery.GetSeedStandings(group.id);
+
                         // Generate the round list
                         ProcessBracket(selectedEvent.Type);
-                        
+
                         if (!GeneratePoolData(poolType, ref poolData)) continue;
 
                         if (selectedEvent.Type == Event.EventType.Singles)
@@ -2199,11 +2196,6 @@ namespace smashgg_to_liquipedia
                 // Get a single phasegroup
                 case TreeNodeData.NodeType.PhaseGroup:
                     apiQuery.GetSets(selectedObjectId, out setList, checkBoxMatchDetails.Checked);
-                    if (seedList == null)
-                    {
-                        richTextBoxLog.Text += string.Format("Seed list not retrieved\r\n");
-                        return;
-                    }
                     if (setList == null)
                     {
                         richTextBoxLog.Text += string.Format("Set list not retrieved\r\n");

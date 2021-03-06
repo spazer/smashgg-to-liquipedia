@@ -11,7 +11,7 @@ namespace smashgg_to_liquipedia.Smashgg.Schema
         #region GraphQL fields
         public string id { get; set; }
         public Entrant entrant { get; set; }
-        public int standing { get; set; }
+        public int placement { get; set; }
         #endregion
     }
 }
