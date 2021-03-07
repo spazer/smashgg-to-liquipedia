@@ -53,6 +53,10 @@ namespace smashgg_to_liquipedia
         {
             InitializeComponent();
 
+            // Display version
+            Version version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
+            this.Text = "Bracket Match Filler v" + $"{version}";
+
             try
             {
                 StreamReader fileinfo = new StreamReader(@"userinfo");
@@ -62,7 +66,7 @@ namespace smashgg_to_liquipedia
             }
             catch
             {
-                Console.WriteLine("No saved credentials.");
+                Console.WriteLine("No saved credentials. Set your smash.gg token first.\r\n");
             }
 
             SetCueText(textBoxTournamentUrl, FormStrings.CuetextURL);
@@ -2009,13 +2013,18 @@ namespace smashgg_to_liquipedia
                     if (tag.nodetype == TreeNodeData.NodeType.Wave)
                     {
                         TreeNodeData samplePhaseGroupTag = (TreeNodeData)e.Node.Nodes[0].Tag;
+                        TreeNode currentPhase = e.Node.Parent;
 
-                        selectedObjectId = selectedEvent.phaseGroups.Where(q => q.id == samplePhaseGroupTag.id).First().wave.id;
+                        // Get phase
+                        var test = selectedEvent.phases.Where(p => p.name == currentPhase.Text).First();
+
+                        // phaseGroups is typically null on the event object
+                        selectedObjectId = test.waves.Where(w => w.Value.Where(pg => pg.id == samplePhaseGroupTag.id).First().id == samplePhaseGroupTag.id).First().Value.ElementAt(0).wave.id;
                         selectedObjectType = TreeNodeData.NodeType.Wave;
                     }
 
                     // Determine if there is only one phasegroup and select it if there is
-                    if (e.Node.Nodes.Count <= 1)
+                    else if (e.Node.Nodes.Count <= 1)
                     {
                         if (tag.nodetype == TreeNodeData.NodeType.Phase)
                         {
@@ -2202,6 +2211,9 @@ namespace smashgg_to_liquipedia
                         return;
                     }
 
+                    // Get standings
+                    seedList = apiQuery.GetSeedStandings(selectedObjectId);
+
                     // Generate the round list
                     ProcessBracket(selectedEvent.Type);
                     break;
@@ -2223,7 +2235,7 @@ namespace smashgg_to_liquipedia
                         return;
                     }
 
-                    selectedPhase = selectedEvent.phases.Where(q => q.phasegroups.nodes.Any(r => r.wave.id== selectedObjectId)).First();
+                    selectedPhase = selectedEvent.phases.Where(q => q.phasegroups.nodes.Any(r => r.wave.id == selectedObjectId)).First();
                     KeyValuePair<string,List<PhaseGroup>> wave = selectedPhase.waves.Where(q => (int)q.Value[0].wave.id == selectedObjectId).First();
                     lastWave = wave.Key;
 
@@ -2258,6 +2270,9 @@ namespace smashgg_to_liquipedia
                             richTextBoxLog.Text += string.Format("Set list not retrieved for {0}\r\n", group.id);
                             continue;
                         }
+
+                        // Get standings
+                        seedList = apiQuery.GetSeedStandings(group.id);
 
                         // Generate the round list
                         ProcessBracket(selectedEvent.Type);

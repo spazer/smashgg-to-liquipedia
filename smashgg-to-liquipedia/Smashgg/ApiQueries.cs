@@ -186,6 +186,7 @@ namespace smashgg_to_liquipedia
                                         displayIdentifier
                                         state
                                         wave {
+                                            id
                                             identifier
                                         }
                                     }
