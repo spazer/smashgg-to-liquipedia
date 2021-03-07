@@ -364,7 +364,7 @@ namespace smashgg_to_liquipedia.Liquipedia
         /// <param name="bracketText">Liquipedia markup</param>
         /// <param name="flipSide">Change L to R</param>
         public void fillBracketSingles(int startRound, int endRound, int offset, ref string bracketText, Dictionary<int, int> matchOffsetPerRound, 
-                                       bool fillByes, bool fillByeWins, bool r1Only, bool includeUnfinished, bool matchDetails, bool flipSide)
+                                       bool fillByes, bool includeUnfinished, bool matchDetails, bool flipSide)
         {
             int increment;
             string bracketSide;
@@ -397,69 +397,44 @@ namespace smashgg_to_liquipedia.Liquipedia
                 {
                     Set currentSet = roundList[i][j];
 
-                    // Skip rounds with missing entrants
-                    if (currentSet.slots[0].entrant == null) continue;
-                    if (currentSet.slots[1].entrant == null) continue;
-                    if (!entrantList.ContainsKey(currentSet.slots[0].entrant.id)) continue;
-                    if (!entrantList.ContainsKey(currentSet.slots[1].entrant.id)) continue;
-
                     // Add offsets
                     outputRound = Math.Abs(i) + offset;
                     int outputSet = currentSet.match + matchOffsetPerRound[i];
 
                     // Check for player byes
-                    if (currentSet.slots[0].entrant.id == Consts.PLAYER_BYE && currentSet.slots[1].entrant.id == Consts.PLAYER_BYE)
+                    if (currentSet.DisplayScore == "Bye" || currentSet.DisplayScore == "bye")
                     {
-                        // If both players are byes, skip this entry
-                        continue;
-                    }
-                    else if (currentSet.slots[0].entrant.id == Consts.PLAYER_BYE)
-                    {
-                        // Fill in player 1 as a bye if fill byes is checked
                         if (fillByes == true)
                         {
-                            if (!r1Only || (r1Only && outputRound == 1))
+                            if (currentSet.slots[0] == null || currentSet.slots[0].entrant == null)
                             {
                                 FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P1, "Bye");
                             }
-                        }
-
-                        // Fill player 2 info
-                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P2, entrantList[currentSet.slots[1].entrant.id].participants[0].gamerTag);
-                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P2 + LpStrings.Flag, entrantList[currentSet.slots[1].entrant.id].participants[0].user.location.country);
-
-                        // Give player 2 a checkmark
-                        if (fillByeWins == true)
-                        {
-                            if (!r1Only || (r1Only && outputRound == 1))
+                            else
                             {
-                                FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P2 + LpStrings.Score, LpStrings.Checkmark);
-                                FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.Win, "2");
+                                FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P1, entrantList[currentSet.slots[0].entrant.id].participants[0].gamerTag);
+                                FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P1 + LpStrings.Flag, entrantList[currentSet.slots[0].entrant.id].participants[0].user.location.country);
                             }
-                        }
-                    }
-                    else if (currentSet.slots[1].entrant.id == Consts.PLAYER_BYE)
-                    {
-                        // Fill in player 2 as a bye
-                        if (fillByes == true)
-                        {
-                            if (!r1Only || (r1Only && outputRound == 1))
+                            if (currentSet.slots[1] == null || currentSet.slots[1].entrant == null)
                             {
                                 FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P2, "Bye");
                             }
-                        }
+                            else
+                            {
+                                FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P2, entrantList[currentSet.slots[1].entrant.id].participants[0].gamerTag);
+                                FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P2 + LpStrings.Flag, entrantList[currentSet.slots[1].entrant.id].participants[0].user.location.country);
+                            }
 
-                        // Fill player 1 info
-                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P1, entrantList[currentSet.slots[0].entrant.id].participants[0].gamerTag);
-                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P1 + LpStrings.Flag, entrantList[currentSet.slots[0].entrant.id].participants[0].user.location.country);
-
-                        // Give player 1 a checkmark
-                        if (fillByeWins == true)
-                        {
-                            if (!r1Only || (r1Only && outputRound == 1))
+                            // Fill wins
+                            if (currentSet.slots[0].entrant != null && currentSet.winnerId == currentSet.slots[0].entrant.id)
                             {
                                 FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P1 + LpStrings.Score, LpStrings.Checkmark);
                                 FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.Win, "1");
+                            }
+                            else if (currentSet.slots[1].entrant != null && currentSet.winnerId == currentSet.slots[1].entrant.id)
+                            {
+                                FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P2 + LpStrings.Score, LpStrings.Checkmark);
+                                FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.Win, "2");
                             }
                         }
                     }
@@ -590,7 +565,7 @@ namespace smashgg_to_liquipedia.Liquipedia
         /// <param name="bracketText">Liquipedia markup</param>
         /// <param name="flipSide">Change L to R</param>
         public void fillBracketDoubles(int startRound, int endRound, int offset, ref string bracketText, Dictionary<int, int> matchOffsetPerRound, 
-                                       bool fillByes, bool fillByeWins, bool r1Only, bool includeUnfinished, bool flipSide)
+                                       bool fillByes, bool fillByeWins, bool flipSide)
         {
             int increment;
             string bracketSide;
@@ -626,58 +601,47 @@ namespace smashgg_to_liquipedia.Liquipedia
                     outputRound = Math.Abs(i) + offset;
                     int outputSet = currentSet.match + matchOffsetPerRound[i];
 
-                    // Skip unfinished sets unless otherwise specified
-                    //if (fillByes == false && currentSet.state == 1)
-                    //{
-                    //    continue;
-                    //}
-
                     // Check for player byes
-                    if (currentSet.slots[0].entrant.id == Consts.PLAYER_BYE && currentSet.slots[1].entrant.id == Consts.PLAYER_BYE)
+                    if (currentSet.DisplayScore == "Bye" || currentSet.DisplayScore == "bye")
                     {
-                        // If both players are byes, skip this entry
-                        continue;
-                    }
-                    else if (currentSet.slots[0].entrant.id == Consts.PLAYER_BYE)
-                    {
-                        // Fill in team 1 as a bye
                         if (fillByes == true)
                         {
-                            FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.T1 + LpStrings.P1, "Bye");
-                            FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.T1 + LpStrings.P2, "Bye");
-                        }
+                            if (currentSet.slots[0] == null || currentSet.slots[0].entrant == null)
+                            {
+                                FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.T1 + LpStrings.P1, "Bye");
+                                FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.T1 + LpStrings.P2, "Bye");
+                            }
+                            else
+                            {
+                                FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.T1 + LpStrings.P1, entrantList[currentSet.slots[0].entrant.id].participants[0].gamerTag);
+                                FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.T1 + LpStrings.P1 + LpStrings.Flag, entrantList[currentSet.slots[0].entrant.id].participants[0].user.location.country);
+                                FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.T1 + LpStrings.P2, entrantList[currentSet.slots[0].entrant.id].participants[1].gamerTag);
+                                FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.T1 + LpStrings.P2 + LpStrings.Flag, entrantList[currentSet.slots[0].entrant.id].participants[1].user.location.country);
+                            }
+                            if (currentSet.slots[1] == null || currentSet.slots[1].entrant == null)
+                            {
+                                FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.T2 + LpStrings.P1, "Bye");
+                                FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.T2 + LpStrings.P2, "Bye");
+                            }
+                            else
+                            {
+                                FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.T2 + LpStrings.P1, entrantList[currentSet.slots[1].entrant.id].participants[0].gamerTag);
+                                FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.T2 + LpStrings.P1 + LpStrings.Flag, entrantList[currentSet.slots[1].entrant.id].participants[0].user.location.country);
+                                FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.T2 + LpStrings.P2, entrantList[currentSet.slots[1].entrant.id].participants[1].gamerTag);
+                                FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.T2 + LpStrings.P2 + LpStrings.Flag, entrantList[currentSet.slots[1].entrant.id].participants[1].user.location.country);
+                            }
 
-                        // Give team 2 a checkmark
-                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.T2 + LpStrings.P1, entrantList[currentSet.slots[1].entrant.id].participants[0].gamerTag);
-                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.T2 + LpStrings.P1 + LpStrings.Flag, entrantList[currentSet.slots[1].entrant.id].participants[0].user.location.country);
-                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.T2 + LpStrings.P2, entrantList[currentSet.slots[1].entrant.id].participants[1].gamerTag);
-                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.T2 + LpStrings.P2 + LpStrings.Flag, entrantList[currentSet.slots[1].entrant.id].participants[1].user.location.country);
-
-                        if (fillByeWins == true)
-                        {
-                            FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.T2 + LpStrings.Score, LpStrings.Checkmark);
-                            FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.Win, "2");
-                        }
-                    }
-                    else if (currentSet.slots[1].entrant.id == Consts.PLAYER_BYE)
-                    {
-                        // Fill in team 2 as a bye
-                        if (fillByes == true)
-                        {
-                            FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.T2 + LpStrings.P1, "Bye");
-                            FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.T2 + LpStrings.P2, "Bye");
-                        }
-
-                        // Give team 1 a checkmark
-                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.T1 + LpStrings.P1, entrantList[currentSet.slots[0].entrant.id].participants[0].gamerTag);
-                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.T1 + LpStrings.P1 + LpStrings.Flag, entrantList[currentSet.slots[0].entrant.id].participants[0].user.location.country);
-                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.T1 + LpStrings.P2, entrantList[currentSet.slots[0].entrant.id].participants[1].gamerTag);
-                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.T1 + LpStrings.P2 + LpStrings.Flag, entrantList[currentSet.slots[0].entrant.id].participants[1].user.location.country);
-
-                        if (fillByeWins == true)
-                        {
-                            FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.T1 + LpStrings.Score, LpStrings.Checkmark);
-                            FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.Win, "1");
+                            // Fill wins
+                            if (currentSet.slots[0].entrant != null && currentSet.winnerId == currentSet.slots[0].entrant.id)
+                            {
+                                FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.T1 + LpStrings.Score, LpStrings.Checkmark);
+                                FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.Win, "1");
+                            }
+                            else if (currentSet.slots[1].entrant != null && currentSet.winnerId == currentSet.slots[1].entrant.id)
+                            {
+                                FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.T2 + LpStrings.Score, LpStrings.Checkmark);
+                                FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.Win, "2");
+                            }
                         }
                     }
                     else
@@ -842,11 +806,15 @@ namespace smashgg_to_liquipedia.Liquipedia
                 {
                     if (advanceWinners > 0 && poolData[poolData.ElementAt(i).Key].rank != 0 && poolType != PoolRecord.PoolType.RoundRobin)
                     {
-                        output += LpStrings.SlotPlace + (poolData[poolData.ElementAt(i).Key].rank - totalWinners);
+                        // Ignore smash.gg placements for advancements since they don't work atm
+                        output += LpStrings.SlotPlace + "1";
+                        //output += LpStrings.SlotPlace + (poolData[poolData.ElementAt(i).Key].rank - totalWinners);
                     }
                     else if (advanceLosers > 0 && poolData[poolData.ElementAt(i).Key].rank != 0 && poolType != PoolRecord.PoolType.RoundRobin)
                     {
-                        output += LpStrings.SlotPlace + (poolData[poolData.ElementAt(i).Key].rank - 1);
+                        // Ignore smash.gg placements for advancements since they don't work atm
+                        output += LpStrings.SlotPlace + (totalWinners+1);
+                        //output += LpStrings.SlotPlace + (poolData[poolData.ElementAt(i).Key].rank - 1);
                     }
                     else
                     {
@@ -989,11 +957,15 @@ namespace smashgg_to_liquipedia.Liquipedia
                 {
                     if (advanceWinners > 0 && poolData[poolData.ElementAt(i).Key].rank != 0 && poolType != PoolRecord.PoolType.RoundRobin)
                     {
-                        output += LpStrings.SlotPlace + (poolData[poolData.ElementAt(i).Key].rank - totalWinners);
+                        // Ignore smash.gg placements for advancements since they don't work atm
+                        output += LpStrings.SlotPlace + "1";
+                        //output += LpStrings.SlotPlace + (poolData[poolData.ElementAt(i).Key].rank - totalWinners);
                     }
                     else if (advanceLosers > 0 && poolData[poolData.ElementAt(i).Key].rank != 0 && poolType != PoolRecord.PoolType.RoundRobin)
                     {
-                        output += LpStrings.SlotPlace + (poolData[poolData.ElementAt(i).Key].rank - 1);
+                        // Ignore smash.gg placements for advancements since they don't work atm
+                        output += LpStrings.SlotPlace + (totalWinners + 1);
+                        //output += LpStrings.SlotPlace + (poolData[poolData.ElementAt(i).Key].rank - 1);
                     }
                     else
                     {

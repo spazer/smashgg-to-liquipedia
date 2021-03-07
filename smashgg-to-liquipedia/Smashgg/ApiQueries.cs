@@ -210,7 +210,7 @@ namespace smashgg_to_liquipedia
             GraphQLResponse response = SendRequest(eventsRequest);
             Tournament tournament = new Tournament();
 
-            if (response.Data != null)
+            if (response != null && response.Data != null)
             {
                 // Parse the json response
                 tournament = JsonConvert.DeserializeObject<Tournament>(response.Data.tournament.ToString());
@@ -278,7 +278,7 @@ namespace smashgg_to_liquipedia
             }
             else
             {
-                WriteLineToLog("Could not retrieve any data");
+                WriteLineToLog("Could not retrieve any data. Check your token.");
             }
 
             return tournament;

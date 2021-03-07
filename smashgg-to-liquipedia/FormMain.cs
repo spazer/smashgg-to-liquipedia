@@ -61,12 +61,17 @@ namespace smashgg_to_liquipedia
             {
                 StreamReader fileinfo = new StreamReader(@"userinfo");
                 authToken = fileinfo.ReadLine().Trim().Unprotect();
-
                 fileinfo.Close();
+
+                if (authToken == "")
+                {
+                    buttonAuthentication.BackColor = Color.PaleVioletRed;
+                }
             }
             catch
             {
-                Console.WriteLine("No saved credentials. Set your smash.gg token first.\r\n");
+                richTextBoxLog.Text += "No saved credentials. Set your smash.gg token first.\r\n";
+                buttonAuthentication.BackColor = Color.PaleVioletRed;
             }
 
             SetCueText(textBoxTournamentUrl, FormStrings.CuetextURL);
@@ -367,8 +372,9 @@ namespace smashgg_to_liquipedia
             root.Expand();
             treeView1.EndUpdate();
 
-
             UnlockControls();
+
+            richTextBoxLog.Text += "Get tournament complete.\r\n";
         }
 
         private void buttonFill_Click(object sender, EventArgs e)
@@ -428,12 +434,12 @@ namespace smashgg_to_liquipedia
             if (checkBoxWinners.Checked)
             {
                 lpout.fillBracketSingles((int)numericUpDownWinnersStart.Value, (int)numericUpDownWinnersEnd.Value, (int)numericUpDownWinnersOffset.Value, ref output, matchOffsetPerRound,
-                    checkBoxFillByes.Checked, checkBoxFillByeWins.Checked, checkBoxR1Only.Checked, checkBoxUnfinished.Checked, checkBoxMatchDetails.Checked, false);
+                    checkBoxFillByes.Checked, checkBoxUnfinished.Checked, checkBoxMatchDetails.Checked, false);
             }
             if (checkBoxLosers.Checked)
             {
                 lpout.fillBracketSingles(-(int)numericUpDownLosersStart.Value, -(int)numericUpDownLosersEnd.Value, (int)numericUpDownLosersOffset.Value, ref output, matchOffsetPerRound,
-                    checkBoxFillByes.Checked, checkBoxFillByeWins.Checked, checkBoxR1Only.Checked, checkBoxUnfinished.Checked, checkBoxMatchDetails.Checked, false);
+                    checkBoxFillByes.Checked, checkBoxUnfinished.Checked, checkBoxMatchDetails.Checked, false);
             }
             if (checkBoxGuessFinal.Checked)
             {
@@ -447,19 +453,19 @@ namespace smashgg_to_liquipedia
 
                 // Fill in R3
                 lpout.fillBracketSingles(gfround, gfround, 3 - gfround, ref finalBracketOutput, matchOffsetPerRound,
-                    checkBoxFillByes.Checked, checkBoxFillByeWins.Checked, checkBoxR1Only.Checked, checkBoxUnfinished.Checked, checkBoxMatchDetails.Checked, false);
+                    checkBoxFillByes.Checked, checkBoxUnfinished.Checked, checkBoxMatchDetails.Checked, false);
 
                 // Fill in L2
                 lpout.fillBracketSingles(lfround, lfround, 2 - Math.Abs(lfround), ref finalBracketOutput, matchOffsetPerRound,
-                    checkBoxFillByes.Checked, checkBoxFillByeWins.Checked, checkBoxR1Only.Checked, checkBoxUnfinished.Checked, checkBoxMatchDetails.Checked, true);
+                    checkBoxFillByes.Checked, checkBoxUnfinished.Checked, checkBoxMatchDetails.Checked, true);
 
                 // Fill in L1
                 lpout.fillBracketSingles(lsround, lsround, 1 - Math.Abs(lsround), ref finalBracketOutput, matchOffsetPerRound,
-                    checkBoxFillByes.Checked, checkBoxFillByeWins.Checked, checkBoxR1Only.Checked, checkBoxUnfinished.Checked, checkBoxMatchDetails.Checked, false);
+                    checkBoxFillByes.Checked, checkBoxUnfinished.Checked, checkBoxMatchDetails.Checked, false);
 
                 // Fill in R1
                 lpout.fillBracketSingles(wfround, wfround, 1 - wfround, ref finalBracketOutput, matchOffsetPerRound,
-                    checkBoxFillByes.Checked, checkBoxFillByeWins.Checked, checkBoxR1Only.Checked, checkBoxUnfinished.Checked, checkBoxMatchDetails.Checked, false);
+                    checkBoxFillByes.Checked, checkBoxUnfinished.Checked, checkBoxMatchDetails.Checked, false);
 
                 if (textBoxHeaderFinals.Text.Trim() != string.Empty)
                 {
@@ -506,12 +512,12 @@ namespace smashgg_to_liquipedia
             if (checkBoxWinners.Checked)
             {
                 lpout.fillBracketDoubles((int)numericUpDownWinnersStart.Value, (int)numericUpDownWinnersEnd.Value, (int)numericUpDownWinnersOffset.Value, ref output, matchOffsetPerRound,
-                    checkBoxFillByes.Checked, checkBoxFillByeWins.Checked, checkBoxR1Only.Checked, checkBoxUnfinished.Checked, false);
+                    checkBoxFillByes.Checked, checkBoxUnfinished.Checked, false);
             }
             if (checkBoxLosers.Checked)
             {
                 lpout.fillBracketDoubles(-(int)numericUpDownLosersStart.Value, -(int)numericUpDownLosersEnd.Value, (int)numericUpDownLosersOffset.Value, ref output, matchOffsetPerRound,
-                    checkBoxFillByes.Checked, checkBoxFillByeWins.Checked, checkBoxR1Only.Checked, checkBoxUnfinished.Checked, false);
+                    checkBoxFillByes.Checked, checkBoxUnfinished.Checked, false);
             }
             if (checkBoxGuessFinal.Checked)
             {
@@ -522,19 +528,19 @@ namespace smashgg_to_liquipedia
 
                 // Fill in R3
                 lpout.fillBracketDoubles(gfround, gfround, 3 - gfround, ref finalBracketOutput, matchOffsetPerRound,
-                    checkBoxFillByes.Checked, checkBoxFillByeWins.Checked, checkBoxR1Only.Checked, checkBoxUnfinished.Checked, false);
+                    checkBoxFillByes.Checked, checkBoxUnfinished.Checked, false);
 
                 // Fill in L2
                 lpout.fillBracketDoubles(lfround, lfround, 2 - Math.Abs(lfround), ref finalBracketOutput, matchOffsetPerRound,
-                    checkBoxFillByes.Checked, checkBoxFillByeWins.Checked, checkBoxR1Only.Checked, checkBoxUnfinished.Checked, true);
+                    checkBoxFillByes.Checked, checkBoxUnfinished.Checked, true);
 
                 // Fill in L1
                 lpout.fillBracketDoubles(lsround, lsround, 1 - Math.Abs(lsround), ref finalBracketOutput, matchOffsetPerRound,
-                    checkBoxFillByes.Checked, checkBoxFillByeWins.Checked, checkBoxR1Only.Checked, checkBoxUnfinished.Checked, false);
+                    checkBoxFillByes.Checked, checkBoxUnfinished.Checked, false);
 
                 // Fill in R1
                 lpout.fillBracketDoubles(wfround, wfround, 1 - wfround, ref finalBracketOutput, matchOffsetPerRound,
-                    checkBoxFillByes.Checked, checkBoxFillByeWins.Checked, checkBoxR1Only.Checked, checkBoxUnfinished.Checked, false);
+                    checkBoxFillByes.Checked, checkBoxUnfinished.Checked, false);
 
 
                 // Replace L2 with R2 because liquipedia markup is inconsistent
@@ -662,7 +668,7 @@ namespace smashgg_to_liquipedia
 
             if (selectedEvent == null)
             {
-                richTextBoxLog.Text += "Get tournament data and select something first.\r\n";
+                richTextBoxLog.Text += "Select a phasegroup and get tournament data first.\r\n";
                 return;
             }
 
@@ -807,17 +813,6 @@ namespace smashgg_to_liquipedia
                 }
             }
 
-            // Fill entrant list from seed list
-            //foreach (Seed seed in seedList)
-            //{
-            //    // Check if the round already exists in roundList
-            //    if (seed.entrant != null)
-            //    {
-            //        entrantList.Add(seed.entrant.id, seed.entrant);
-            //    }
-            //}
-
-
             // Clear out bye rounds in winners
             if (roundList.Keys.Max() > 0)
             {
@@ -841,7 +836,7 @@ namespace smashgg_to_liquipedia
                     bool actualMatch = false;
                     for (int j = 0; j < roundList[i].Count; j++)
                     {
-                        if (roundList[i][j].DisplayScore == "bye")
+                        if (roundList[i][j].DisplayScore == "Bye" || roundList[i][j].DisplayScore == "bye")
                         {
                             continue;
                         }
@@ -890,7 +885,7 @@ namespace smashgg_to_liquipedia
                     bool actualMatch = false;
                     for (int j = 0; j < roundList[i].Count; j++)
                     {
-                        if (roundList[i][j].DisplayScore == "bye") 
+                        if (roundList[i][j].DisplayScore == "Bye" || roundList[i][j].DisplayScore == "bye") 
                         {
                             continue;
                         }
@@ -1819,13 +1814,11 @@ namespace smashgg_to_liquipedia
             buttonGroupTable.Enabled = false;
 
             checkBoxFillByes.Enabled = false;
-            checkBoxR1Only.Enabled = false;
             checkBoxGuessFinal.Enabled = false;
             checkBoxLockLosers.Enabled = false;
             checkBoxLockWinners.Enabled = false;
             checkBoxLosers.Enabled = false;
             checkBoxWinners.Enabled = false;
-            checkBoxFillByeWins.Enabled = false;
             checkBoxMatchDetails.Enabled = false;
             checkBoxUnfinished.Enabled = false;
 
@@ -1865,13 +1858,11 @@ namespace smashgg_to_liquipedia
             buttonGroupTable.Enabled = true;
 
             checkBoxFillByes.Enabled = true;
-            checkBoxR1Only.Enabled = true;
             checkBoxGuessFinal.Enabled = true;
             checkBoxLockLosers.Enabled = true;
             checkBoxLockWinners.Enabled = true;
             checkBoxLosers.Enabled = true;
             checkBoxWinners.Enabled = true;
-            checkBoxFillByeWins.Enabled = true;
             checkBoxMatchDetails.Enabled = true;
             checkBoxUnfinished.Enabled = true;
 
@@ -1955,7 +1946,17 @@ namespace smashgg_to_liquipedia
         {
             Authentication tokenWindow = new Authentication(ref authToken);
             tokenWindow.ShowDialog();
+
             authToken = tokenWindow.token;
+            if (authToken == "")
+            {
+                buttonAuthentication.BackColor = Color.PaleVioletRed;
+            }
+            else
+            {
+                buttonAuthentication.BackColor = SystemColors.Control;
+            }
+
             apiQuery.SetToken(authToken);
         }
 
@@ -2117,6 +2118,7 @@ namespace smashgg_to_liquipedia
             ClearData();
             checkBoxWinners.Checked = false;
             checkBoxLosers.Checked = false;
+            richTextBoxLog.Clear();
 
             if (selectedEvent == null)
             {
@@ -2299,6 +2301,8 @@ namespace smashgg_to_liquipedia
                     richTextBoxLog.Text += "Can't do anything with that object\r\n";
                     break;
             }
+
+            richTextBoxLog.Text += string.Format("Get data complete.\r\n");
         }
     }
 }

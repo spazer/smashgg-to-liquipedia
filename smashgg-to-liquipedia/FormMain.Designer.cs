@@ -49,7 +49,6 @@
             this.label6 = new System.Windows.Forms.Label();
             this.buttonPrizePool = new System.Windows.Forms.Button();
             this.numericUpDownPrizePool = new System.Windows.Forms.NumericUpDown();
-            this.checkBoxFillByeWins = new System.Windows.Forms.CheckBox();
             this.buttonAKA = new System.Windows.Forms.Button();
             this.radioButtonSmash = new System.Windows.Forms.RadioButton();
             this.radioButtonFighters = new System.Windows.Forms.RadioButton();
@@ -60,7 +59,6 @@
             this.checkBoxMatchDetails = new System.Windows.Forms.CheckBox();
             this.checkBoxUnfinished = new System.Windows.Forms.CheckBox();
             this.buttonGroupTable = new System.Windows.Forms.Button();
-            this.checkBoxR1Only = new System.Windows.Forms.CheckBox();
             this.buttonAuthentication = new System.Windows.Forms.Button();
             this.textBoxHeaderFinals = new System.Windows.Forms.TextBox();
             this.textBoxHeaderLosers = new System.Windows.Forms.TextBox();
@@ -116,7 +114,7 @@
             this.richTextBoxEntrants.Location = new System.Drawing.Point(6, 6);
             this.richTextBoxEntrants.Name = "richTextBoxEntrants";
             this.richTextBoxEntrants.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
-            this.richTextBoxEntrants.Size = new System.Drawing.Size(504, 86);
+            this.richTextBoxEntrants.Size = new System.Drawing.Size(669, 86);
             this.richTextBoxEntrants.TabIndex = 0;
             this.richTextBoxEntrants.Text = "";
             // 
@@ -189,9 +187,9 @@
             // 
             // buttonFill
             // 
-            this.buttonFill.Location = new System.Drawing.Point(859, 338);
+            this.buttonFill.Location = new System.Drawing.Point(488, 143);
             this.buttonFill.Name = "buttonFill";
-            this.buttonFill.Size = new System.Drawing.Size(75, 23);
+            this.buttonFill.Size = new System.Drawing.Size(189, 35);
             this.buttonFill.TabIndex = 2;
             this.buttonFill.Text = "Fill Bracket";
             this.buttonFill.UseVisualStyleBackColor = true;
@@ -237,7 +235,9 @@
             // checkBoxFillByes
             // 
             this.checkBoxFillByes.AutoSize = true;
-            this.checkBoxFillByes.Location = new System.Drawing.Point(519, 31);
+            this.checkBoxFillByes.Checked = true;
+            this.checkBoxFillByes.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBoxFillByes.Location = new System.Drawing.Point(709, 195);
             this.checkBoxFillByes.Name = "checkBoxFillByes";
             this.checkBoxFillByes.Size = new System.Drawing.Size(63, 17);
             this.checkBoxFillByes.TabIndex = 7;
@@ -283,9 +283,9 @@
             // 
             // buttonPrizePool
             // 
-            this.buttonPrizePool.Location = new System.Drawing.Point(488, 198);
+            this.buttonPrizePool.Location = new System.Drawing.Point(488, 197);
             this.buttonPrizePool.Name = "buttonPrizePool";
-            this.buttonPrizePool.Size = new System.Drawing.Size(94, 23);
+            this.buttonPrizePool.Size = new System.Drawing.Size(151, 23);
             this.buttonPrizePool.TabIndex = 17;
             this.buttonPrizePool.Text = "Prize Pool Table";
             this.buttonPrizePool.UseVisualStyleBackColor = true;
@@ -293,7 +293,7 @@
             // 
             // numericUpDownPrizePool
             // 
-            this.numericUpDownPrizePool.Location = new System.Drawing.Point(590, 200);
+            this.numericUpDownPrizePool.Location = new System.Drawing.Point(645, 198);
             this.numericUpDownPrizePool.Name = "numericUpDownPrizePool";
             this.numericUpDownPrizePool.Size = new System.Drawing.Size(32, 20);
             this.numericUpDownPrizePool.TabIndex = 18;
@@ -303,19 +303,9 @@
             0,
             0});
             // 
-            // checkBoxFillByeWins
-            // 
-            this.checkBoxFillByeWins.AutoSize = true;
-            this.checkBoxFillByeWins.Location = new System.Drawing.Point(519, 54);
-            this.checkBoxFillByeWins.Name = "checkBoxFillByeWins";
-            this.checkBoxFillByeWins.Size = new System.Drawing.Size(82, 17);
-            this.checkBoxFillByeWins.TabIndex = 7;
-            this.checkBoxFillByeWins.Text = "Fill bye wins";
-            this.checkBoxFillByeWins.UseVisualStyleBackColor = true;
-            // 
             // buttonAKA
             // 
-            this.buttonAKA.Location = new System.Drawing.Point(737, 59);
+            this.buttonAKA.Location = new System.Drawing.Point(709, 59);
             this.buttonAKA.Name = "buttonAKA";
             this.buttonAKA.Size = new System.Drawing.Size(75, 23);
             this.buttonAKA.TabIndex = 2;
@@ -350,7 +340,7 @@
             // labelAkaDatabaseRev
             // 
             this.labelAkaDatabaseRev.AutoSize = true;
-            this.labelAkaDatabaseRev.Location = new System.Drawing.Point(734, 85);
+            this.labelAkaDatabaseRev.Location = new System.Drawing.Point(709, 85);
             this.labelAkaDatabaseRev.Name = "labelAkaDatabaseRev";
             this.labelAkaDatabaseRev.Size = new System.Drawing.Size(57, 13);
             this.labelAkaDatabaseRev.TabIndex = 22;
@@ -361,7 +351,7 @@
             this.panel1.Controls.Add(this.radioButtonRocketLeague);
             this.panel1.Controls.Add(this.radioButtonSmash);
             this.panel1.Controls.Add(this.radioButtonFighters);
-            this.panel1.Location = new System.Drawing.Point(709, 210);
+            this.panel1.Location = new System.Drawing.Point(712, 101);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(69, 67);
             this.panel1.TabIndex = 23;
@@ -385,7 +375,7 @@
             this.panel2.Controls.Add(this.radioButtonBracket);
             this.panel2.Controls.Add(this.label6);
             this.panel2.Controls.Add(this.label5);
-            this.panel2.Location = new System.Drawing.Point(830, 166);
+            this.panel2.Location = new System.Drawing.Point(830, 192);
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(111, 115);
             this.panel2.TabIndex = 24;
@@ -393,7 +383,7 @@
             // checkBoxMatchDetails
             // 
             this.checkBoxMatchDetails.AutoSize = true;
-            this.checkBoxMatchDetails.Location = new System.Drawing.Point(709, 166);
+            this.checkBoxMatchDetails.Location = new System.Drawing.Point(709, 218);
             this.checkBoxMatchDetails.Name = "checkBoxMatchDetails";
             this.checkBoxMatchDetails.Size = new System.Drawing.Size(91, 17);
             this.checkBoxMatchDetails.TabIndex = 25;
@@ -403,7 +393,7 @@
             // checkBoxUnfinished
             // 
             this.checkBoxUnfinished.AutoSize = true;
-            this.checkBoxUnfinished.Location = new System.Drawing.Point(709, 189);
+            this.checkBoxUnfinished.Location = new System.Drawing.Point(709, 241);
             this.checkBoxUnfinished.Name = "checkBoxUnfinished";
             this.checkBoxUnfinished.Size = new System.Drawing.Size(112, 17);
             this.checkBoxUnfinished.TabIndex = 26;
@@ -412,29 +402,19 @@
             // 
             // buttonGroupTable
             // 
-            this.buttonGroupTable.Location = new System.Drawing.Point(768, 367);
+            this.buttonGroupTable.Location = new System.Drawing.Point(488, 102);
             this.buttonGroupTable.Name = "buttonGroupTable";
-            this.buttonGroupTable.Size = new System.Drawing.Size(75, 23);
+            this.buttonGroupTable.Size = new System.Drawing.Size(189, 35);
             this.buttonGroupTable.TabIndex = 27;
             this.buttonGroupTable.Text = "Group Table";
             this.buttonGroupTable.UseVisualStyleBackColor = true;
             this.buttonGroupTable.Click += new System.EventHandler(this.buttonGroupTable_Click);
             // 
-            // checkBoxR1Only
-            // 
-            this.checkBoxR1Only.AutoSize = true;
-            this.checkBoxR1Only.Location = new System.Drawing.Point(519, 8);
-            this.checkBoxR1Only.Name = "checkBoxR1Only";
-            this.checkBoxR1Only.Size = new System.Drawing.Size(40, 17);
-            this.checkBoxR1Only.TabIndex = 28;
-            this.checkBoxR1Only.Text = "R1";
-            this.checkBoxR1Only.UseVisualStyleBackColor = true;
-            // 
             // buttonAuthentication
             // 
-            this.buttonAuthentication.Location = new System.Drawing.Point(737, 106);
+            this.buttonAuthentication.Location = new System.Drawing.Point(830, 107);
             this.buttonAuthentication.Name = "buttonAuthentication";
-            this.buttonAuthentication.Size = new System.Drawing.Size(75, 23);
+            this.buttonAuthentication.Size = new System.Drawing.Size(108, 23);
             this.buttonAuthentication.TabIndex = 29;
             this.buttonAuthentication.Text = "Auth";
             this.buttonAuthentication.UseVisualStyleBackColor = true;
@@ -487,7 +467,9 @@
             // 
             this.tabPageTournamentExplorer.Controls.Add(this.buttonGetData);
             this.tabPageTournamentExplorer.Controls.Add(this.buttonPrizePool);
+            this.tabPageTournamentExplorer.Controls.Add(this.buttonGroupTable);
             this.tabPageTournamentExplorer.Controls.Add(this.numericUpDownPrizePool);
+            this.tabPageTournamentExplorer.Controls.Add(this.buttonFill);
             this.tabPageTournamentExplorer.Controls.Add(this.treeView1);
             this.tabPageTournamentExplorer.Location = new System.Drawing.Point(4, 22);
             this.tabPageTournamentExplorer.Name = "tabPageTournamentExplorer";
@@ -499,11 +481,11 @@
             // 
             // buttonGetData
             // 
-            this.buttonGetData.Location = new System.Drawing.Point(580, 6);
+            this.buttonGetData.Location = new System.Drawing.Point(488, 6);
             this.buttonGetData.Name = "buttonGetData";
-            this.buttonGetData.Size = new System.Drawing.Size(97, 90);
+            this.buttonGetData.Size = new System.Drawing.Size(189, 90);
             this.buttonGetData.TabIndex = 29;
-            this.buttonGetData.Text = "Get";
+            this.buttonGetData.Text = "Get Data";
             this.buttonGetData.UseVisualStyleBackColor = true;
             this.buttonGetData.Click += new System.EventHandler(this.buttonGetData_Click);
             // 
@@ -512,7 +494,7 @@
             this.treeView1.CheckBoxes = true;
             this.treeView1.Location = new System.Drawing.Point(6, 6);
             this.treeView1.Name = "treeView1";
-            this.treeView1.Size = new System.Drawing.Size(448, 221);
+            this.treeView1.Size = new System.Drawing.Size(476, 221);
             this.treeView1.TabIndex = 28;
             this.treeView1.AfterCheck += new System.Windows.Forms.TreeViewEventHandler(this.treeView1_AfterCheck);
             // 
@@ -528,7 +510,6 @@
             this.tabPageRetrievedData.Controls.Add(this.label12);
             this.tabPageRetrievedData.Controls.Add(this.numericUpDownLosersOffset);
             this.tabPageRetrievedData.Controls.Add(this.label11);
-            this.tabPageRetrievedData.Controls.Add(this.checkBoxR1Only);
             this.tabPageRetrievedData.Controls.Add(this.numericUpDownLosersStart);
             this.tabPageRetrievedData.Controls.Add(this.checkBoxLockLosers);
             this.tabPageRetrievedData.Controls.Add(this.buttonWinnerShift);
@@ -539,9 +520,7 @@
             this.tabPageRetrievedData.Controls.Add(this.numericUpDownWinnersOffset);
             this.tabPageRetrievedData.Controls.Add(this.label2);
             this.tabPageRetrievedData.Controls.Add(this.numericUpDownWinnersStart);
-            this.tabPageRetrievedData.Controls.Add(this.checkBoxFillByeWins);
             this.tabPageRetrievedData.Controls.Add(this.checkBoxLockWinners);
-            this.tabPageRetrievedData.Controls.Add(this.checkBoxFillByes);
             this.tabPageRetrievedData.Location = new System.Drawing.Point(4, 22);
             this.tabPageRetrievedData.Name = "tabPageRetrievedData";
             this.tabPageRetrievedData.Padding = new System.Windows.Forms.Padding(3);
@@ -778,10 +757,8 @@
             this.ClientSize = new System.Drawing.Size(948, 566);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.label7);
-            this.Controls.Add(this.buttonGroupTable);
             this.Controls.Add(this.textBoxTournamentUrl);
             this.Controls.Add(this.textBoxHeaderWinners);
-            this.Controls.Add(this.buttonFill);
             this.Controls.Add(this.textBoxHeaderLosers);
             this.Controls.Add(this.textBoxHeaderFinals);
             this.Controls.Add(this.buttonAuthentication);
@@ -797,6 +774,7 @@
             this.Controls.Add(this.checkBoxWinners);
             this.Controls.Add(this.richTextBoxExLpWinnersBracket);
             this.Controls.Add(this.richTextBoxExLpFinalBracket);
+            this.Controls.Add(this.checkBoxFillByes);
             this.Controls.Add(this.richTextBoxExLpLosersBracket);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.richTextBoxLog);
@@ -804,7 +782,7 @@
             this.Controls.Add(this.tabControl);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "FormMain";
-            this.Text = "Smash.gg to Liquipedia v4.0.0";
+            this.Text = "Smash.gg to Liquipedia";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormMain_FormClosing);
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAdvanceWinners)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAdvanceLosers)).EndInit();
@@ -852,7 +830,6 @@
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Button buttonPrizePool;
         private System.Windows.Forms.NumericUpDown numericUpDownPrizePool;
-        private System.Windows.Forms.CheckBox checkBoxFillByeWins;
         private System.Windows.Forms.Button buttonAKA;
         private System.Windows.Forms.RadioButton radioButtonSmash;
         private System.Windows.Forms.RadioButton radioButtonFighters;
@@ -862,7 +839,6 @@
         private System.Windows.Forms.CheckBox checkBoxMatchDetails;
         private System.Windows.Forms.CheckBox checkBoxUnfinished;
         private System.Windows.Forms.Button buttonGroupTable;
-        private System.Windows.Forms.CheckBox checkBoxR1Only;
         private System.Windows.Forms.RadioButton radioButtonRocketLeague;
         private System.Windows.Forms.Button buttonAuthentication;
         private RichTextBoxEx richTextBoxExLpFinalBracket;
