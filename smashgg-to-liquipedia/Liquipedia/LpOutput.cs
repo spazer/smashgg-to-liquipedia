@@ -464,7 +464,7 @@ namespace smashgg_to_liquipedia.Liquipedia
                             {
                                 if (includeUnfinished || currentSet.State == Tournament.ActivityState.Completed)
                                 {
-                                    if (currentSet.entrant1wins != 0 && currentSet.entrant2wins != 0)
+                                    if (currentSet.entrant1wins != 0 || currentSet.entrant2wins != 0)
                                     {
                                         FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P2 + LpStrings.Score, currentSet.entrant1wins.ToString());
                                         FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P1 + LpStrings.Score, currentSet.entrant2wins.ToString());
@@ -486,7 +486,7 @@ namespace smashgg_to_liquipedia.Liquipedia
                             {
                                 if (includeUnfinished || currentSet.State == Tournament.ActivityState.Completed)
                                 {
-                                    if (currentSet.entrant1wins != 0 && currentSet.entrant2wins != 0)
+                                    if (currentSet.entrant1wins != 0 || currentSet.entrant2wins != 0)
                                     {
                                         FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P1 + LpStrings.Score, currentSet.entrant1wins.ToString());
                                         FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P2 + LpStrings.Score, currentSet.entrant2wins.ToString());
