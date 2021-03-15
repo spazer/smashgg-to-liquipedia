@@ -28,6 +28,7 @@ namespace smashgg_to_liquipedia
         private readonly IFormMain form;
 
         private const int PER_PAGE_SETS = 60;
+        private const int PER_PAGE_SETS_DETAILED = 30;
         private const int PER_PAGE_ENTRANTS = 200;
 
         #region Smash.gg Enumerations
@@ -284,7 +285,7 @@ namespace smashgg_to_liquipedia
             return tournament;
         }
 
-        public void GetSets(int phaseGroupId, out List<Set> setList, bool includeDetails)
+        public bool GetSets(int phaseGroupId, out List<Set> setList, bool includeDetails)
         {
             setList = new List<Set>();
 
@@ -316,9 +317,9 @@ namespace smashgg_to_liquipedia
                 }";
 
             string setsWithDetails = @"
-                query GetSetsWithDetails($phaseGroupId: ID!, $page: Int) {
+                query GetSetsWithDetails($phaseGroupId: ID!, $page: Int, $perPage: Int) {
                     phaseGroup(id: $phaseGroupId) {
-                        sets(perPage:60, page:$page, filters: {
+                        sets(perPage:$perPage, page:$page, filters: {
                             showByes:true
                         }) {
                             pageInfo {
@@ -359,27 +360,33 @@ namespace smashgg_to_liquipedia
                 }";
 
             GraphQLRequest setsRequest = new GraphQLRequest();
-            if (includeDetails)
-            {
-                setsRequest.Query = setsWithDetails;
-                setsRequest.OperationName = "GetSetsWithDetails";
-            }
-            else
-            {
-                setsRequest.Query = setsWithoutDetails;
-                setsRequest.OperationName = "GetSets";
-            }
 
             // Retrieve pages while there are more paginated sets
             PhaseGroup tempPhaseGroup = new PhaseGroup();
             do
             {
-                setsRequest.Variables = new
+                if (includeDetails)
                 {
-                    phaseGroupId = phaseGroupId,
-                    page = page,
-                    perPage = PER_PAGE_SETS
-                };
+                    setsRequest.Query = setsWithDetails;
+                    setsRequest.OperationName = "GetSetsWithDetails";
+                    setsRequest.Variables = new
+                    {
+                        phaseGroupId = phaseGroupId,
+                        page = page,
+                        perPage = PER_PAGE_SETS_DETAILED
+                    };
+                }
+                else
+                {
+                    setsRequest.Query = setsWithoutDetails;
+                    setsRequest.OperationName = "GetSets";
+                    setsRequest.Variables = new
+                    {
+                        phaseGroupId = phaseGroupId,
+                        page = page,
+                        perPage = PER_PAGE_SETS
+                    };
+                }
 
                 GraphQLResponse setsResponse = SendRequest(setsRequest);
                 if (setsResponse != null)
@@ -387,6 +394,7 @@ namespace smashgg_to_liquipedia
                     // Parse the json response
                     tempPhaseGroup = JsonConvert.DeserializeObject<PhaseGroup>(setsResponse.Data.phaseGroup.ToString());
                     setList.AddRange(tempPhaseGroup.sets.nodes);
+                    WriteLineToLog("Got sets (Page " + page + " of " + tempPhaseGroup.sets.pageInfo.totalPages + ")");
 
                     // Increase the page count
                     page++;
@@ -394,9 +402,11 @@ namespace smashgg_to_liquipedia
                 else
                 {
                     WriteLineToLog("Could not retrieve any data");
-                    return;
+                    return false;
                 }
             } while (page <= tempPhaseGroup.sets.pageInfo.totalPages);
+
+            return true;
         }
 
         /// <summary>

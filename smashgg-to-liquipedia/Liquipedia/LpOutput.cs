@@ -441,18 +441,24 @@ namespace smashgg_to_liquipedia.Liquipedia
                     else
                     {
                         // Fill in the set normally
-                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P1, entrantList[currentSet.slots[0].entrant.id].participants[0].gamerTag);
-                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P1 + LpStrings.Flag, entrantList[currentSet.slots[0].entrant.id].participants[0].user.location.country);
-                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P2, entrantList[currentSet.slots[1].entrant.id].participants[0].gamerTag);
-                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P2 + LpStrings.Flag, entrantList[currentSet.slots[1].entrant.id].participants[0].user.location.country);
+                        if (currentSet.slots[0].entrant != null)
+                        {
+                            FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P1, entrantList[currentSet.slots[0].entrant.id].participants[0].gamerTag);
+                            FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P1 + LpStrings.Flag, entrantList[currentSet.slots[0].entrant.id].participants[0].user.location.country);
+                        }
+                        if (currentSet.slots[1].entrant != null)
+                        {
+                            FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P2, entrantList[currentSet.slots[1].entrant.id].participants[0].gamerTag);
+                            FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P2 + LpStrings.Flag, entrantList[currentSet.slots[1].entrant.id].participants[0].user.location.country);
+                        }
 
                         // Check for DQs
-                        if (currentSet.DisplayScore == "DQ" && currentSet.winnerId == currentSet.slots[1].entrant.id)
+                        if (currentSet.DisplayScore == "DQ" && currentSet.slots[1].entrant != null && currentSet.winnerId == currentSet.slots[1].entrant.id)
                         {
                             FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P1 + LpStrings.Score, "DQ");
                             FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P2 + LpStrings.Score, LpStrings.Checkmark);
                         }
-                        else if (currentSet.DisplayScore == "DQ" && currentSet.winnerId == currentSet.slots[0].entrant.id)
+                        else if (currentSet.DisplayScore == "DQ" && currentSet.slots[0].entrant != null && currentSet.winnerId == currentSet.slots[0].entrant.id)
                         {
                             FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P2 + LpStrings.Score, "DQ");
                             FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P1 + LpStrings.Score, LpStrings.Checkmark);
@@ -493,11 +499,11 @@ namespace smashgg_to_liquipedia.Liquipedia
                                     }
                                     else
                                     {
-                                        if (currentSet.winnerId == currentSet.slots[0].entrant.id)
+                                        if (currentSet.slots[0].entrant != null && currentSet.winnerId == currentSet.slots[0].entrant.id)
                                         {
                                             FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P1 + LpStrings.Score, LpStrings.Checkmark);
                                         }
-                                        else if (currentSet.winnerId == currentSet.slots[1].entrant.id)
+                                        else if (currentSet.slots[1].entrant != null && currentSet.winnerId == currentSet.slots[1].entrant.id)
                                         {
                                             FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P2 + LpStrings.Score, LpStrings.Checkmark);
                                         }
@@ -509,29 +515,29 @@ namespace smashgg_to_liquipedia.Liquipedia
                         // Set the winner
                         if ((currentSet.round == roundList.Keys.Max()) && currentSet.match == 2 && currentSet.wPlacement == 1)
                         {
-                            if (currentSet.winnerId == currentSet.slots[0].entrant.id)
+                            if (currentSet.slots[0].entrant != null && currentSet.winnerId == currentSet.slots[0].entrant.id)
                             {
                                 FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + 1 + LpStrings.Win, "2");
                             }
-                            else if (currentSet.winnerId == currentSet.slots[1].entrant.id)
+                            else if (currentSet.slots[1].entrant != null && currentSet.winnerId == currentSet.slots[1].entrant.id)
                             {
                                 FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + 1 + LpStrings.Win, "1");
                             }
                         }
                         else if ((currentSet.round == roundList.Keys.Max()) && currentSet.match == 1 && roundList[i].Count > 1 && currentSet.wPlacement == 1)
                         {
-                            if (currentSet.winnerId == currentSet.slots[0].entrant.id)
+                            if (currentSet.slots[0].entrant != null && currentSet.winnerId == currentSet.slots[0].entrant.id)
                             {
                                 FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + 1 + LpStrings.Win, "1");
                             }
                         }
                         else
                         {
-                            if (currentSet.winnerId == currentSet.slots[0].entrant.id)
+                            if (currentSet.slots[0].entrant != null && currentSet.winnerId == currentSet.slots[0].entrant.id)
                             {
                                 FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.Win, "1");
                             }
-                            else if (currentSet.winnerId == currentSet.slots[1].entrant.id)
+                            else if (currentSet.slots[1].entrant != null && currentSet.winnerId == currentSet.slots[1].entrant.id)
                             {
                                 FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.Win, "2");
                             }

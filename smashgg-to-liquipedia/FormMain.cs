@@ -2206,7 +2206,11 @@ namespace smashgg_to_liquipedia
 
                 // Get a single phasegroup
                 case TreeNodeData.NodeType.PhaseGroup:
-                    apiQuery.GetSets(selectedObjectId, out setList, checkBoxMatchDetails.Checked);
+                    if (!(apiQuery.GetSets(selectedObjectId, out setList, checkBoxMatchDetails.Checked)))
+                    {
+                        richTextBoxLog.Text += string.Format("Get failed\r\n");
+                        return;
+                    }
                     if (setList == null)
                     {
                         richTextBoxLog.Text += string.Format("Set list not retrieved\r\n");
