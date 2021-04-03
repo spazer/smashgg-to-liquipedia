@@ -1275,6 +1275,11 @@ namespace smashgg_to_liquipedia
             // Create a record for each entrant
             foreach (Seed seed in seedList)
             {
+                if (seed.entrant == null)
+                {
+                    continue;
+                }
+
                 record.Add(seed.entrant.id, new PoolRecord());
                 List<Set> relevantSets = setList.Where(q => q.slots.Any(r => r.entrant != null && r.entrant.id.Equals(seed.entrant.id))).ToList<Set>();
                 foreach (Set set in relevantSets)

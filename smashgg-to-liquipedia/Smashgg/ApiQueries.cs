@@ -633,7 +633,10 @@ namespace smashgg_to_liquipedia
             // Standardize participant information
             foreach (Seed seed in phaseGroupResults.seeds.nodes)
             {
-                ParticipantStandardization(seed.entrant.participants);
+                if (seed.entrant != null)
+                {
+                    ParticipantStandardization(seed.entrant.participants);
+                }
             }
 
             return phaseGroupResults.seeds.nodes;

@@ -298,31 +298,48 @@ namespace smashgg_to_liquipedia.Liquipedia
                         insertiontext += " |" + identifier + LpStrings.P2 + LpStrings.Character + game.orderNum + "=" + character;
 
                         // Insert stock counts
-                        if (game.entrant2p1stocks == Consts.UNKNOWN)
+                        //if (game.entrant2p1stocks == Consts.UNKNOWN)
+                        //{
+                        //    insertiontext += " |" + identifier + LpStrings.P1 + LpStrings.Stock + game.orderNum + "=";
+                        //}
+                        //else
+                        //{
+                        //    insertiontext += " |" + identifier + LpStrings.P1 + LpStrings.Stock + game.orderNum + "=" + game.entrant2p1stocks;
+                        //}
+
+                        //if (game.entrant1p1stocks == Consts.UNKNOWN)
+                        //{
+                        //    insertiontext += " |" + identifier + LpStrings.P2 + LpStrings.Stock + game.orderNum + "=";
+                        //}
+                        //else
+                        //{
+                        //    insertiontext += " |" + identifier + LpStrings.P2 + LpStrings.Stock + game.orderNum + "=" + game.entrant1p1stocks;
+                        //}
+
+                        // Temporary stock counts - only set 0 stocks for the loser
+                        if (game.winnerId == setData.slots[1].entrant.id)
                         {
                             insertiontext += " |" + identifier + LpStrings.P1 + LpStrings.Stock + game.orderNum + "=";
+                            insertiontext += " |" + identifier + LpStrings.P2 + LpStrings.Stock + game.orderNum + "=0";
                         }
-                        else
+                        else if (game.winnerId == setData.slots[0].entrant.id)
                         {
-                            insertiontext += " |" + identifier + LpStrings.P1 + LpStrings.Stock + game.orderNum + "=" + game.entrant2p1stocks;
-                        }
-
-                        if (game.entrant1p1stocks == Consts.UNKNOWN)
-                        {
+                            insertiontext += " |" + identifier + LpStrings.P1 + LpStrings.Stock + game.orderNum + "=0";
                             insertiontext += " |" + identifier + LpStrings.P2 + LpStrings.Stock + game.orderNum + "=";
                         }
                         else
                         {
-                            insertiontext += " |" + identifier + LpStrings.P2 + LpStrings.Stock + game.orderNum + "=" + game.entrant1p1stocks;
+                            insertiontext += " |" + identifier + LpStrings.P1 + LpStrings.Stock + game.orderNum + "=";
+                            insertiontext += " |" + identifier + LpStrings.P2 + LpStrings.Stock + game.orderNum + "=";
                         }
 
                         // Insert game winner
                         insertiontext += " |" + identifier + LpStrings.Win + game.orderNum + "=";
-                        if (game.winner == setData.slots[0].entrant.id)
+                        if (game.winnerId == setData.slots[0].entrant.id)
                         {
                             insertiontext += "2";
                         }
-                        else if (game.winner == setData.slots[1].entrant.id)
+                        else if (game.winnerId == setData.slots[1].entrant.id)
                         {
                             insertiontext += "1";
                         }
@@ -547,7 +564,7 @@ namespace smashgg_to_liquipedia.Liquipedia
                         if (includeUnfinished || currentSet.State == Tournament.ActivityState.Completed)
                         {
                             // For bracket reset
-                            if ((currentSet.round == roundList.Keys.Max()) && currentSet.match == 2 && currentSet.games != null && matchDetails)
+                            if ((currentSet.round == roundList.Keys.Max()) && currentSet.match == 2 && currentSet.games != null && currentSet.wPlacement == 1 && matchDetails)
                             {
                                 FillMatchDetailsSingles(bracketSide, outputRound, outputSet, currentSet, ref bracketText, true);
                             }
