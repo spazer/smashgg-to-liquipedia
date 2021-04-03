@@ -13,10 +13,6 @@ namespace smashgg_to_liquipedia.Smashgg.Schema
         public int orderNum { get; set; }
         public List<GameSelection> selections { get; set; }
 
-
-        // Old stuff
-        public int winner;
-
         public int EntrantChar(int entrantId)
         {
             if (selections != null && selections.Count > 0)
@@ -29,15 +25,5 @@ namespace smashgg_to_liquipedia.Smashgg.Schema
 
             return 0;
         }
-
-
-        public int entrant1p1stocks;
-        public int entrant1p2stocks;
-
-        public int entrant1p2char;
-        public int entrant2p2char;
-
-        public int entrant2p1stocks;
-        public int entrant2p2stocks;
     }
 }

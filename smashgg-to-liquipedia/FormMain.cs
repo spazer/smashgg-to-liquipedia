@@ -1842,9 +1842,13 @@ namespace smashgg_to_liquipedia
             richTextBoxEntrants.Enabled = false;
             richTextBoxExLpLosersBracket.Enabled = false;
             richTextBoxExLpWinnersBracket.Enabled = false;
+            richTextBoxExLpFinalBracket.Enabled = false;
             richTextBoxLog.Enabled = false;
             richTextBoxWinners.Enabled = false;
             richTextBoxLosers.Enabled = false;
+            textBoxHeaderWinners.Enabled = false;
+            textBoxHeaderLosers.Enabled = false;
+            textBoxHeaderFinals.Enabled = false;
             richTextBoxLpOutput.Enabled = false;
         }
 
@@ -1886,9 +1890,13 @@ namespace smashgg_to_liquipedia
             richTextBoxEntrants.Enabled = true;
             richTextBoxExLpLosersBracket.Enabled = true;
             richTextBoxExLpWinnersBracket.Enabled = true;
+            richTextBoxExLpFinalBracket.Enabled = true;
             richTextBoxLog.Enabled = true;
             richTextBoxWinners.Enabled = true;
             richTextBoxLosers.Enabled = true;
+            textBoxHeaderWinners.Enabled = true;
+            textBoxHeaderLosers.Enabled = true;
+            textBoxHeaderFinals.Enabled = true;
             richTextBoxLpOutput.Enabled = true;
 
             // Re-lock numericUpDown controls if needed
@@ -2143,6 +2151,31 @@ namespace smashgg_to_liquipedia
             {
                 // Get all phasegroups in a phase
                 case TreeNodeData.NodeType.Phase:
+                    Phase selectedPhase = selectedEvent.phases.Where(q => q.id == selectedObjectId).First<Phase>();
+
+                    // For a single phasegroup phase, assume we just want the phasegroup.
+                    if (selectedPhase.phasegroups.nodes.Count == 1)
+                    {
+                        richTextBoxLog.Text += string.Format("Single phasegroup phase detected\r\n");
+                        if (!(apiQuery.GetSets(selectedObjectId, out setList, checkBoxMatchDetails.Checked)))
+                        {
+                            richTextBoxLog.Text += string.Format("Get failed\r\n");
+                            return;
+                        }
+                        if (setList == null)
+                        {
+                            richTextBoxLog.Text += string.Format("Set list not retrieved\r\n");
+                            return;
+                        }
+
+                        // Get standings
+                        seedList = apiQuery.GetSeedStandings(selectedObjectId);
+
+                        // Generate the round list
+                        ProcessBracket(selectedEvent.Type);
+                        break;
+                    }
+
                     // Set the pool type
                     PoolRecord.PoolType poolType;
                     if (radioButtonBracket.Checked)
@@ -2159,7 +2192,7 @@ namespace smashgg_to_liquipedia
                         return;
                     }
 
-                    Phase selectedPhase = selectedEvent.phases.Where(q => q.id == selectedObjectId).First<Phase>();
+                    
 
                     // Setup progress bar
                     progressBar.Minimum = 0;
