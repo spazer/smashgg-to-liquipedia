@@ -64,7 +64,7 @@ namespace smashgg_to_liquipedia
             this.playerdb = playerdb;
             this.form = form;
 
-            bucket = TokenBuckets.Construct().WithCapacity(80).WithFixedIntervalRefillStrategy(80, TimeSpan.FromSeconds(60)).Build();
+            bucket = TokenBuckets.Construct().WithCapacity(50).WithFixedIntervalRefillStrategy(20, TimeSpan.FromSeconds(60)).Build();
 
             // Get the endpoint
             string endpoint = string.Empty;
@@ -118,7 +118,7 @@ namespace smashgg_to_liquipedia
         /// </summary>
         /// <param name="request">GraphQL request</param>
         /// <returns>JSON data</returns>
-        public GraphQLResponse SendRequest(GraphQLRequest request)
+        private GraphQLResponse SendRequest(GraphQLRequest request)
         {
             int tries = 3;
 
@@ -148,7 +148,7 @@ namespace smashgg_to_liquipedia
                 else
                 {
                     WriteLineToLog("No data. Retrying...");
-                    Thread.Sleep(2500);
+                    Task.Delay(5000).Wait();
                     tries--;
                 }
             }
@@ -223,15 +223,13 @@ namespace smashgg_to_liquipedia
                     // For each phase in the event
                     for (int j = 0; j < tournament.events[i].phases.Count; j++)
                     {
-                        // Only work on phases that contain more than one phasegroup
+                        // Only do additional work on phases that contain more than one phasegroup
                         if (tournament.events[i].phases[j].phasegroups.nodes.Count > 1)
                         {
                             // For each phasegroup in the phase
                             for (int k = 0; k < tournament.events[i].phases[j].phasegroups.nodes.Count; k++)
                             {
                                 var currentPhaseGroup = tournament.events[i].phases[j].phasegroups.nodes[k];
-
-
 
                                 // Generate waves for the phasegroup if relevant
                                 currentPhaseGroup.GenerateWave();
@@ -394,7 +392,7 @@ namespace smashgg_to_liquipedia
                     // Parse the json response
                     tempPhaseGroup = JsonConvert.DeserializeObject<PhaseGroup>(setsResponse.Data.phaseGroup.ToString());
                     setList.AddRange(tempPhaseGroup.sets.nodes);
-                    WriteLineToLog("Got sets (Page " + page + " of " + tempPhaseGroup.sets.pageInfo.totalPages + ")");
+                    WriteLineToLog("Got sets for " + phaseGroupId + " (pg " + page + " of " + tempPhaseGroup.sets.pageInfo.totalPages + ")");
 
                     // Increase the page count
                     page++;

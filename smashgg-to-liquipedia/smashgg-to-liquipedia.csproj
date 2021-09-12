@@ -53,7 +53,6 @@
   <ItemGroup>
     <Reference Include="Esendex.TokenBucket, Version=1.0.7.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Esendex.TokenBucket.1.0.7\lib\net40\Esendex.TokenBucket.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="GraphQL.Client, Version=1.0.3.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\GraphQL.Client.1.0.3\lib\netstandard1.1\GraphQL.Client.dll</HintPath>

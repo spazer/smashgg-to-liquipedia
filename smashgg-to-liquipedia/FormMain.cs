@@ -2030,10 +2030,10 @@ namespace smashgg_to_liquipedia
                         TreeNode currentPhase = e.Node.Parent;
 
                         // Get phase
-                        var test = selectedEvent.phases.Where(p => p.name == currentPhase.Text).First();
+                        var testPhases = selectedEvent.phases.Where(p => p.name == currentPhase.Text).First();
 
                         // phaseGroups is typically null on the event object
-                        selectedObjectId = test.waves.Where(w => w.Value.Where(pg => pg.id == samplePhaseGroupTag.id).First().id == samplePhaseGroupTag.id).First().Value.ElementAt(0).wave.id;
+                        selectedObjectId = testPhases.waves.Where(w => w.Value.Where(pg => pg.id == samplePhaseGroupTag.id).First().id == samplePhaseGroupTag.id).First().Value.ElementAt(0).wave.id;
                         selectedObjectType = TreeNodeData.NodeType.Wave;
                     }
 
