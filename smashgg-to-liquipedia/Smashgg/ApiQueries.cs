@@ -13,7 +13,6 @@ using GraphQL.Common.Response;
 using smashgg_to_liquipedia.Smashgg.Schema;
 using smashgg_to_liquipedia.Smashgg;
 using Esendex.TokenBucket;
-using System.Threading;
 using System.IO;
 
 namespace smashgg_to_liquipedia
