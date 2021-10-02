@@ -157,6 +157,10 @@ namespace smashgg_to_liquipedia
                 eventNodeTag.id = tournamentEvent.id;
                 eventNodeTag.name = tournamentEvent.name;
                 eventNodeTag.nodetype = TreeNodeData.NodeType.Event;
+                if (tournamentEvent.teamRosterSize != null)
+                {
+                    eventNodeTag.playersPerEntrant = tournamentEvent.teamRosterSize.maxPlayers;
+                }
                 eventNode.Tag = eventNodeTag;
 
 
@@ -2008,12 +2012,14 @@ namespace smashgg_to_liquipedia
                     // Deselect other nodes
                     DeselectOtherTreeNodes(treeView1.Nodes[0], e.Node);
 
-                    // Set checked node properties
-                    selectedEvent = FindParentEvent(e.Node);
-                    selectedObjectId = tag.id;
-                    selectedObjectType = tag.nodetype;
+                    //// Set checked node properties
+                    //selectedEvent = FindParentEvent(e.Node);
+                    //selectedObjectId = tag.id;
+                    //selectedObjectType = tag.nodetype;
                 }
-                else if (checkedNodes == 1)
+
+                checkedNodes = CountCheckedTreeNodes(treeView1.Nodes[0]);
+                if (checkedNodes == 1)
                 {
                     TreeNodeData tag = (TreeNodeData)e.Node.Tag;
 
@@ -2144,19 +2150,123 @@ namespace smashgg_to_liquipedia
             checkBoxWinners.Checked = false;
             checkBoxLosers.Checked = false;
 
-            // Get entrants in the event
-            apiQuery.GetEventEntrants(selectedEvent.id, out entrantList);
-
-            switch (selectedObjectType)
+            try
             {
-                // Get all phasegroups in a phase
-                case TreeNodeData.NodeType.Phase:
-                    Phase selectedPhase = selectedEvent.phases.Where(q => q.id == selectedObjectId).First<Phase>();
+                // Get entrants in the event
+                if (selectedEvent.teamRosterSize == null)
+                {
+                    apiQuery.GetEventEntrants(selectedEvent.id, 1, out entrantList);
+                }
+                else
+                {
+                    apiQuery.GetEventEntrants(selectedEvent.id, selectedEvent.teamRosterSize.maxPlayers, out entrantList);
+                }
+            }
+            catch (Exception error)
+            {
+                richTextBoxLpOutput.Text = "Failed to get event entrants\r\n";
+                richTextBoxLpOutput.Text += error.Message;
+            }
 
-                    // For a single phasegroup phase, assume we just want the phasegroup.
-                    if (selectedPhase.phasegroups.nodes.Count == 1)
-                    {
-                        richTextBoxLog.Text += string.Format("Single phasegroup phase detected\r\n");
+            try
+            {
+                switch (selectedObjectType)
+                {
+                    // Get all phasegroups in a phase
+                    case TreeNodeData.NodeType.Phase:
+                        Phase selectedPhase = selectedEvent.phases.Where(q => q.id == selectedObjectId).First<Phase>();
+
+                        // For a single phasegroup phase, assume we just want the phasegroup.
+                        if (selectedPhase.phasegroups.nodes.Count == 1)
+                        {
+                            richTextBoxLog.Text += string.Format("Single phasegroup phase detected\r\n");
+                            if (!(apiQuery.GetSets(selectedObjectId, out setList, checkBoxMatchDetails.Checked)))
+                            {
+                                richTextBoxLog.Text += string.Format("Get failed\r\n");
+                                return;
+                            }
+                            if (setList == null)
+                            {
+                                richTextBoxLog.Text += string.Format("Set list not retrieved\r\n");
+                                return;
+                            }
+
+                            // Get standings
+                            seedList = apiQuery.GetSeedStandings(selectedObjectId);
+
+                            // Generate the round list
+                            ProcessBracket(selectedEvent.Type);
+                            break;
+                        }
+
+                        // Set the pool type
+                        PoolRecord.PoolType poolType;
+                        if (radioButtonBracket.Checked)
+                        {
+                            poolType = PoolRecord.PoolType.Bracket;
+                        }
+                        else if (radioButtonRR.Checked)
+                        {
+                            poolType = PoolRecord.PoolType.RoundRobin;
+                        }
+                        else
+                        {
+                            richTextBoxLog.Text += "Specify a bracket type.\r\n";
+                            return;
+                        }
+
+
+
+                        // Setup progress bar
+                        progressBar.Minimum = 0;
+                        progressBar.Maximum = selectedPhase.phasegroups.nodes.Count;
+                        progressBar.Value = 1;
+                        progressBar.Step = 1;
+
+                        // Retrieve pages for each group
+                        string lastWave = string.Empty;
+                        foreach (PhaseGroup group in selectedPhase.phasegroups.nodes)
+                        {
+                            if (setList == null) setList = new List<Set>();
+
+                            // Clear data
+                            ClearData();
+                            setList.Clear();
+
+                            Dictionary<int, PoolRecord> poolData = new Dictionary<int, PoolRecord>();
+
+                            // Get all sets in the phasegroup
+                            apiQuery.GetSets(group.id, out setList, checkBoxMatchDetails.Checked);
+                            if (setList == null)
+                            {
+                                richTextBoxLog.Text += string.Format("Set list not retrieved for {0}\r\n", group.id);
+                                continue;
+                            }
+
+                            // Get standings
+                            seedList = apiQuery.GetSeedStandings(group.id);
+
+                            // Generate the round list
+                            ProcessBracket(selectedEvent.Type);
+
+                            if (!GeneratePoolData(poolType, ref poolData)) continue;
+
+                            if (selectedEvent.Type == Event.EventType.Singles)
+                            {
+                                OutputSinglesPhase(selectedPhase, poolData, ref lastWave, group, group.State, poolType);
+                            }
+                            else if (selectedEvent.Type == Event.EventType.Doubles)
+                            {
+                                OutputDoublesPhase(selectedPhase, poolData, ref lastWave, group, group.State, poolType);
+                            }
+
+                            // Increment the progress bar
+                            progressBar.PerformStep();
+                        }
+                        break;
+
+                    // Get a single phasegroup
+                    case TreeNodeData.NodeType.PhaseGroup:
                         if (!(apiQuery.GetSets(selectedObjectId, out setList, checkBoxMatchDetails.Checked)))
                         {
                             richTextBoxLog.Text += string.Format("Get failed\r\n");
@@ -2174,177 +2284,96 @@ namespace smashgg_to_liquipedia
                         // Generate the round list
                         ProcessBracket(selectedEvent.Type);
                         break;
-                    }
 
-                    // Set the pool type
-                    PoolRecord.PoolType poolType;
-                    if (radioButtonBracket.Checked)
-                    {
-                        poolType = PoolRecord.PoolType.Bracket;
-                    }
-                    else if (radioButtonRR.Checked)
-                    {
-                        poolType = PoolRecord.PoolType.RoundRobin;
-                    }
-                    else
-                    {
-                        richTextBoxLog.Text += "Specify a bracket type.\r\n";
-                        return;
-                    }
-
-                    
-
-                    // Setup progress bar
-                    progressBar.Minimum = 0;
-                    progressBar.Maximum = selectedPhase.phasegroups.nodes.Count;
-                    progressBar.Value = 1;
-                    progressBar.Step = 1;
-
-                    // Retrieve pages for each group
-                    string lastWave = string.Empty;
-                    foreach (PhaseGroup group in selectedPhase.phasegroups.nodes)
-                    {
-                        if (setList == null) setList = new List<Set>();
-
-                        // Clear data
-                        ClearData();
-                        setList.Clear();
-
-                        Dictionary<int, PoolRecord> poolData = new Dictionary<int, PoolRecord>();
-
-                        // Get all sets in the phasegroup
-                        apiQuery.GetSets(group.id, out setList, checkBoxMatchDetails.Checked);
-                        if (setList == null)
+                    // Get a single wave in a phase
+                    case TreeNodeData.NodeType.Wave:
+                        // Set the pool type
+                        if (radioButtonBracket.Checked)
                         {
-                            richTextBoxLog.Text += string.Format("Set list not retrieved for {0}\r\n", group.id);
-                            continue;
+                            poolType = PoolRecord.PoolType.Bracket;
+                        }
+                        else if (radioButtonRR.Checked)
+                        {
+                            poolType = PoolRecord.PoolType.RoundRobin;
+                        }
+                        else
+                        {
+                            richTextBoxLog.Text += "Specify a bracket type.\r\n";
+                            return;
                         }
 
-                        // Get standings
-                        seedList = apiQuery.GetSeedStandings(group.id);
+                        selectedPhase = selectedEvent.phases.Where(q => q.phasegroups.nodes.Any(r => r.wave.id == selectedObjectId)).First();
+                        KeyValuePair<string, List<PhaseGroup>> wave = selectedPhase.waves.Where(q => (int)q.Value[0].wave.id == selectedObjectId).First();
+                        lastWave = wave.Key;
 
-                        // Generate the round list
-                        ProcessBracket(selectedEvent.Type);
+                        // Setup progress bar
+                        progressBar.Minimum = 0;
+                        progressBar.Maximum = wave.Value.Count;
+                        progressBar.Value = 1;
+                        progressBar.Step = 1;
 
-                        if (!GeneratePoolData(poolType, ref poolData)) continue;
-
-                        if (selectedEvent.Type == Event.EventType.Singles)
+                        // Retrieve pages for each group
+                        foreach (PhaseGroup group in wave.Value)
                         {
-                            OutputSinglesPhase(selectedPhase, poolData, ref lastWave, group, group.State, poolType);
-                        }
-                        else if (selectedEvent.Type == Event.EventType.Doubles)
-                        {
-                            OutputDoublesPhase(selectedPhase, poolData, ref lastWave, group, group.State, poolType);
-                        }
+                            if (setList == null) setList = new List<Set>();
+                            if (seedList == null) seedList = new List<Seed>();
 
-                        // Increment the progress bar
-                        progressBar.PerformStep();
-                    }
-                    break;
+                            // Clear data
+                            ClearData();
+                            setList.Clear();
+                            seedList.Clear();
 
-                // Get a single phasegroup
-                case TreeNodeData.NodeType.PhaseGroup:
-                    if (!(apiQuery.GetSets(selectedObjectId, out setList, checkBoxMatchDetails.Checked)))
-                    {
-                        richTextBoxLog.Text += string.Format("Get failed\r\n");
-                        return;
-                    }
-                    if (setList == null)
-                    {
-                        richTextBoxLog.Text += string.Format("Set list not retrieved\r\n");
-                        return;
-                    }
+                            Dictionary<int, PoolRecord> poolData = new Dictionary<int, PoolRecord>();
 
-                    // Get standings
-                    seedList = apiQuery.GetSeedStandings(selectedObjectId);
+                            // Get all sets in the phasegroup
+                            apiQuery.GetSets(group.id, out setList, checkBoxMatchDetails.Checked);
+                            if (seedList == null)
+                            {
+                                richTextBoxLog.Text += string.Format("Seed list not retrieved for {0}\r\n", group.id);
+                                continue;
+                            }
+                            if (setList == null)
+                            {
+                                richTextBoxLog.Text += string.Format("Set list not retrieved for {0}\r\n", group.id);
+                                continue;
+                            }
 
-                    // Generate the round list
-                    ProcessBracket(selectedEvent.Type);
-                    break;
+                            // Get standings
+                            seedList = apiQuery.GetSeedStandings(group.id);
 
-                // Get a single wave in a phase
-                case TreeNodeData.NodeType.Wave:
-                    // Set the pool type
-                    if (radioButtonBracket.Checked)
-                    {
-                        poolType = PoolRecord.PoolType.Bracket;
-                    }
-                    else if (radioButtonRR.Checked)
-                    {
-                        poolType = PoolRecord.PoolType.RoundRobin;
-                    }
-                    else
-                    {
-                        richTextBoxLog.Text += "Specify a bracket type.\r\n";
-                        return;
-                    }
+                            // Generate the round list
+                            ProcessBracket(selectedEvent.Type);
 
-                    selectedPhase = selectedEvent.phases.Where(q => q.phasegroups.nodes.Any(r => r.wave.id == selectedObjectId)).First();
-                    KeyValuePair<string,List<PhaseGroup>> wave = selectedPhase.waves.Where(q => (int)q.Value[0].wave.id == selectedObjectId).First();
-                    lastWave = wave.Key;
+                            if (!GeneratePoolData(poolType, ref poolData)) continue;
 
-                    // Setup progress bar
-                    progressBar.Minimum = 0;
-                    progressBar.Maximum = wave.Value.Count;
-                    progressBar.Value = 1;
-                    progressBar.Step = 1;
+                            if (selectedEvent.Type == Event.EventType.Singles)
+                            {
+                                OutputSinglesPhase(selectedPhase, poolData, ref lastWave, group, group.State, poolType);
+                            }
+                            else if (selectedEvent.Type == Event.EventType.Doubles)
+                            {
+                                OutputDoublesPhase(selectedPhase, poolData, ref lastWave, group, group.State, poolType);
+                            }
 
-                    // Retrieve pages for each group
-                    foreach (PhaseGroup group in wave.Value)
-                    {
-                        if (setList == null) setList = new List<Set>();
-                        if (seedList == null) seedList = new List<Seed>();
-
-                        // Clear data
-                        ClearData();
-                        setList.Clear();
-                        seedList.Clear();
-
-                        Dictionary<int, PoolRecord> poolData = new Dictionary<int, PoolRecord>();
-
-                        // Get all sets in the phasegroup
-                        apiQuery.GetSets(group.id, out setList, checkBoxMatchDetails.Checked);
-                        if (seedList == null)
-                        {
-                            richTextBoxLog.Text += string.Format("Seed list not retrieved for {0}\r\n", group.id);
-                            continue;
-                        }
-                        if (setList == null)
-                        {
-                            richTextBoxLog.Text += string.Format("Set list not retrieved for {0}\r\n", group.id);
-                            continue;
+                            // Increment the progress bar
+                            progressBar.PerformStep();
                         }
 
-                        // Get standings
-                        seedList = apiQuery.GetSeedStandings(group.id);
+                        break;
 
-                        // Generate the round list
-                        ProcessBracket(selectedEvent.Type);
-
-                        if (!GeneratePoolData(poolType, ref poolData)) continue;
-
-                        if (selectedEvent.Type == Event.EventType.Singles)
-                        {
-                            OutputSinglesPhase(selectedPhase, poolData, ref lastWave, group, group.State, poolType);
-                        }
-                        else if (selectedEvent.Type == Event.EventType.Doubles)
-                        {
-                            OutputDoublesPhase(selectedPhase, poolData, ref lastWave, group, group.State, poolType);
-                        }
-
-                        // Increment the progress bar
-                        progressBar.PerformStep();
-                    }
-
-                    break;
-
-                // Invalid object selected - do nothing
-                default:
-                    richTextBoxLog.Text += "Can't do anything with that object\r\n";
-                    break;
+                    // Invalid object selected - do nothing
+                    default:
+                        richTextBoxLog.Text += "Can't do anything with that object\r\n";
+                        break;
+                }
+            }
+            catch (Exception error)
+            {
+                richTextBoxLpOutput.Text = "Failed to get data\r\n";
+                richTextBoxLpOutput.Text += error.Message;
             }
 
-            richTextBoxLog.Text += string.Format("Get data complete.\r\n");
+    richTextBoxLog.Text += string.Format("Get data complete.\r\n");
         }
     }
 }

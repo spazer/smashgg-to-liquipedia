@@ -28,7 +28,8 @@ namespace smashgg_to_liquipedia
 
         private const int PER_PAGE_SETS = 60;
         private const int PER_PAGE_SETS_DETAILED = 30;
-        private const int PER_PAGE_ENTRANTS = 200;
+        private const int PER_PAGE_ENTRANTS_SINGLES = 200;
+        private const int PER_PAGE_ENTRANTS_DOUBLES = 100;
 
         #region Smash.gg Enumerations
         public enum ActivityState
@@ -172,6 +173,9 @@ namespace smashgg_to_liquipedia
                             id
                             name
                             numEntrants
+                            teamRosterSize {
+                                maxPlayers
+                            }
                             type
                             state
                             phases {
@@ -360,48 +364,55 @@ namespace smashgg_to_liquipedia
 
             // Retrieve pages while there are more paginated sets
             PhaseGroup tempPhaseGroup = new PhaseGroup();
-            do
+            try
             {
-                if (includeDetails)
+                do
                 {
-                    setsRequest.Query = setsWithDetails;
-                    setsRequest.OperationName = "GetSetsWithDetails";
-                    setsRequest.Variables = new
+                    if (includeDetails)
                     {
-                        phaseGroupId = phaseGroupId,
-                        page = page,
-                        perPage = PER_PAGE_SETS_DETAILED
-                    };
-                }
-                else
-                {
-                    setsRequest.Query = setsWithoutDetails;
-                    setsRequest.OperationName = "GetSets";
-                    setsRequest.Variables = new
+                        setsRequest.Query = setsWithDetails;
+                        setsRequest.OperationName = "GetSetsWithDetails";
+                        setsRequest.Variables = new
+                        {
+                            phaseGroupId = phaseGroupId,
+                            page = page,
+                            perPage = PER_PAGE_SETS_DETAILED
+                        };
+                    }
+                    else
                     {
-                        phaseGroupId = phaseGroupId,
-                        page = page,
-                        perPage = PER_PAGE_SETS
-                    };
-                }
+                        setsRequest.Query = setsWithoutDetails;
+                        setsRequest.OperationName = "GetSets";
+                        setsRequest.Variables = new
+                        {
+                            phaseGroupId = phaseGroupId,
+                            page = page,
+                            perPage = PER_PAGE_SETS
+                        };
+                    }
 
-                GraphQLResponse setsResponse = SendRequest(setsRequest);
-                if (setsResponse != null)
-                {
-                    // Parse the json response
-                    tempPhaseGroup = JsonConvert.DeserializeObject<PhaseGroup>(setsResponse.Data.phaseGroup.ToString());
-                    setList.AddRange(tempPhaseGroup.sets.nodes);
-                    WriteLineToLog("Got sets for " + phaseGroupId + " (pg " + page + " of " + tempPhaseGroup.sets.pageInfo.totalPages + ")");
+                    GraphQLResponse setsResponse = SendRequest(setsRequest);
+                    if (setsResponse != null)
+                    {
+                        // Parse the json response
+                        tempPhaseGroup = JsonConvert.DeserializeObject<PhaseGroup>(setsResponse.Data.phaseGroup.ToString());
+                        setList.AddRange(tempPhaseGroup.sets.nodes);
+                        WriteLineToLog("Got sets for " + phaseGroupId + " (pg " + page + " of " + tempPhaseGroup.sets.pageInfo.totalPages + ")");
 
-                    // Increase the page count
-                    page++;
-                }
-                else
-                {
-                    WriteLineToLog("Could not retrieve any data");
-                    return false;
-                }
-            } while (page <= tempPhaseGroup.sets.pageInfo.totalPages);
+                        // Increase the page count
+                        page++;
+                    }
+                    else
+                    {
+                        WriteLineToLog("Could not retrieve any data");
+                        return false;
+                    }
+                } while (page <= tempPhaseGroup.sets.pageInfo.totalPages);
+            }
+            catch (Exception error)
+            {
+                WriteLineToLog(error.Message);
+            }
 
             return true;
         }
@@ -411,7 +422,7 @@ namespace smashgg_to_liquipedia
         /// </summary>
         /// <param name="eventId">ID of the event to query</param>
         /// <param name="entrants">Entrants object for the event</param>
-        public void GetEventEntrants(int eventId, out Dictionary<int,Entrant> entrants)
+        public void GetEventEntrants(int eventId, int playersPerEntrant, out Dictionary<int,Entrant> entrants)
         {
             // Will contain the full entrants list
             List<Entrant> entrantList = new List<Entrant>();
@@ -472,12 +483,24 @@ namespace smashgg_to_liquipedia
                 Event tempEvent = new Event();
                 do
                 {
-                    entrantsRequest.Variables = new
+                    if (playersPerEntrant > 0) {
+                        entrantsRequest.Variables = new
+                        {
+                            eventId = eventId,
+                            page = page,
+                            perPage = PER_PAGE_ENTRANTS_SINGLES / playersPerEntrant
+                        };
+                    }
+                    else
                     {
-                        eventId = eventId,
-                        page = page,
-                        perPage = PER_PAGE_ENTRANTS
-                    };
+                        entrantsRequest.Variables = new
+                        {
+                            eventId = eventId,
+                            page = page,
+                            perPage = PER_PAGE_ENTRANTS_SINGLES
+                        };
+                    }
+                    
 
                     GraphQLResponse entrantsResponse = SendRequest(entrantsRequest);
                     if (entrantsResponse != null)
