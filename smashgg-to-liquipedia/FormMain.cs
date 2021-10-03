@@ -2039,7 +2039,7 @@ namespace smashgg_to_liquipedia
                         var testPhases = selectedEvent.phases.Where(p => p.name == currentPhase.Text).First();
 
                         // phaseGroups is typically null on the event object
-                        selectedObjectId = testPhases.waves.Where(w => w.Value.Where(pg => pg.id == samplePhaseGroupTag.id).First().id == samplePhaseGroupTag.id).First().Value.ElementAt(0).wave.id;
+                        selectedObjectId = testPhases.waves.Where(w => w.Value.First().id == samplePhaseGroupTag.id).First().Value.ElementAt(0).wave.id;
                         selectedObjectType = TreeNodeData.NodeType.Wave;
                     }
 
@@ -2327,20 +2327,20 @@ namespace smashgg_to_liquipedia
 
                             // Get all sets in the phasegroup
                             apiQuery.GetSets(group.id, out setList, checkBoxMatchDetails.Checked);
-                            if (seedList == null)
-                            {
-                                richTextBoxLog.Text += string.Format("Seed list not retrieved for {0}\r\n", group.id);
-                                continue;
-                            }
-                            if (setList == null)
+                            if (setList == null || setList.Count == 0)
                             {
                                 richTextBoxLog.Text += string.Format("Set list not retrieved for {0}\r\n", group.id);
                                 continue;
                             }
-
+                            
                             // Get standings
                             seedList = apiQuery.GetSeedStandings(group.id);
-
+                            if (seedList == null || seedList.Count == 0)
+                            {
+                                richTextBoxLog.Text += string.Format("Seed list not retrieved for {0}\r\n", group.id);
+                                continue;
+                            }
+         
                             // Generate the round list
                             ProcessBracket(selectedEvent.Type);
 
@@ -2371,6 +2371,7 @@ namespace smashgg_to_liquipedia
             {
                 richTextBoxLpOutput.Text = "Failed to get data\r\n";
                 richTextBoxLpOutput.Text += error.Message;
+                richTextBoxLpOutput.Text += error.StackTrace;
             }
 
     richTextBoxLog.Text += string.Format("Get data complete.\r\n");

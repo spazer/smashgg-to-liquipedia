@@ -234,10 +234,17 @@
     </Content>
     <Content Include="smashgg to liquipedia.ico" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="lib\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>XCOPY "$(SolutionDir)smashgg-to-liquipedia\Character Lists" "$(TargetDir)Character Lists" /s /i /y
 XCOPY "$(SolutionDir)smashgg-to-liquipedia\Stage Lists" "$(TargetDir)Stage Lists" /s /i /y</PreBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
