@@ -12,7 +12,7 @@ namespace smashgg_to_liquipedia.Smashgg.Schema
         // GraphQL fields
         public int id { get; set; }
         public string displayIdentifier { get; set; }
-        public int state { get; set; }
+        public int? state { get; set; }
         public int phaseId { get; set; }
         public Wave wave { get; set; }
         public SeedConnection seeds { get; set; }
