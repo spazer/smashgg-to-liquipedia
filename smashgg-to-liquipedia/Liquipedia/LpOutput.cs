@@ -670,14 +670,20 @@ namespace smashgg_to_liquipedia.Liquipedia
                     else
                     {
                         // Fill in the currentSet normally
-                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.T1 + LpStrings.P1, entrantList[currentSet.slots[0].entrant.id].participants[0].gamerTag);
-                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.T1 + LpStrings.P1 + LpStrings.Flag, entrantList[currentSet.slots[0].entrant.id].participants[0].user.location.country);
-                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.T1 + LpStrings.P2, entrantList[currentSet.slots[0].entrant.id].participants[1].gamerTag);
-                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.T1 + LpStrings.P2 + LpStrings.Flag, entrantList[currentSet.slots[0].entrant.id].participants[1].user.location.country);
-                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.T2 + LpStrings.P1, entrantList[currentSet.slots[1].entrant.id].participants[0].gamerTag);
-                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.T2 + LpStrings.P1 + LpStrings.Flag, entrantList[currentSet.slots[1].entrant.id].participants[0].user.location.country);
-                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.T2 + LpStrings.P2, entrantList[currentSet.slots[1].entrant.id].participants[1].gamerTag);
-                        FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.T2 + LpStrings.P2 + LpStrings.Flag, entrantList[currentSet.slots[1].entrant.id].participants[1].user.location.country);
+                        if (currentSet.slots[0].entrant != null)
+                        {
+                            FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.T1 + LpStrings.P1, entrantList[currentSet.slots[0].entrant.id].participants[0].gamerTag);
+                            FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.T1 + LpStrings.P1 + LpStrings.Flag, entrantList[currentSet.slots[0].entrant.id].participants[0].user.location.country);
+                            FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.T1 + LpStrings.P2, entrantList[currentSet.slots[0].entrant.id].participants[1].gamerTag);
+                            FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.T1 + LpStrings.P2 + LpStrings.Flag, entrantList[currentSet.slots[0].entrant.id].participants[1].user.location.country);
+                        }
+                        if (currentSet.slots[1].entrant != null)
+                        {
+                            FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.T2 + LpStrings.P1, entrantList[currentSet.slots[1].entrant.id].participants[0].gamerTag);
+                            FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.T2 + LpStrings.P1 + LpStrings.Flag, entrantList[currentSet.slots[1].entrant.id].participants[0].user.location.country);
+                            FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.T2 + LpStrings.P2, entrantList[currentSet.slots[1].entrant.id].participants[1].gamerTag);
+                            FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.T2 + LpStrings.P2 + LpStrings.Flag, entrantList[currentSet.slots[1].entrant.id].participants[1].user.location.country);
+                        }
 
                         // Check for DQs
                         if (currentSet.entrant1wins == -1)
@@ -754,11 +760,11 @@ namespace smashgg_to_liquipedia.Liquipedia
                         }
                         else
                         {
-                            if (currentSet.winnerId == currentSet.slots[0].entrant.id)
+                            if (currentSet.slots[0].entrant != null && currentSet.winnerId == currentSet.slots[0].entrant.id)
                             {
                                 FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.Win, "1");
                             }
-                            else if (currentSet.winnerId == currentSet.slots[1].entrant.id)
+                            else if (currentSet.slots[1].entrant != null && currentSet.winnerId == currentSet.slots[1].entrant.id)
                             {
                                 FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.Win, "2");
                             }
