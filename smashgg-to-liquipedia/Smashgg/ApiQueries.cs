@@ -294,7 +294,7 @@ namespace smashgg_to_liquipedia
             string setsWithoutDetails = @"
                 query GetSets($phaseGroupId: ID!, $page: Int, $perPage: Int) {
                     phaseGroup(id: $phaseGroupId) {
-                        sets(perPage:$perPage, page:$page, filters: {
+                        sets(perPage:$perPage, page:$page, sortType: NONE, filters: {
                             showByes:true
                         }) {
                             pageInfo {
@@ -320,7 +320,7 @@ namespace smashgg_to_liquipedia
             string setsWithDetails = @"
                 query GetSetsWithDetails($phaseGroupId: ID!, $page: Int, $perPage: Int) {
                     phaseGroup(id: $phaseGroupId) {
-                        sets(perPage:$perPage, page:$page, filters: {
+                        sets(perPage:$perPage, page:$page, sortType: NONE, filters: {
                             showByes:true
                         }) {
                             pageInfo {
