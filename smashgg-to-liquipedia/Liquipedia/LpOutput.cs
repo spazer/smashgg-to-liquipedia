@@ -742,18 +742,18 @@ namespace smashgg_to_liquipedia.Liquipedia
                         // Set the winner
                         if ((currentSet.round == roundList.Keys.Max()) && currentSet.match == 2)
                         {
-                            if (currentSet.winnerId == currentSet.slots[0].entrant.id)
+                            if (currentSet.slots[0].entrant != null && currentSet.winnerId == currentSet.slots[0].entrant.id)
                             {
                                 FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + 1 + LpStrings.Win, "2");
                             }
-                            else if (currentSet.winnerId == currentSet.slots[1].entrant.id)
+                            else if (currentSet.slots[1].entrant != null && currentSet.winnerId == currentSet.slots[1].entrant.id)
                             {
                                 FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + 1 + LpStrings.Win, "1");
                             }
                         }
                         else if ((currentSet.round == roundList.Keys.Max()) && currentSet.match == 1 && roundList[i].Count > 1)
                         {
-                            if (currentSet.winnerId == currentSet.slots[0].entrant.id)
+                            if (currentSet.slots[0].entrant != null && currentSet.winnerId == currentSet.slots[0].entrant.id)
                             {
                                 FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + 1 + LpStrings.Win, "1");
                             }
