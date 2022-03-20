@@ -716,6 +716,20 @@ namespace smashgg_to_liquipedia.Liquipedia
                             // smash.gg switches P1 and P2 in the event of a bracket reset
                             if ((currentSet.round == roundList.Keys.Max()) && currentSet.match == 2)
                             {
+                                // Add score params for the second set
+                                Regex rgx = new Regex(@"(\|r" + outputRound + @"m1t1score=.*)");
+                                Match match = rgx.Match(bracketText);
+                                if (match.Success)
+                                {
+                                    bracketText = bracketText.Replace(match.Groups[1].Value, match.Groups[1].Value + @" |r" + outputRound + @"m2t1score=");
+                                }
+                                rgx = new Regex(@"(\|r" + outputRound + @"m1t2score=.*)");
+                                match = rgx.Match(bracketText);
+                                if (match.Success)
+                                {
+                                    bracketText = bracketText.Replace(match.Groups[1].Value, match.Groups[1].Value + @" |r" + outputRound + @"m2t2score=");
+                                }
+
                                 if (currentSet.entrant1wins != Consts.UNKNOWN && currentSet.entrant2wins != Consts.UNKNOWN)
                                 {
                                     FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.T2 + LpStrings.Score, currentSet.entrant1wins.ToString());

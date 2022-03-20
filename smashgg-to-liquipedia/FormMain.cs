@@ -525,6 +525,9 @@ namespace smashgg_to_liquipedia
             }
             if (checkBoxGuessFinal.Checked)
             {
+                finalBracketOutput = richTextBoxExLpFinalBracket.Text;
+
+                // Assume the highest round is grand finals, the lowest round is losers finals, etc.
                 int gfround = roundList.Keys.Max();
                 int wfround = roundList.Keys.Max() + 1;
                 int lfround = roundList.Keys.Min();
