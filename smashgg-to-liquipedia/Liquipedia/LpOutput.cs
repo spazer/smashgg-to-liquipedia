@@ -487,6 +487,21 @@ namespace smashgg_to_liquipedia.Liquipedia
                             {
                                 if (includeUnfinished || currentSet.State == Tournament.ActivityState.Completed)
                                 {
+                                    // Add score params for the second set
+                                    Regex rgx = new Regex(@"(\|r" + outputRound + @"m1p1score=.*)");
+                                    Match match = rgx.Match(bracketText);
+                                    if (match.Success)
+                                    {
+                                        bracketText = bracketText.Replace(match.Groups[1].Value, match.Groups[1].Value + @" |r" + outputRound + @"m2p1score=");
+                                    }
+                                    rgx = new Regex(@"(\|r" + outputRound + @"m1p2score=.*)");
+                                    match = rgx.Match(bracketText);
+                                    if (match.Success)
+                                    {
+                                        bracketText = bracketText.Replace(match.Groups[1].Value, match.Groups[1].Value + @" |r" + outputRound + @"m2p2score=");
+                                    }
+
+                                    // Fill in the score params
                                     if (currentSet.entrant1wins != 0 || currentSet.entrant2wins != 0)
                                     {
                                         FillLPParameter(ref bracketText, bracketSide + outputRound + LpStrings.Match + outputSet + LpStrings.P2 + LpStrings.Score, currentSet.entrant1wins.ToString());

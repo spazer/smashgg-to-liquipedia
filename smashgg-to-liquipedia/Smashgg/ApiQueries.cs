@@ -310,6 +310,7 @@ namespace smashgg_to_liquipedia
                                 round
                                 displayScore
                                 winnerId
+                                wPlacement
                                 state
                                 slots {
                                     entrant{
