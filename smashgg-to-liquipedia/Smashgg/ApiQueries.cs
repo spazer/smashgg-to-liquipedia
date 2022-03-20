@@ -224,6 +224,10 @@ namespace smashgg_to_liquipedia
                 for (int i = 0; i < tournament.events.Count; i++)
                 {
                     // For each phase in the event
+                    if (tournament.events[i].phases == null)
+                    {
+                        tournament.events[i].phases = new List<Phase>();
+                    }
                     for (int j = 0; j < tournament.events[i].phases.Count; j++)
                     {
                         // Only do additional work on phases that contain more than one phasegroup
@@ -256,7 +260,7 @@ namespace smashgg_to_liquipedia
                     }
 
                     // Sort the phasegroups into a logical order
-                    for (int j=0; j< tournament.events[i].phases.Count; j++)
+                    for (int j = 0; j < tournament.events[i].phases.Count; j++)
                     {
                         // Sort the phasegroups within the waves
                         if (tournament.events[i].phases[j].waves.Count > 0)
