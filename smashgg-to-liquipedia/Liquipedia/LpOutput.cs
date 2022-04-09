@@ -346,18 +346,25 @@ namespace smashgg_to_liquipedia.Liquipedia
 
                         // Insert stage
                         string stage = string.Empty;
-                        if (gameStageList.ContainsKey(game.stage.id))
+                        if (game.stage != null)
                         {
-                            stage = gameStageList[game.stage.id];
-                        }
-                        else if (game.stage.id == Consts.UNKNOWN)
-                        {
-                            stage = string.Empty;
+                            if (gameStageList.ContainsKey(game.stage.id))
+                            {
+                                stage = gameStageList[game.stage.id];
+                            }
+                            else if (game.stage.id == Consts.UNKNOWN || game.stage.id == 0)
+                            {
+                                stage = string.Empty;
+                            }
+                            else
+                            {
+                                stage = game.stage.id.ToString();
+                                log += "No stage entry for number: " + stage + "\r\n";
+                            }
                         }
                         else
                         {
-                            stage = game.stage.id.ToString();
-                            log += "No stage entry for number: " + stage + "\r\n";
+                            stage = "Unknown";
                         }
 
                         insertiontext += " |" + identifier + LpStrings.Stage + game.orderNum + "=" + stage + "\r\n";
