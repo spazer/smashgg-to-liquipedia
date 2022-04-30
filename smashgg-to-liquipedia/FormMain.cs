@@ -270,7 +270,7 @@ namespace smashgg_to_liquipedia
                                 waveNode.BackColor = Color.LightGreen;
                                 waveComplete++;
                             }
-                            else if (phasegroupActive > 1)
+                            else if (phasegroupActive >= 1 || phasegroupComplete >= 1)
                             {
                                 waveNode.BackColor = Color.LightYellow;
                                 waveActive++;
@@ -288,7 +288,7 @@ namespace smashgg_to_liquipedia
                             phaseNode.BackColor = Color.LightGreen;
 
                         }
-                        else if (waveActive > 1)
+                        else if (waveActive >= 1 || waveComplete >= 1)
                         {
                             phaseNode.BackColor = Color.LightYellow;
                         }
@@ -357,7 +357,7 @@ namespace smashgg_to_liquipedia
                         {
                             phaseNode.BackColor = Color.LightGreen;
                         }
-                        else if (phasegroupActive >= 1)
+                        else if (phasegroupActive >= 1 || phasegroupComplete >= 1)
                         {
                             phaseNode.BackColor = Color.LightYellow;
                         }
