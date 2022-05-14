@@ -978,7 +978,7 @@ namespace smashgg_to_liquipedia
             {
                 List<Set> tempList = roundList[roundList.ElementAt(i).Key];
 
-                tempList = tempList.OrderBy(x => x.id).ToList();
+                //tempList = tempList.OrderBy(x => x.id).ToList();
 
                 for (int j = 0; j < tempList.Count; j++)
                 {
