@@ -978,7 +978,16 @@ namespace smashgg_to_liquipedia
             {
                 List<Set> tempList = roundList[roundList.ElementAt(i).Key];
 
-                //tempList = tempList.OrderBy(x => x.id).ToList();
+                // Test to see if the id is valid. If not, this is a preview id
+                bool isNumber = false;
+                int number = 0;
+                isNumber = int.TryParse(tempList[0].id, out number);
+
+                // Only order the sets if this is not a preview
+                if (isNumber)
+                {
+                    tempList = tempList.OrderBy(x => x.id).ToList();
+                }
 
                 for (int j = 0; j < tempList.Count; j++)
                 {
