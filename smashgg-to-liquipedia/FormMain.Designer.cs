@@ -31,7 +31,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormMain));
             this.richTextBoxEntrants = new System.Windows.Forms.RichTextBox();
             this.textBoxTournamentUrl = new System.Windows.Forms.TextBox();
-            this.buttonGetBracket = new System.Windows.Forms.Button();
+            this.buttonGetTournament = new System.Windows.Forms.Button();
             this.radioButtonBracket = new System.Windows.Forms.RadioButton();
             this.radioButtonRR = new System.Windows.Forms.RadioButton();
             this.label5 = new System.Windows.Forms.Label();
@@ -89,6 +89,7 @@
             this.label2 = new System.Windows.Forms.Label();
             this.numericUpDownWinnersStart = new System.Windows.Forms.NumericUpDown();
             this.checkBoxLockWinners = new System.Windows.Forms.CheckBox();
+            this.buttonGetEvent = new System.Windows.Forms.Button();
             this.richTextBoxExLpWinnersBracket = new RichTextBoxEx();
             this.richTextBoxExLpFinalBracket = new RichTextBoxEx();
             this.richTextBoxExLpLosersBracket = new RichTextBoxEx();
@@ -126,15 +127,15 @@
             this.textBoxTournamentUrl.TabIndex = 1;
             this.textBoxTournamentUrl.Enter += new System.EventHandler(this.textBoxURL_Enter);
             // 
-            // buttonGetBracket
+            // buttonGetTournament
             // 
-            this.buttonGetBracket.Location = new System.Drawing.Point(830, 59);
-            this.buttonGetBracket.Name = "buttonGetBracket";
-            this.buttonGetBracket.Size = new System.Drawing.Size(108, 23);
-            this.buttonGetBracket.TabIndex = 2;
-            this.buttonGetBracket.Text = "Get Tournament";
-            this.buttonGetBracket.UseVisualStyleBackColor = true;
-            this.buttonGetBracket.Click += new System.EventHandler(this.buttonGetTournament_Click);
+            this.buttonGetTournament.Location = new System.Drawing.Point(830, 59);
+            this.buttonGetTournament.Name = "buttonGetTournament";
+            this.buttonGetTournament.Size = new System.Drawing.Size(108, 23);
+            this.buttonGetTournament.TabIndex = 2;
+            this.buttonGetTournament.Text = "Get Tournament";
+            this.buttonGetTournament.UseVisualStyleBackColor = true;
+            this.buttonGetTournament.Click += new System.EventHandler(this.buttonGetTournament_Click);
             // 
             // radioButtonBracket
             // 
@@ -412,7 +413,7 @@
             // 
             // buttonAuthentication
             // 
-            this.buttonAuthentication.Location = new System.Drawing.Point(830, 107);
+            this.buttonAuthentication.Location = new System.Drawing.Point(830, 142);
             this.buttonAuthentication.Name = "buttonAuthentication";
             this.buttonAuthentication.Size = new System.Drawing.Size(108, 23);
             this.buttonAuthentication.TabIndex = 29;
@@ -723,6 +724,16 @@
             this.checkBoxLockWinners.UseVisualStyleBackColor = true;
             this.checkBoxLockWinners.CheckedChanged += new System.EventHandler(this.checkBoxLock_CheckedChanged);
             // 
+            // buttonGetEvent
+            // 
+            this.buttonGetEvent.Location = new System.Drawing.Point(830, 88);
+            this.buttonGetEvent.Name = "buttonGetEvent";
+            this.buttonGetEvent.Size = new System.Drawing.Size(108, 23);
+            this.buttonGetEvent.TabIndex = 33;
+            this.buttonGetEvent.Text = "Get Event";
+            this.buttonGetEvent.UseVisualStyleBackColor = true;
+            this.buttonGetEvent.Click += new System.EventHandler(this.buttonGetEvent_Click);
+            // 
             // richTextBoxExLpWinnersBracket
             // 
             this.richTextBoxExLpWinnersBracket.Cue = null;
@@ -755,6 +766,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(948, 566);
+            this.Controls.Add(this.buttonGetEvent);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.label7);
             this.Controls.Add(this.textBoxTournamentUrl);
@@ -767,7 +779,7 @@
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.labelAkaDatabaseRev);
             this.Controls.Add(this.buttonAKA);
-            this.Controls.Add(this.buttonGetBracket);
+            this.Controls.Add(this.buttonGetTournament);
             this.Controls.Add(this.progressBar);
             this.Controls.Add(this.checkBoxGuessFinal);
             this.Controls.Add(this.checkBoxLosers);
@@ -810,7 +822,7 @@
 
         private System.Windows.Forms.RichTextBox richTextBoxEntrants;
         private System.Windows.Forms.TextBox textBoxTournamentUrl;
-        private System.Windows.Forms.Button buttonGetBracket;
+        private System.Windows.Forms.Button buttonGetTournament;
         private System.Windows.Forms.RadioButton radioButtonBracket;
         private System.Windows.Forms.RadioButton radioButtonRR;
         private System.Windows.Forms.Label label5;
@@ -871,6 +883,7 @@
         private System.Windows.Forms.NumericUpDown numericUpDownWinnersEnd;
         private System.Windows.Forms.TreeView treeView1;
         private System.Windows.Forms.Button buttonGetData;
+        private System.Windows.Forms.Button buttonGetEvent;
     }
 }
 

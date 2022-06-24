@@ -1828,7 +1828,7 @@ namespace smashgg_to_liquipedia
             textBoxTournamentUrl.Enabled = false;
 
             buttonFill.Enabled = false;
-            buttonGetBracket.Enabled = false;
+            buttonGetTournament.Enabled = false;
             buttonPrizePool.Enabled = false;
             buttonWinnerShift.Enabled = false;
             buttonLoserShift.Enabled = false;
@@ -1876,7 +1876,7 @@ namespace smashgg_to_liquipedia
             textBoxTournamentUrl.Enabled = true;
 
             buttonFill.Enabled = true;
-            buttonGetBracket.Enabled = true;
+            buttonGetTournament.Enabled = true;
             buttonPrizePool.Enabled = true;
             buttonWinnerShift.Enabled = true;
             buttonLoserShift.Enabled = true;
@@ -2387,6 +2387,298 @@ namespace smashgg_to_liquipedia
             }
 
     richTextBoxLog.Text += string.Format("Get data complete.\r\n");
+        }
+
+        /// <summary>
+        /// Retrieves a single event for the tournament tree
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void buttonGetEvent_Click(object sender, EventArgs e)
+        {
+            LockControls();
+
+            tabControl.SelectedTab = tabPageTournamentExplorer;
+
+            // Find tournament slug
+            textBoxTournamentUrl.Text = textBoxTournamentUrl.Text.Trim();
+            int tournamentMarker = textBoxTournamentUrl.Text.IndexOf("tournament/");
+            if (tournamentMarker == -1)
+            {
+                richTextBoxLog.Text += "Invalid URL\r\n";
+                UnlockControls();
+                return;
+            }
+            int endtournamentMarker = textBoxTournamentUrl.Text.IndexOf("/", tournamentMarker + 11);
+            if (endtournamentMarker == -1)
+            {
+                endtournamentMarker = textBoxTournamentUrl.Text.Length;
+            }
+            int tournamentSlugLength = endtournamentMarker - (tournamentMarker + 11);
+            string tournamentSlug = textBoxTournamentUrl.Text.Substring(tournamentMarker + 11, tournamentSlugLength);
+
+            // Find event slug
+            int eventMarker = textBoxTournamentUrl.Text.IndexOf("/event/");
+            if (eventMarker == -1)
+            {
+                richTextBoxLog.Text += "Invalid URL - no event found\r\n";
+                UnlockControls();
+                return;
+            }
+            int endEventMarker = textBoxTournamentUrl.Text.IndexOf("/", eventMarker + 7);
+            if (endEventMarker == -1)
+            {
+                endEventMarker = textBoxTournamentUrl.Text.Length;
+            }
+            string eventSlug = textBoxTournamentUrl.Text.Substring(tournamentMarker + 11, tournamentSlugLength + 7 + endEventMarker - (eventMarker + 7));
+
+            // Clear the treeview
+            treeView1.Nodes.Clear();
+            tournament = apiQuery.GetSingleEvent(tournamentSlug, "tournament/" + eventSlug);
+            if (tournament.events == null)
+            {
+                richTextBoxLog.Text += "Failed to get tournament\r\n";
+                UnlockControls();
+                return;
+            }
+
+            // Begin updating the treeview
+            treeView1.BeginUpdate();
+            TreeNode root = new TreeNode(tournament.slug);
+            treeView1.Nodes.Add(root);
+
+            // Go through all events in the tournament
+            foreach (Event tournamentEvent in tournament.events)
+            {
+                TreeNode eventNode = new TreeNode(tournamentEvent.name);
+
+                // Save relevant data to event tag
+                TreeNodeData eventNodeTag = new TreeNodeData();
+                eventNodeTag.id = tournamentEvent.id;
+                eventNodeTag.name = tournamentEvent.name;
+                eventNodeTag.nodetype = TreeNodeData.NodeType.Event;
+                if (tournamentEvent.teamRosterSize != null)
+                {
+                    eventNodeTag.playersPerEntrant = tournamentEvent.teamRosterSize.maxPlayers;
+                }
+                eventNode.Tag = eventNodeTag;
+
+
+                // Display number of entrants
+                switch (tournamentEvent.Type)
+                {
+                    case Event.EventType.Singles:
+                        eventNode.Text = tournamentEvent.name + " (" + tournamentEvent.numEntrants.ToString() + " players)";
+                        break;
+                    case Event.EventType.Doubles:
+                        eventNode.Text = tournamentEvent.name + " (" + tournamentEvent.numEntrants.ToString() + " entrants, " + (2 * tournamentEvent.numEntrants).ToString() + " players)";
+                        break;
+                    default:
+                        eventNode.Text = tournamentEvent.name + " (" + tournamentEvent.numEntrants.ToString() + " entrants)";
+                        break;
+                }
+
+                // Set the event bg color
+                switch (tournamentEvent.state)
+                {
+                    case Tournament.ActivityState.Completed:
+                        eventNode.BackColor = Color.LightGreen;
+                        break;
+                    case Tournament.ActivityState.Active:
+                        eventNode.BackColor = Color.LightYellow;
+                        break;
+                    default:
+                        eventNode.BackColor = Color.LightPink;
+                        break;
+                }
+
+                root.Nodes.Add(eventNode);
+
+                foreach (Phase phase in tournamentEvent.phases)
+                {
+                    TreeNode phaseNode = new TreeNode(phase.name);
+
+                    // Save relevant data to phase tag
+                    TreeNodeData phaseNodeTag = new TreeNodeData();
+                    phaseNodeTag.id = phase.id;
+                    phaseNodeTag.name = phase.name;
+                    phaseNodeTag.nodetype = TreeNodeData.NodeType.Phase;
+                    phaseNode.Tag = phaseNodeTag;
+
+                    if (phase.waves.Count > 0)
+                    {
+                        // Add waves for each phase
+                        int waveActive = 0;
+                        int waveComplete = 0;
+                        foreach (KeyValuePair<string, List<PhaseGroup>> wave in phase.waves)
+                        {
+                            TreeNode waveNode = new TreeNode(wave.Key);
+
+                            // Save relevant data to wave tag
+                            TreeNodeData waveNodeTag = new TreeNodeData();
+                            if (wave.Value[0].wave == null)
+                            {
+                                waveNodeTag.id = 0;
+                            }
+                            else
+                            {
+                                waveNodeTag.id = wave.Value[0].Number;
+                            }
+
+                            waveNodeTag.name = wave.Key;
+                            waveNodeTag.nodetype = TreeNodeData.NodeType.Wave;
+                            waveNode.Tag = waveNodeTag;
+
+                            // Set wave text
+                            waveNode.Text = "Wave " + wave.Key + " (" + wave.Value.Count + " groups)";
+
+                            // Add phasegroups associated with each wave
+                            int phasegroupActive = 0;
+                            int phasegroupComplete = 0;
+                            foreach (PhaseGroup phasegroup in wave.Value)
+                            {
+                                TreeNode phasegroupNode = new TreeNode(phasegroup.displayIdentifier);
+
+                                // Save relevant data to phasegroup tag
+                                TreeNodeData phasegroupNodeTag = new TreeNodeData();
+                                phasegroupNodeTag.id = phasegroup.id;
+                                phasegroupNodeTag.name = phasegroup.displayIdentifier;
+                                phasegroupNodeTag.nodetype = TreeNodeData.NodeType.PhaseGroup;
+                                phasegroupNode.Tag = phasegroupNodeTag;
+
+                                // Set the phasegroup bg color
+                                switch (phasegroup.State)
+                                {
+                                    case Tournament.ActivityState.Completed:
+                                        phasegroupNode.BackColor = Color.LightGreen;
+                                        phasegroupComplete++;
+                                        break;
+                                    case Tournament.ActivityState.Active:
+                                        phasegroupNode.BackColor = Color.LightYellow;
+                                        phasegroupActive++;
+                                        break;
+                                    default:
+                                        phasegroupNode.BackColor = Color.LightPink;
+                                        break;
+                                }
+
+                                waveNode.Nodes.Add(phasegroupNode);
+                            }
+
+                            if (phasegroupComplete == wave.Value.Count)
+                            {
+                                waveNode.BackColor = Color.LightGreen;
+                                waveComplete++;
+                            }
+                            else if (phasegroupActive >= 1 || phasegroupComplete >= 1)
+                            {
+                                waveNode.BackColor = Color.LightYellow;
+                                waveActive++;
+                            }
+                            else
+                            {
+                                waveNode.BackColor = Color.LightPink;
+                            }
+
+                            phaseNode.Nodes.Add(waveNode);
+                        }
+
+                        if (waveComplete == phase.waves.Count)
+                        {
+                            phaseNode.BackColor = Color.LightGreen;
+
+                        }
+                        else if (waveActive >= 1 || waveComplete >= 1)
+                        {
+                            phaseNode.BackColor = Color.LightYellow;
+                        }
+                        else
+                        {
+                            phaseNode.BackColor = Color.LightPink;
+                        }
+                    }
+                    else
+                    {
+                        // Add phasegroups associated with each phase
+                        int phasegroupActive = 0;
+                        int phasegroupComplete = 0;
+                        if (phase.phasegroups.nodes.Count >= 2)
+                        {
+                            foreach (PhaseGroup phasegroup in phase.phasegroups.nodes)
+                            {
+                                TreeNode phasegroupNode = new TreeNode(phasegroup.displayIdentifier + " " + phasegroup.WaveLetter);
+
+                                // Save relevant data to phasegroup tag
+                                TreeNodeData phasegroupNodeTag = new TreeNodeData();
+                                phasegroupNodeTag.id = phasegroup.id;
+                                phasegroupNodeTag.name = phasegroup.displayIdentifier;
+                                phasegroupNodeTag.nodetype = TreeNodeData.NodeType.PhaseGroup;
+                                phasegroupNode.Tag = phasegroupNodeTag;
+
+                                // Set the phasegroup bg color
+                                switch (phasegroup.State)
+                                {
+                                    case Tournament.ActivityState.Completed:
+                                        phasegroupNode.BackColor = Color.LightGreen;
+                                        phasegroupComplete++;
+                                        break;
+                                    case Tournament.ActivityState.Active:
+                                        phasegroupNode.BackColor = Color.LightYellow;
+                                        phasegroupActive++;
+                                        break;
+                                    default:
+                                        phasegroupNode.BackColor = Color.LightPink;
+                                        break;
+                                }
+
+                                phaseNode.Nodes.Add(phasegroupNode);
+                            }
+                        }
+                        else
+                        {
+                            foreach (PhaseGroup phasegroup in phase.phasegroups.nodes)
+                            {
+                                switch (phasegroup.State)
+                                {
+                                    case Tournament.ActivityState.Completed:
+                                        phasegroupComplete++;
+                                        break;
+                                    case Tournament.ActivityState.Active:
+                                        phasegroupActive++;
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            }
+                        }
+
+                        // Set bgcolor for phase
+                        if (phasegroupComplete == phase.phasegroups.nodes.Count)
+                        {
+                            phaseNode.BackColor = Color.LightGreen;
+                        }
+                        else if (phasegroupActive >= 1 || phasegroupComplete >= 1)
+                        {
+                            phaseNode.BackColor = Color.LightYellow;
+                        }
+                        else
+                        {
+                            phaseNode.BackColor = Color.LightPink;
+                        }
+                    }
+
+                    // Add phase to event
+                    eventNode.Nodes.Add(phaseNode);
+                }
+            }
+
+            // Expand the tournament node
+            root.Expand();
+            treeView1.EndUpdate();
+
+            UnlockControls();
+
+            richTextBoxLog.Text += "Get event complete.\r\n";
         }
     }
 }
