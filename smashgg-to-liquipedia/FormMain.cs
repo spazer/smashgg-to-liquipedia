@@ -1427,14 +1427,14 @@ namespace smashgg_to_liquipedia
             }
 
             // Remove entrants without listed sets (smash.gg seems to list extraneous entrants sometimes)
-            for (int i = 0; i < record.Count; i++)
-            {
-                if (record.ElementAt(i).Value.isinGroup == false)
-                {
-                    record.Remove(record.ElementAt(i).Key);
-                    i--;
-                }
-            }
+            //for (int i = 0; i < record.Count; i++)
+            //{
+            //    if (record.ElementAt(i).Value.isinGroup == false)
+            //    {
+            //        record.Remove(record.ElementAt(i).Key);
+            //        i--;
+            //    }
+            //}
 
             // Sort the entrants by their rank and W-L records
             if (poolType == PoolRecord.PoolType.Bracket)
