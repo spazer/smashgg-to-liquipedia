@@ -2402,6 +2402,7 @@ namespace smashgg_to_liquipedia
 
             // Find tournament slug
             textBoxTournamentUrl.Text = textBoxTournamentUrl.Text.Trim();
+            textBoxTournamentUrl.Text = textBoxTournamentUrl.Text.Replace("/events/", "/event/");
             int tournamentMarker = textBoxTournamentUrl.Text.IndexOf("tournament/");
             if (tournamentMarker == -1)
             {
@@ -2419,18 +2420,19 @@ namespace smashgg_to_liquipedia
 
             // Find event slug
             int eventMarker = textBoxTournamentUrl.Text.IndexOf("/event/");
+            int eventMarkerLength = 7;
             if (eventMarker == -1)
             {
                 richTextBoxLog.Text += "Invalid URL - no event found\r\n";
                 UnlockControls();
                 return;
             }
-            int endEventMarker = textBoxTournamentUrl.Text.IndexOf("/", eventMarker + 7);
+            int endEventMarker = textBoxTournamentUrl.Text.IndexOf("/", eventMarker + eventMarkerLength);
             if (endEventMarker == -1)
             {
                 endEventMarker = textBoxTournamentUrl.Text.Length;
             }
-            string eventSlug = textBoxTournamentUrl.Text.Substring(tournamentMarker + 11, tournamentSlugLength + 7 + endEventMarker - (eventMarker + 7));
+            string eventSlug = textBoxTournamentUrl.Text.Substring(tournamentMarker + 11, tournamentSlugLength + eventMarkerLength + endEventMarker - (eventMarker + eventMarkerLength));
 
             // Clear the treeview
             treeView1.Nodes.Clear();
