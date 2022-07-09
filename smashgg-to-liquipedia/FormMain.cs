@@ -2193,7 +2193,7 @@ namespace smashgg_to_liquipedia
                         if (selectedPhase.phasegroups.nodes.Count == 1)
                         {
                             richTextBoxLog.Text += string.Format("Single phasegroup phase detected\r\n");
-                            if (!(apiQuery.GetSets(selectedObjectId, out setList, checkBoxMatchDetails.Checked)))
+                            if (!(apiQuery.GetSets(selectedObjectId, out setList, checkBoxMatchDetails.Checked, checkBoxSorting.Checked)))
                             {
                                 richTextBoxLog.Text += string.Format("Get failed\r\n");
                                 return;
@@ -2249,7 +2249,7 @@ namespace smashgg_to_liquipedia
                             Dictionary<int, PoolRecord> poolData = new Dictionary<int, PoolRecord>();
 
                             // Get all sets in the phasegroup
-                            apiQuery.GetSets(group.id, out setList, checkBoxMatchDetails.Checked);
+                            apiQuery.GetSets(group.id, out setList, checkBoxMatchDetails.Checked, checkBoxSorting.Checked);
                             if (setList == null)
                             {
                                 richTextBoxLog.Text += string.Format("Set list not retrieved for {0}\r\n", group.id);
@@ -2280,7 +2280,7 @@ namespace smashgg_to_liquipedia
 
                     // Get a single phasegroup
                     case TreeNodeData.NodeType.PhaseGroup:
-                        if (!(apiQuery.GetSets(selectedObjectId, out setList, checkBoxMatchDetails.Checked)))
+                        if (!(apiQuery.GetSets(selectedObjectId, out setList, checkBoxMatchDetails.Checked, checkBoxSorting.Checked)))
                         {
                             richTextBoxLog.Text += string.Format("Get failed\r\n");
                             return;
@@ -2339,7 +2339,7 @@ namespace smashgg_to_liquipedia
                             Dictionary<int, PoolRecord> poolData = new Dictionary<int, PoolRecord>();
 
                             // Get all sets in the phasegroup
-                            apiQuery.GetSets(group.id, out setList, checkBoxMatchDetails.Checked);
+                            apiQuery.GetSets(group.id, out setList, checkBoxMatchDetails.Checked, checkBoxSorting.Checked);
                             if (setList == null || setList.Count == 0)
                             {
                                 richTextBoxLog.Text += string.Format("Set list not retrieved for {0}\r\n", group.id);

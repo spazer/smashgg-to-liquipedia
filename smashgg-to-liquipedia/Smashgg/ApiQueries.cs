@@ -428,7 +428,7 @@ namespace smashgg_to_liquipedia
             return tournament;
         }
 
-        public bool GetSets(int phaseGroupId, out List<Set> setList, bool includeDetails)
+        public bool GetSets(int phaseGroupId, out List<Set> setList, bool includeDetails, bool noSorting)
         {
             setList = new List<Set>();
 
@@ -437,6 +437,33 @@ namespace smashgg_to_liquipedia
                 query GetSets($phaseGroupId: ID!, $page: Int, $perPage: Int) {
                     phaseGroup(id: $phaseGroupId) {
                         sets(perPage:$perPage, page:$page, sortType: ROUND, filters: {
+                            showByes:true
+                        }) {
+                            pageInfo {
+                                total
+                                totalPages
+                            }
+                            nodes {
+                                id
+                                round
+                                displayScore
+                                winnerId
+                                wPlacement
+                                state
+                                slots {
+                                    entrant{
+                                        id
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }";
+
+            string setsWithoutDetailsOrSorting = @"
+                query GetSetsNoSort($phaseGroupId: ID!, $page: Int, $perPage: Int) {
+                    phaseGroup(id: $phaseGroupId) {
+                        sets(perPage:$perPage, page:$page, filters: {
                             showByes:true
                         }) {
                             pageInfo {
@@ -520,6 +547,17 @@ namespace smashgg_to_liquipedia
                             phaseGroupId = phaseGroupId,
                             page = page,
                             perPage = PER_PAGE_SETS_DETAILED
+                        };
+                    }
+                    else if (noSorting)
+                    {
+                        setsRequest.Query = setsWithoutDetailsOrSorting;
+                        setsRequest.OperationName = "GetSetsNoSort";
+                        setsRequest.Variables = new
+                        {
+                            phaseGroupId = phaseGroupId,
+                            page = page,
+                            perPage = PER_PAGE_SETS
                         };
                     }
                     else

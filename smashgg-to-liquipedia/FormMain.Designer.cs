@@ -93,6 +93,7 @@
             this.richTextBoxExLpWinnersBracket = new RichTextBoxEx();
             this.richTextBoxExLpFinalBracket = new RichTextBoxEx();
             this.richTextBoxExLpLosersBracket = new RichTextBoxEx();
+            this.checkBoxSorting = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAdvanceWinners)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAdvanceLosers)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPrizePool)).BeginInit();
@@ -761,11 +762,24 @@
             this.richTextBoxExLpLosersBracket.TabIndex = 13;
             this.richTextBoxExLpLosersBracket.Text = "";
             // 
+            // checkBoxSorting
+            // 
+            this.checkBoxSorting.AutoSize = true;
+            this.checkBoxSorting.Checked = true;
+            this.checkBoxSorting.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBoxSorting.Location = new System.Drawing.Point(709, 264);
+            this.checkBoxSorting.Name = "checkBoxSorting";
+            this.checkBoxSorting.Size = new System.Drawing.Size(67, 17);
+            this.checkBoxSorting.TabIndex = 34;
+            this.checkBoxSorting.Text = "Sort sets";
+            this.checkBoxSorting.UseVisualStyleBackColor = true;
+            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(948, 566);
+            this.Controls.Add(this.checkBoxSorting);
             this.Controls.Add(this.buttonGetEvent);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.label7);
@@ -884,6 +898,7 @@
         private System.Windows.Forms.TreeView treeView1;
         private System.Windows.Forms.Button buttonGetData;
         private System.Windows.Forms.Button buttonGetEvent;
+        private System.Windows.Forms.CheckBox checkBoxSorting;
     }
 }
 
