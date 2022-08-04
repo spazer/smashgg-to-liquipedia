@@ -90,10 +90,11 @@
             this.numericUpDownWinnersStart = new System.Windows.Forms.NumericUpDown();
             this.checkBoxLockWinners = new System.Windows.Forms.CheckBox();
             this.buttonGetEvent = new System.Windows.Forms.Button();
+            this.checkBoxSorting = new System.Windows.Forms.CheckBox();
             this.richTextBoxExLpWinnersBracket = new RichTextBoxEx();
             this.richTextBoxExLpFinalBracket = new RichTextBoxEx();
             this.richTextBoxExLpLosersBracket = new RichTextBoxEx();
-            this.checkBoxSorting = new System.Windows.Forms.CheckBox();
+            this.buttonAkaList = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAdvanceWinners)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAdvanceLosers)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPrizePool)).BeginInit();
@@ -189,7 +190,7 @@
             // 
             // buttonFill
             // 
-            this.buttonFill.Location = new System.Drawing.Point(488, 143);
+            this.buttonFill.Location = new System.Drawing.Point(488, 111);
             this.buttonFill.Name = "buttonFill";
             this.buttonFill.Size = new System.Drawing.Size(189, 35);
             this.buttonFill.TabIndex = 2;
@@ -404,7 +405,7 @@
             // 
             // buttonGroupTable
             // 
-            this.buttonGroupTable.Location = new System.Drawing.Point(488, 102);
+            this.buttonGroupTable.Location = new System.Drawing.Point(488, 70);
             this.buttonGroupTable.Name = "buttonGroupTable";
             this.buttonGroupTable.Size = new System.Drawing.Size(189, 35);
             this.buttonGroupTable.TabIndex = 27;
@@ -473,6 +474,7 @@
             this.tabPageTournamentExplorer.Controls.Add(this.numericUpDownPrizePool);
             this.tabPageTournamentExplorer.Controls.Add(this.buttonFill);
             this.tabPageTournamentExplorer.Controls.Add(this.treeView1);
+            this.tabPageTournamentExplorer.Controls.Add(this.buttonAkaList);
             this.tabPageTournamentExplorer.Location = new System.Drawing.Point(4, 22);
             this.tabPageTournamentExplorer.Name = "tabPageTournamentExplorer";
             this.tabPageTournamentExplorer.Padding = new System.Windows.Forms.Padding(3);
@@ -485,7 +487,7 @@
             // 
             this.buttonGetData.Location = new System.Drawing.Point(488, 6);
             this.buttonGetData.Name = "buttonGetData";
-            this.buttonGetData.Size = new System.Drawing.Size(189, 90);
+            this.buttonGetData.Size = new System.Drawing.Size(189, 58);
             this.buttonGetData.TabIndex = 29;
             this.buttonGetData.Text = "Get Data";
             this.buttonGetData.UseVisualStyleBackColor = true;
@@ -735,6 +737,18 @@
             this.buttonGetEvent.UseVisualStyleBackColor = true;
             this.buttonGetEvent.Click += new System.EventHandler(this.buttonGetEvent_Click);
             // 
+            // checkBoxSorting
+            // 
+            this.checkBoxSorting.AutoSize = true;
+            this.checkBoxSorting.Checked = true;
+            this.checkBoxSorting.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBoxSorting.Location = new System.Drawing.Point(709, 264);
+            this.checkBoxSorting.Name = "checkBoxSorting";
+            this.checkBoxSorting.Size = new System.Drawing.Size(67, 17);
+            this.checkBoxSorting.TabIndex = 34;
+            this.checkBoxSorting.Text = "Sort sets";
+            this.checkBoxSorting.UseVisualStyleBackColor = true;
+            // 
             // richTextBoxExLpWinnersBracket
             // 
             this.richTextBoxExLpWinnersBracket.Cue = null;
@@ -762,17 +776,15 @@
             this.richTextBoxExLpLosersBracket.TabIndex = 13;
             this.richTextBoxExLpLosersBracket.Text = "";
             // 
-            // checkBoxSorting
+            // buttonAkaList
             // 
-            this.checkBoxSorting.AutoSize = true;
-            this.checkBoxSorting.Checked = true;
-            this.checkBoxSorting.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBoxSorting.Location = new System.Drawing.Point(709, 264);
-            this.checkBoxSorting.Name = "checkBoxSorting";
-            this.checkBoxSorting.Size = new System.Drawing.Size(67, 17);
-            this.checkBoxSorting.TabIndex = 34;
-            this.checkBoxSorting.Text = "Sort sets";
-            this.checkBoxSorting.UseVisualStyleBackColor = true;
+            this.buttonAkaList.Location = new System.Drawing.Point(488, 168);
+            this.buttonAkaList.Name = "buttonAkaList";
+            this.buttonAkaList.Size = new System.Drawing.Size(189, 23);
+            this.buttonAkaList.TabIndex = 2;
+            this.buttonAkaList.Text = "Make AKA List";
+            this.buttonAkaList.UseVisualStyleBackColor = true;
+            this.buttonAkaList.Click += new System.EventHandler(this.buttonAKAList_Click);
             // 
             // FormMain
             // 
@@ -899,6 +911,7 @@
         private System.Windows.Forms.Button buttonGetData;
         private System.Windows.Forms.Button buttonGetEvent;
         private System.Windows.Forms.CheckBox checkBoxSorting;
+        private System.Windows.Forms.Button buttonAkaList;
     }
 }
 

@@ -710,14 +710,11 @@ namespace smashgg_to_liquipedia
                 }
             }
 
-            // Convert country to abbreviations
+            // Standardize the entrant/participant information
             for (int i = 0; i < entrantList.Count; i++)
             {
-                Standardization standards = new Standardization();
-                for (int j = 0; j < entrantList[i].participants.Count; j++)
-                {
-                    entrantList[i].participants[j].user.location.country = standards.CountryAbbreviation(entrantList[i].participants[j].user.location.country);
-                }
+                //Standardization standards = new Standardization();
+                ParticipantStandardization(entrantList[i].participants);
             }
 
             // Reformat list into dictionary
@@ -818,6 +815,32 @@ namespace smashgg_to_liquipedia
                     phaseGroupId = phaseGroupId
                 }
             };
+            GraphQLRequest pgStandingsScoreRequest = new GraphQLRequest
+            {
+                Query = @"
+                    query GetPhaseGroupScoreStandings($phaseGroupId: ID!) {
+                        phaseGroup(id: $phaseGroupId) {
+                            seeds(query: {
+                                page: 1
+                                perPage: 100
+                            }) {
+                                nodes{
+                                  	entrant {
+                                      	id
+                                        name
+                                    }
+                                    placement
+                                    setRecordWithoutByes(phaseGroupId: $phaseGroupId)
+                                }
+                            }
+                        }
+                    }",
+                OperationName = "GetPhaseGroupScoreStandings",
+                Variables = new
+                {
+                    phaseGroupId = phaseGroupId
+                }
+            };
 
             GraphQLResponse response = SendRequest(pgStandingsRequest);
             PhaseGroup phaseGroupResults = new PhaseGroup();
@@ -851,15 +874,9 @@ namespace smashgg_to_liquipedia
         {
             foreach (Participant participant in participants)
             {
-                foreach (PlayerInfo info in playerdb.players)
-                {
-                    if (participant.player.id == info.smashggID || participant.player.id == info.smashggID)
-                    {
-                        participant.gamerTag = info.name;
-                        participant.gamerTag = info.name;
-                        participant.user.location.country = info.flag;
-                        break;
-                    }
+                if (playerdb.players.ContainsKey(participant.player.id)) {
+                    participant.gamerTag = playerdb.players[participant.player.id].name;
+                    participant.user.location.country = playerdb.players[participant.player.id].flag;
                 }
 
                 participant.user.location.country = standardization.CountryAbbreviation(participant.user.location.country);

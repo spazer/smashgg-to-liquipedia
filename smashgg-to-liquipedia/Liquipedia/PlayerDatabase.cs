@@ -25,13 +25,16 @@ namespace smashgg_to_liquipedia
 
         public enum DbSource { Smash, Fighters };
 
-        public List<PlayerInfo> players;
+        /// <summary>
+        /// The key is the smash.gg id
+        /// </summary>
+        public Dictionary<int, PlayerInfo> players;
 
         private int revID;
 
         public PlayerDatabase(DbSource source)
         {
-            players = new List<PlayerInfo>();
+            players = new Dictionary<int, PlayerInfo>();
             ReadDatabaseFromFile(source);
         }
 
@@ -124,17 +127,18 @@ namespace smashgg_to_liquipedia
                         regex = segment.Substring(altPos + TEMPLATE_ALTS.Length, smashggPos - altPos - TEMPLATE_ALTS.Length).Trim();
                     }
 
-                    // Get smashgg ID. If no ID exists, make it 0
+                    // Get smashgg ID. If no ID exists, skip adding this entry
                     if (smashggPos != -1)
                     {
                         if (!int.TryParse(segment.Substring(smashggPos + TEMPLATE_SMASHGG.Length, segment.Length - smashggPos - TEMPLATE_SMASHGG.Length - TEMPLATE_END.Length).Trim(), out smashggID))
                         {
-                            smashggID = 0;
+                            i = entryend; 
+                            continue;
                         }
                     }
 
                     PlayerInfo newPlayer = new PlayerInfo(player, flag, regex, smashggID);
-                    players.Add(newPlayer);
+                    players.Add(smashggID, newPlayer);
 
                     i = entryend;
                 }

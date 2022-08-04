@@ -2682,5 +2682,28 @@ namespace smashgg_to_liquipedia
 
             richTextBoxLog.Text += "Get event complete.\r\n";
         }
+
+        private void buttonAKAList_Click(object sender, EventArgs e)
+        {
+            // Check to see if there are entrants to output
+            if (entrantList.Count == 0) {
+                richTextBoxLog.Text += "No entrants to output.\r\n";
+                return;
+            }
+
+            // Output entrants using smash.gg ids
+            richTextBoxLpOutput.Clear();
+            foreach (KeyValuePair<int, Entrant> entrant in entrantList)
+            {
+                var uniqueId = entrant.Value.participants[0].player.id;
+                var country = entrant.Value.participants[0].user.location.country;
+                var tag = entrant.Value.participants[0].gamerTag;
+
+                richTextBoxLpOutput.Text += "{{AltSlot |player= |flag="  + country +
+                    " |alts=" + tag +
+                    " |smashgg=" + uniqueId +
+                    "}}\r\n";
+            }
+        }
     }
 }
