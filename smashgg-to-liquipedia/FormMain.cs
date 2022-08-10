@@ -739,6 +739,7 @@ namespace smashgg_to_liquipedia
         {
             WebClient client = new WebClient();
             client.Headers[HttpRequestHeader.AcceptEncoding] = "gzip";
+            client.Headers[HttpRequestHeader.UserAgent] = "smashgg-to-liquipedia (https://github.com/spazer/smashgg-to-liquipedia)";
 
             // Decide on the URL to use
             string json = string.Empty;
