@@ -2706,5 +2706,44 @@ namespace smashgg_to_liquipedia
                     "}}\r\n";
             }
         }
+
+        private void buttonSWT_Click(object sender, EventArgs e)
+        {
+            if (selectedEvent == null)
+            {
+                richTextBoxLog.Text += "No event selected\r\n";
+                return;
+            }
+
+            List<Standing> standingList = apiQuery.GetStandings(selectedEvent.id, (int)numericUpDownPrizePool.Value);
+
+
+            richTextBoxLog.Text += "Outputting results\r\n";
+
+            // Loop through the records to remove placements of 0
+            for (int i = 0; i < standingList.Count; i++)
+            {
+                if (standingList[i].placement == 0)
+                {
+                    standingList.RemoveAt(i);
+                    i--;
+                }
+            }
+
+            // Loop through the records to add entries to the prize pool
+            for (int j = 0; j < standingList.Count; j++)
+            {
+                if (selectedEvent.Type == Event.EventType.Singles)
+                {
+                    // Assume there is only 1 player output their info
+                    richTextBoxLpOutput.Text += "|p" + (j+1) + "=" + standingList[j].entrant.participants[0].gamerTag +
+                                                "|flag" + (j+1) + "=" + standingList[j].entrant.participants[0].user.location.country +
+                                                "\r\n";
+                }
+            }
+
+            richTextBoxLpOutput.Text = richTextBoxLpOutput.Text.Trim();
+            richTextBoxLog.Text += "Done.\r\n";
+        }
     }
 }

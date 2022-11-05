@@ -68,6 +68,7 @@
             this.tabPageTournamentExplorer = new System.Windows.Forms.TabPage();
             this.buttonGetData = new System.Windows.Forms.Button();
             this.treeView1 = new System.Windows.Forms.TreeView();
+            this.buttonAkaList = new System.Windows.Forms.Button();
             this.tabPageRetrievedData = new System.Windows.Forms.TabPage();
             this.richTextBoxLosers = new System.Windows.Forms.RichTextBox();
             this.richTextBoxWinners = new System.Windows.Forms.RichTextBox();
@@ -94,7 +95,7 @@
             this.richTextBoxExLpWinnersBracket = new RichTextBoxEx();
             this.richTextBoxExLpFinalBracket = new RichTextBoxEx();
             this.richTextBoxExLpLosersBracket = new RichTextBoxEx();
-            this.buttonAkaList = new System.Windows.Forms.Button();
+            this.buttonSWT = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAdvanceWinners)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAdvanceLosers)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPrizePool)).BeginInit();
@@ -288,7 +289,7 @@
             // 
             this.buttonPrizePool.Location = new System.Drawing.Point(488, 197);
             this.buttonPrizePool.Name = "buttonPrizePool";
-            this.buttonPrizePool.Size = new System.Drawing.Size(151, 23);
+            this.buttonPrizePool.Size = new System.Drawing.Size(94, 23);
             this.buttonPrizePool.TabIndex = 17;
             this.buttonPrizePool.Text = "Prize Pool Table";
             this.buttonPrizePool.UseVisualStyleBackColor = true;
@@ -468,6 +469,7 @@
             // 
             // tabPageTournamentExplorer
             // 
+            this.tabPageTournamentExplorer.Controls.Add(this.buttonSWT);
             this.tabPageTournamentExplorer.Controls.Add(this.buttonGetData);
             this.tabPageTournamentExplorer.Controls.Add(this.buttonPrizePool);
             this.tabPageTournamentExplorer.Controls.Add(this.buttonGroupTable);
@@ -501,6 +503,16 @@
             this.treeView1.Size = new System.Drawing.Size(476, 221);
             this.treeView1.TabIndex = 28;
             this.treeView1.AfterCheck += new System.Windows.Forms.TreeViewEventHandler(this.treeView1_AfterCheck);
+            // 
+            // buttonAkaList
+            // 
+            this.buttonAkaList.Location = new System.Drawing.Point(488, 168);
+            this.buttonAkaList.Name = "buttonAkaList";
+            this.buttonAkaList.Size = new System.Drawing.Size(189, 23);
+            this.buttonAkaList.TabIndex = 2;
+            this.buttonAkaList.Text = "Make AKA List";
+            this.buttonAkaList.UseVisualStyleBackColor = true;
+            this.buttonAkaList.Click += new System.EventHandler(this.buttonAKAList_Click);
             // 
             // tabPageRetrievedData
             // 
@@ -776,15 +788,15 @@
             this.richTextBoxExLpLosersBracket.TabIndex = 13;
             this.richTextBoxExLpLosersBracket.Text = "";
             // 
-            // buttonAkaList
+            // buttonSWT
             // 
-            this.buttonAkaList.Location = new System.Drawing.Point(488, 168);
-            this.buttonAkaList.Name = "buttonAkaList";
-            this.buttonAkaList.Size = new System.Drawing.Size(189, 23);
-            this.buttonAkaList.TabIndex = 2;
-            this.buttonAkaList.Text = "Make AKA List";
-            this.buttonAkaList.UseVisualStyleBackColor = true;
-            this.buttonAkaList.Click += new System.EventHandler(this.buttonAKAList_Click);
+            this.buttonSWT.Location = new System.Drawing.Point(586, 197);
+            this.buttonSWT.Name = "buttonSWT";
+            this.buttonSWT.Size = new System.Drawing.Size(53, 23);
+            this.buttonSWT.TabIndex = 30;
+            this.buttonSWT.Text = "SWT";
+            this.buttonSWT.UseVisualStyleBackColor = true;
+            this.buttonSWT.Click += new System.EventHandler(this.buttonSWT_Click);
             // 
             // FormMain
             // 
@@ -912,6 +924,7 @@
         private System.Windows.Forms.Button buttonGetEvent;
         private System.Windows.Forms.CheckBox checkBoxSorting;
         private System.Windows.Forms.Button buttonAkaList;
+        private System.Windows.Forms.Button buttonSWT;
     }
 }
 
