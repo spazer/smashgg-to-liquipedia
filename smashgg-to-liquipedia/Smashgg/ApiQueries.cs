@@ -463,7 +463,7 @@ namespace smashgg_to_liquipedia
             string setsWithoutDetailsOrSorting = @"
                 query GetSetsNoSort($phaseGroupId: ID!, $page: Int, $perPage: Int) {
                     phaseGroup(id: $phaseGroupId) {
-                        sets(perPage:$perPage, page:$page, filters: {
+                        sets(perPage:$perPage, page:$page, sortType: NONE, filters: {
                             showByes:true
                         }) {
                             pageInfo {
