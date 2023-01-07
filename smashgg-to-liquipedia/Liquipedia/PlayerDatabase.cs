@@ -148,6 +148,11 @@ namespace smashgg_to_liquipedia
                 Console.WriteLine("Error durign parsing of AKA database: " + ex.ParamName + " = " + ex.ActualValue);
                 Console.WriteLine(ex.StackTrace);
             }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error during parsing of AKA database: " + i);
+                Console.WriteLine(ex.Message);
+            }
             catch
             {
                 Console.WriteLine("Error during parsing of AKA database: " + i);
