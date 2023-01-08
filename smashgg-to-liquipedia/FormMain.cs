@@ -123,14 +123,16 @@ namespace smashgg_to_liquipedia
                 UnlockControls();
                 return;
             }
+            string slug;
             int endtournamentMarker = textBoxTournamentUrl.Text.IndexOf("/", tournamentMarker + 11);
             if (endtournamentMarker == -1)
             {
-                richTextBoxLog.Text += "Invalid URL\r\n";
-                UnlockControls();
-                return;
+                slug = textBoxTournamentUrl.Text.Substring(tournamentMarker + 11);
             }
-            string slug = textBoxTournamentUrl.Text.Substring(tournamentMarker + 11, endtournamentMarker - (tournamentMarker + 11));
+            else
+            {
+                slug = textBoxTournamentUrl.Text.Substring(tournamentMarker + 11, endtournamentMarker - (tournamentMarker + 11));
+            }            
 
             // Clear the treeview
             treeView1.Nodes.Clear();
