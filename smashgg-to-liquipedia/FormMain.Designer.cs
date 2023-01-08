@@ -526,17 +526,6 @@
             this.tabPageTournamentExplorer.Text = "Tournament Explorer";
             this.tabPageTournamentExplorer.UseVisualStyleBackColor = true;
             // 
-            // buttonSWT
-            // 
-            this.buttonSWT.Location = new System.Drawing.Point(781, 242);
-            this.buttonSWT.Margin = new System.Windows.Forms.Padding(4);
-            this.buttonSWT.Name = "buttonSWT";
-            this.buttonSWT.Size = new System.Drawing.Size(71, 28);
-            this.buttonSWT.TabIndex = 30;
-            this.buttonSWT.Text = "SWT";
-            this.buttonSWT.UseVisualStyleBackColor = true;
-            this.buttonSWT.Click += new System.EventHandler(this.buttonSWT_Click);
-            // 
             // buttonGetData
             // 
             this.buttonGetData.Location = new System.Drawing.Point(651, 7);
