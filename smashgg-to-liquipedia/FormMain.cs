@@ -451,36 +451,88 @@ namespace smashgg_to_liquipedia
             if (checkBoxGuessFinal.Checked)
             {
                 finalBracketOutput = richTextBoxExLpFinalBracket.Text;
-
-                // Assume the highest round is grand finals, the lowest round is losers finals, etc.
-                int gfround = roundList.Keys.Max();
-                int wfround = roundList.Keys.Max() - 1;
-                int lfround = roundList.Keys.Min();
-                int lsround = roundList.Keys.Min() + 1;
-
-                // Fill in R3
-                lpout.fillBracketSingles(gfround, gfround, 3 - gfround, ref finalBracketOutput, matchOffsetPerRound,
-                    checkBoxFillByes.Checked, checkBoxUnfinished.Checked, checkBoxMatchDetails.Checked, false);
-
-                // Fill in L2
-                lpout.fillBracketSingles(lfround, lfround, 2 - Math.Abs(lfround), ref finalBracketOutput, matchOffsetPerRound,
-                    checkBoxFillByes.Checked, checkBoxUnfinished.Checked, checkBoxMatchDetails.Checked, true);
-
-                // Fill in L1
-                lpout.fillBracketSingles(lsround, lsround, 1 - Math.Abs(lsround), ref finalBracketOutput, matchOffsetPerRound,
-                    checkBoxFillByes.Checked, checkBoxUnfinished.Checked, checkBoxMatchDetails.Checked, false);
-
-                // Fill in R1
-                lpout.fillBracketSingles(wfround, wfround, 1 - wfround, ref finalBracketOutput, matchOffsetPerRound,
-                    checkBoxFillByes.Checked, checkBoxUnfinished.Checked, checkBoxMatchDetails.Checked, false);
-
-                if (textBoxHeaderFinals.Text.Trim() != string.Empty)
+                if (radioButtonDEFinal.Checked)
                 {
-                    output += textBoxHeaderFinals.Text + "\r\n" + finalBracketOutput.Trim();
+                    // Assume the highest round is grand finals, the lowest round is losers finals, etc.
+                    int gfround = roundList.Keys.Max();
+                    int wfround = roundList.Keys.Max() - 1;
+                    int lfround = roundList.Keys.Min();
+                    int lsround = roundList.Keys.Min() + 1;
+
+                    // Fill in R3
+                    lpout.fillBracketSingles(gfround, gfround, 3 - gfround, ref finalBracketOutput, matchOffsetPerRound,
+                        checkBoxFillByes.Checked, checkBoxUnfinished.Checked, checkBoxMatchDetails.Checked, false);
+
+                    // Fill in L2
+                    lpout.fillBracketSingles(lfround, lfround, 2 - Math.Abs(lfround), ref finalBracketOutput, matchOffsetPerRound,
+                        checkBoxFillByes.Checked, checkBoxUnfinished.Checked, checkBoxMatchDetails.Checked, true);
+
+                    // Fill in L1
+                    lpout.fillBracketSingles(lsround, lsround, 1 - Math.Abs(lsround), ref finalBracketOutput, matchOffsetPerRound,
+                        checkBoxFillByes.Checked, checkBoxUnfinished.Checked, checkBoxMatchDetails.Checked, false);
+
+                    // Fill in R1
+                    lpout.fillBracketSingles(wfround, wfround, 1 - wfround, ref finalBracketOutput, matchOffsetPerRound,
+                        checkBoxFillByes.Checked, checkBoxUnfinished.Checked, checkBoxMatchDetails.Checked, false);
+
+                    if (textBoxHeaderFinals.Text.Trim() != string.Empty)
+                    {
+                        output += textBoxHeaderFinals.Text + "\r\n" + finalBracketOutput.Trim();
+                    }
+                    else
+                    {
+                        output += finalBracketOutput.Trim();
+                    }
                 }
-                else
+                else if (radioButton4DE4S.Checked)
                 {
-                    output += finalBracketOutput.Trim();
+                    // Assume the highest round is grand finals, the lowest round is losers finals, etc.
+                    int gfround = roundList.Keys.Max();
+                    int wfround = roundList.Keys.Max() - 1;
+                    int wsround = roundList.Keys.Max() - 2;
+                    int lfround = roundList.Keys.Min();
+                    int lsround = roundList.Keys.Min() + 1;
+                    int lqround = roundList.Keys.Min() + 2;
+                    int lt8round = roundList.Keys.Min() + 3;
+
+                    // Fill in R5
+                    lpout.fillBracketSingles(gfround, gfround, 5 - gfround, ref finalBracketOutput, matchOffsetPerRound,
+                        checkBoxFillByes.Checked, checkBoxUnfinished.Checked, checkBoxMatchDetails.Checked, false);
+
+                    // Fill in R4
+                    lpout.fillBracketSingles(wfround, wfround, 4 - wfround, ref finalBracketOutput, matchOffsetPerRound,
+                        checkBoxFillByes.Checked, checkBoxUnfinished.Checked, checkBoxMatchDetails.Checked, false);
+
+                    // Fill in R2
+                    lpout.fillBracketSingles(wsround, wsround, 2 - wsround, ref finalBracketOutput, matchOffsetPerRound,
+                        checkBoxFillByes.Checked, checkBoxUnfinished.Checked, checkBoxMatchDetails.Checked, false);
+
+                    // Fill in L4
+                    lpout.fillBracketSingles(lfround, lfround, 4 - Math.Abs(lfround), ref finalBracketOutput, matchOffsetPerRound,
+                        checkBoxFillByes.Checked, checkBoxUnfinished.Checked, checkBoxMatchDetails.Checked, false);
+
+                    // Fill in L3
+                    lpout.fillBracketSingles(lsround, lsround, 3 - Math.Abs(lsround), ref finalBracketOutput, matchOffsetPerRound,
+                        checkBoxFillByes.Checked, checkBoxUnfinished.Checked, checkBoxMatchDetails.Checked, false);
+
+                    // Fill in L2
+                    lpout.fillBracketSingles(lqround, lqround, 2 - Math.Abs(lqround), ref finalBracketOutput, matchOffsetPerRound,
+                        checkBoxFillByes.Checked, checkBoxUnfinished.Checked, checkBoxMatchDetails.Checked, false);
+
+                    // Fill in L1
+                    lpout.fillBracketSingles(lt8round, lt8round, 1 - Math.Abs(lt8round), ref finalBracketOutput, matchOffsetPerRound,
+                        checkBoxFillByes.Checked, checkBoxUnfinished.Checked, checkBoxMatchDetails.Checked, false);
+
+
+
+                    if (textBoxHeaderFinals.Text.Trim() != string.Empty)
+                    {
+                        output += textBoxHeaderFinals.Text + "\r\n" + finalBracketOutput.Trim();
+                    }
+                    else
+                    {
+                        output += finalBracketOutput.Trim();
+                    }
                 }
             }
 
@@ -2746,6 +2798,94 @@ namespace smashgg_to_liquipedia
 
             richTextBoxLpOutput.Text = richTextBoxLpOutput.Text.Trim();
             richTextBoxLog.Text += "Done.\r\n";
+        }
+
+        private void radioButtonFinalBracket_CheckedChanged(object sender, EventArgs e)
+        {
+            if (radioButton4DE4S.Checked) 
+            {
+                richTextBoxExLpFinalBracket.Text = @"{{4DE4SBracket2
+|l1placement=7-8
+|l2placement=5-6
+|l3placement=4
+|l4placement=3
+|r5loserplacement=2
+|r5winnerplacement=1
+
+<!-- WINNERS BRACKET -->
+|r2m1p1= |r2m1p1flag= |r2m1p1score=
+|r2m1p2= |r2m1p2flag= |r2m1p2score=
+|r2m1win=
+
+|r2m2p1= |r2m2p1flag= |r2m2p1score=
+|r2m2p2= |r2m2p2flag= |r2m2p2score=
+|r2m2win=
+
+|r4m1p1= |r4m1p1flag= |r4m1p1score=
+|r4m1p2= |r4m1p2flag= |r4m1p2score=
+|r4m1win=
+
+<!-- LOSERS BRACKET -->
+|l1m1p1= |l1m1p1flag= |l1m1p1score=
+|l1m1p2= |l1m1p2flag= |l1m1p2score=
+|l1m1win=
+
+|l1m2p1= |l1m2p1flag= |l1m2p1score=
+|l1m2p2= |l1m2p2flag= |l1m2p2score=
+|l1m2win=
+
+|l2m1p1= |l2m1p1flag= |l2m1p1score=
+|l2m1p2= |l2m1p2flag= |l2m1p2score=
+|l2m1win=
+
+|l2m2p1= |l2m2p1flag= |l2m2p1score=
+|l2m2p2= |l2m2p2flag= |l2m2p2score=
+|l2m2win=
+
+|l3m1p1= |l3m1p1flag= |l3m1p1score=
+|l3m1p2= |l3m1p2flag= |l3m1p2score=
+|l3m1win=
+
+|l4m1p1= |l4m1p1flag= |l4m1p1score=
+|l4m1p2= |l4m1p2flag= |l4m1p2score=
+|l4m1win=
+
+<!-- GRAND FINALS -->
+|r5m1p1= |r5m1p1flag= |r5m1p1score=
+|r5m1p2= |r5m1p2flag= |r5m1p2score=
+|r5m1win=
+}}";
+            }
+            else if (radioButtonDEFinal.Checked) 
+            {
+                richTextBoxExLpFinalBracket.Text = @"{{DEFinalSmwBracket
+|l1placement=4
+|r2placement=3
+|r3loserplacement=2
+|r3winnerplacement=1
+
+<!-- FROM WINNERS -->
+|r1m1p1= |r1m1p1flag= |r1m1p1score=
+|r1m1p2= |r1m1p2flag= |r1m1p2score=
+|r1m1win=
+
+<!-- FROM LOSERS -->
+|l1m1p1= |l1m1p1flag= |l1m1p1score=
+|l1m1p2= |l1m1p2flag= |l1m1p2score=
+|l1m1win=
+
+<!-- LOSERS FINALS -->
+|r2m1p1= |r2m1p1flag= |r2m1p1score=
+|r2m1p2= |r2m1p2flag= |r2m1p2score=
+|r2m1win=
+
+<!-- GRAND FINALS -->
+|r3m1p1= |r3m1p1flag= |r3m1p1score=
+|r3m1p2= |r3m1p2flag= |r3m1p2score=
+|r3m1win=
+}}";
+            }
+            
         }
     }
 }
