@@ -55,7 +55,7 @@ namespace smashgg_to_liquipedia
 
             // Display version
             Version version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
-            this.Text = "Bracket Match Filler v" + $"{version}";
+            this.Text = "Start.gg to Liquipedia v" + $"{version}";
 
             try
             {
