@@ -68,6 +68,7 @@
             this.tabPageTournamentExplorer = new System.Windows.Forms.TabPage();
             this.buttonGetData = new System.Windows.Forms.Button();
             this.treeView1 = new System.Windows.Forms.TreeView();
+            this.buttonAkaList = new System.Windows.Forms.Button();
             this.tabPageRetrievedData = new System.Windows.Forms.TabPage();
             this.richTextBoxLosers = new System.Windows.Forms.RichTextBox();
             this.richTextBoxWinners = new System.Windows.Forms.RichTextBox();
@@ -94,7 +95,9 @@
             this.richTextBoxExLpWinnersBracket = new RichTextBoxEx();
             this.richTextBoxExLpFinalBracket = new RichTextBoxEx();
             this.richTextBoxExLpLosersBracket = new RichTextBoxEx();
-            this.buttonAkaList = new System.Windows.Forms.Button();
+            this.panel3 = new System.Windows.Forms.Panel();
+            this.radioButton4DE4S = new System.Windows.Forms.RadioButton();
+            this.radioButtonDEFinal = new System.Windows.Forms.RadioButton();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAdvanceWinners)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAdvanceLosers)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPrizePool)).BeginInit();
@@ -109,6 +112,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownWinnersEnd)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownWinnersOffset)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownWinnersStart)).BeginInit();
+            this.panel3.SuspendLayout();
             this.SuspendLayout();
             // 
             // richTextBoxEntrants
@@ -259,9 +263,9 @@
             this.checkBoxGuessFinal.AutoSize = true;
             this.checkBoxGuessFinal.Location = new System.Drawing.Point(477, 277);
             this.checkBoxGuessFinal.Name = "checkBoxGuessFinal";
-            this.checkBoxGuessFinal.Size = new System.Drawing.Size(121, 17);
+            this.checkBoxGuessFinal.Size = new System.Drawing.Size(86, 17);
             this.checkBoxGuessFinal.TabIndex = 14;
-            this.checkBoxGuessFinal.Text = "Guess Final Bracket";
+            this.checkBoxGuessFinal.Text = "Guess Finals";
             this.checkBoxGuessFinal.UseVisualStyleBackColor = true;
             // 
             // numericUpDownAdvanceLosers
@@ -501,6 +505,16 @@
             this.treeView1.Size = new System.Drawing.Size(476, 221);
             this.treeView1.TabIndex = 28;
             this.treeView1.AfterCheck += new System.Windows.Forms.TreeViewEventHandler(this.treeView1_AfterCheck);
+            // 
+            // buttonAkaList
+            // 
+            this.buttonAkaList.Location = new System.Drawing.Point(488, 168);
+            this.buttonAkaList.Name = "buttonAkaList";
+            this.buttonAkaList.Size = new System.Drawing.Size(189, 23);
+            this.buttonAkaList.TabIndex = 2;
+            this.buttonAkaList.Text = "Make AKA List";
+            this.buttonAkaList.UseVisualStyleBackColor = true;
+            this.buttonAkaList.Click += new System.EventHandler(this.buttonAKAList_Click);
             // 
             // tabPageRetrievedData
             // 
@@ -776,21 +790,47 @@
             this.richTextBoxExLpLosersBracket.TabIndex = 13;
             this.richTextBoxExLpLosersBracket.Text = "";
             // 
-            // buttonAkaList
+            // panel3
             // 
-            this.buttonAkaList.Location = new System.Drawing.Point(488, 168);
-            this.buttonAkaList.Name = "buttonAkaList";
-            this.buttonAkaList.Size = new System.Drawing.Size(189, 23);
-            this.buttonAkaList.TabIndex = 2;
-            this.buttonAkaList.Text = "Make AKA List";
-            this.buttonAkaList.UseVisualStyleBackColor = true;
-            this.buttonAkaList.Click += new System.EventHandler(this.buttonAKAList_Click);
+            this.panel3.Controls.Add(this.radioButton4DE4S);
+            this.panel3.Controls.Add(this.radioButtonDEFinal);
+            this.panel3.Location = new System.Drawing.Point(566, 277);
+            this.panel3.Name = "panel3";
+            this.panel3.Size = new System.Drawing.Size(135, 18);
+            this.panel3.TabIndex = 35;
+            // 
+            // radioButton4DE4S
+            // 
+            this.radioButton4DE4S.AccessibleRole = System.Windows.Forms.AccessibleRole.None;
+            this.radioButton4DE4S.AutoSize = true;
+            this.radioButton4DE4S.Location = new System.Drawing.Point(68, 0);
+            this.radioButton4DE4S.Name = "radioButton4DE4S";
+            this.radioButton4DE4S.Size = new System.Drawing.Size(59, 17);
+            this.radioButton4DE4S.TabIndex = 0;
+            this.radioButton4DE4S.TabStop = true;
+            this.radioButton4DE4S.Text = "4DE4S";
+            this.radioButton4DE4S.UseVisualStyleBackColor = true;
+            this.radioButton4DE4S.CheckedChanged += new System.EventHandler(this.radioButtonFinalBracket_CheckedChanged);
+            // 
+            // radioButtonDEFinal
+            // 
+            this.radioButtonDEFinal.AutoSize = true;
+            this.radioButtonDEFinal.Checked = true;
+            this.radioButtonDEFinal.Location = new System.Drawing.Point(0, 0);
+            this.radioButtonDEFinal.Name = "radioButtonDEFinal";
+            this.radioButtonDEFinal.Size = new System.Drawing.Size(62, 17);
+            this.radioButtonDEFinal.TabIndex = 0;
+            this.radioButtonDEFinal.TabStop = true;
+            this.radioButtonDEFinal.Text = "DEFinal";
+            this.radioButtonDEFinal.UseVisualStyleBackColor = true;
+            this.radioButtonDEFinal.CheckedChanged += new System.EventHandler(this.radioButtonFinalBracket_CheckedChanged);
             // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(948, 566);
+            this.Controls.Add(this.panel3);
             this.Controls.Add(this.checkBoxSorting);
             this.Controls.Add(this.buttonGetEvent);
             this.Controls.Add(this.panel1);
@@ -819,6 +859,7 @@
             this.Controls.Add(this.richTextBoxLpOutput);
             this.Controls.Add(this.tabControl);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "FormMain";
             this.Text = "Smash.gg to Liquipedia";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormMain_FormClosing);
@@ -839,6 +880,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownWinnersEnd)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownWinnersOffset)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownWinnersStart)).EndInit();
+            this.panel3.ResumeLayout(false);
+            this.panel3.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -912,6 +955,9 @@
         private System.Windows.Forms.Button buttonGetEvent;
         private System.Windows.Forms.CheckBox checkBoxSorting;
         private System.Windows.Forms.Button buttonAkaList;
+        private System.Windows.Forms.Panel panel3;
+        private System.Windows.Forms.RadioButton radioButton4DE4S;
+        private System.Windows.Forms.RadioButton radioButtonDEFinal;
     }
 }
 
