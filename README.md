@@ -2,15 +2,18 @@
 Queries the start.gg (formerly smash.gg) api for data to put in Liquipedia pages
 
 ## Getting the data
-1. Copy paste a valid start.gg tournament URL into the URL textbox. The exact subpage doesn't matter as the tournament is clearly in the URL.
-  * **Example:** https://www.start.gg/tournament/genesis-9-1/details
+Before starting, ensure you have a valid start.gg api key. These keys are only valid for one year. Enter it into the "Auth" window.
+
+1. Copy/paste a valid start.gg tournament URL into the URL textbox. The exact subpage doesn't matter as long as the tournament slug clearly shows up in the URL.
+  * **Example 1:** https://www.start.gg/tournament/genesis-9-1/details
+  * **Example 2:** https://www.start.gg/tournament/genesis-9-1/event/melee-doubles/brackets/1276361/1956087
 2. Click "Get Tournament". Events are populated in the Tournament Explorer.
   * **Note:** If the tournament is too large, you may need to enter an event URL instead and use the "Get Event" button
 3. Find the event you want data for. Expand it by clicking the + sign.
 
 ## Option 1: Generate Pools/Group Table Code
-1. Select a Phase or a Wave in the Tournament Explorer using the checkbox.
-2. On the right hand side, select Bracket Pols or Round Robin depending on the format of the pools.
+1. Drill into the three and select a Phase or a Wave in the Tournament Explorer using the checkbox.
+2. On the right hand side, select "Bracket Pools" or "Round Robin" depending on the format of the pools.
 3. Set Advance Winners and Advance Losers depending on how many players will proceed to the next phase of the tournament.
 4. Click on "Get Data". Let the program run.
 
