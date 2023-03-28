@@ -81,11 +81,11 @@ namespace smashgg_to_liquipedia
 
             if (radioButtonSmash.Checked == true)
             {
-                playerdb = new PlayerDatabase(PlayerDatabase.DbSource.Smash);
+                playerdb = new PlayerDatabase(PlayerDatabase.DbSource.Smash, this);
             }
             else if (radioButtonFighters.Checked == true)
             {
-                playerdb = new PlayerDatabase(PlayerDatabase.DbSource.Fighters);
+                playerdb = new PlayerDatabase(PlayerDatabase.DbSource.Fighters, this);
             }
             UpdateRevID();
 

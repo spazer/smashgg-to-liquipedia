@@ -23,6 +23,8 @@ namespace smashgg_to_liquipedia
         private static string TEMPLATE_ALTS = @"|alts=";
         private static string TEMPLATE_SMASHGG = @"|smashgg=";
 
+        private readonly IFormMain form;
+
         public enum DbSource { Smash, Fighters };
 
         /// <summary>
@@ -32,8 +34,9 @@ namespace smashgg_to_liquipedia
 
         private int revID;
 
-        public PlayerDatabase(DbSource source)
+        public PlayerDatabase(DbSource source, IFormMain form)
         {
+            this.form = form;
             players = new Dictionary<int, PlayerInfo>();
             ReadDatabaseFromFile(source);
         }
@@ -145,17 +148,17 @@ namespace smashgg_to_liquipedia
             }
             catch (ArgumentOutOfRangeException ex)
             {
-                Console.WriteLine("Error durign parsing of AKA database: " + ex.ParamName + " = " + ex.ActualValue);
+                form.Log += "Error during parsing of AKA database: " + ex.ParamName + " = " + ex.ActualValue + "\r\n";
                 Console.WriteLine(ex.StackTrace);
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Error during parsing of AKA database: " + i);
+                form.Log += "Error during parsing of AKA database: Line " + i + "\r\n";
                 Console.WriteLine(ex.Message);
             }
             catch
             {
-                Console.WriteLine("Error during parsing of AKA database: " + i);
+                form.Log += "Error during parsing of AKA database: Line " + i + "\r\n";
             }
         }
 

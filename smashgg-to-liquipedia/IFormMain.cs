@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace smashgg_to_liquipedia
 {
-    interface IFormMain
+    public interface IFormMain
     {
         string Log { get; set; }
     }
