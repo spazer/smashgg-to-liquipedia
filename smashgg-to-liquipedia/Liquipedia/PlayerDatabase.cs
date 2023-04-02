@@ -92,6 +92,7 @@ namespace smashgg_to_liquipedia
 
         private void ParseWikitext(string json)
         {
+            string segment = "";
             int i = 0;
             try
             {
@@ -100,7 +101,7 @@ namespace smashgg_to_liquipedia
                     int entrystart = json.IndexOf(TEMPLATE_START, i);
                     int entryend = json.IndexOf(TEMPLATE_END, i) + TEMPLATE_END.Length;
 
-                    string segment = json.Substring(entrystart, entryend - entrystart);
+                    segment = json.Substring(entrystart, entryend - entrystart);
 
                     int playerPos = segment.IndexOf(TEMPLATE_PLAYER);
                     int flagPos = segment.IndexOf(TEMPLATE_FLAG);
@@ -153,12 +154,13 @@ namespace smashgg_to_liquipedia
             }
             catch (Exception ex)
             {
-                form.Log += "Error during parsing of AKA database: Line " + i + "\r\n";
-                Console.WriteLine(ex.Message);
-            }
-            catch
-            {
-                form.Log += "Error during parsing of AKA database: Line " + i + "\r\n";
+                form.Log += "Error during parsing of AKA database: Index " + i + "\r\n";
+
+                if (segment != String.Empty)
+                {
+                    form.Log += segment + "\r\n";
+                }
+                form.Log += ex.Message + "\r\n";
             }
         }
 
