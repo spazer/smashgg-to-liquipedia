@@ -405,7 +405,20 @@ namespace smashgg_to_liquipedia
         {
             string output = string.Empty;
             string finalBracketOutput = string.Empty;
-            Liquipedia.LpOutput lpout = new Liquipedia.LpOutput(selectedEvent, ref entrantList, ref setList, ref roundList);
+            Liquipedia.LpOutput lpout;
+            
+            if (radioButtonSmash.Checked)
+            {
+                lpout = new Liquipedia.LpOutput(selectedEvent, ref entrantList, ref setList, ref roundList, "stock");
+            }
+            else if (radioButtonFighters.Checked)
+            {
+                lpout = new Liquipedia.LpOutput(selectedEvent, ref entrantList, ref setList, ref roundList, "score");
+            }
+            else
+            {
+                lpout = new Liquipedia.LpOutput(selectedEvent, ref entrantList, ref setList, ref roundList);
+            }
 
             if (checkBoxWinners.Checked == true)
             {
