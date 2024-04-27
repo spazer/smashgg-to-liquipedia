@@ -2543,7 +2543,7 @@ namespace smashgg_to_liquipedia
 
             // Clear the treeview
             treeView1.Nodes.Clear();
-            tournament = apiQuery.GetSingleEvent(tournamentSlug, "tournament/" + eventSlug);
+            tournament = apiQuery.GetSingleEvent(tournamentSlug, "tournament/" + eventSlug, (int)numericUpDownEventPage.Value);
             if (tournament.events == null)
             {
                 richTextBoxLog.Text += "Failed to get tournament\r\n";

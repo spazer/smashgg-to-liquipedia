@@ -296,12 +296,12 @@ namespace smashgg_to_liquipedia
         /// <param name="tournamentSlug">Tournament slug</param>
         /// <param name="errors">Errors</param>
         /// <returns>Tournament object with all events</returns>
-        public Tournament GetSingleEvent(string tournamentSlug, string eventSlug)
+        public Tournament GetSingleEvent(string tournamentSlug, string eventSlug, int page)
         {
             GraphQLRequest eventsRequest = new GraphQLRequest
             {
                 Query = @"
-                query GetSingleEvent($slug: String) {
+                query GetSingleEvent($slug: String, $page: Int) {
                     event(slug: $slug) {
                         id
                         name
@@ -315,7 +315,7 @@ namespace smashgg_to_liquipedia
                             id
                             name
                             phaseGroups(query: {
-                              page: 1
+                              page: $page
                               perPage: 256
                             }) {
                                 nodes {
@@ -342,6 +342,11 @@ namespace smashgg_to_liquipedia
                 }
             };
 
+            eventsRequest.Variables = new
+            {
+                slug = eventSlug,
+                page = page
+            };
 
             GraphQLResponse response = SendRequest(eventsRequest);
             Tournament tournament = new Tournament();
@@ -409,13 +414,16 @@ namespace smashgg_to_liquipedia
                             }
                         }
 
-                        if (tournament.events[i].phases[j].phasegroups.nodes[0].identifierType == PhaseGroup.IdentiferType.WaveNumber)
+                        if (tournament.events[i].phases[j].phasegroups.nodes.Count > 0)
                         {
-                            tournament.events[i].phases[j].phasegroups.nodes = tournament.events[i].phases[j].phasegroups.nodes.OrderBy(q => q.WaveLetter).ThenBy(q => q.Number).ToList();
-                        }
-                        else if (tournament.events[i].phases[j].phasegroups.nodes[0].identifierType == PhaseGroup.IdentiferType.NumberOnly)
-                        {
-                            tournament.events[i].phases[j].phasegroups.nodes = tournament.events[i].phases[j].phasegroups.nodes.OrderBy(q => q.Number).ToList();
+                            if (tournament.events[i].phases[j].phasegroups.nodes[0].identifierType == PhaseGroup.IdentiferType.WaveNumber)
+                            {
+                                tournament.events[i].phases[j].phasegroups.nodes = tournament.events[i].phases[j].phasegroups.nodes.OrderBy(q => q.WaveLetter).ThenBy(q => q.Number).ToList();
+                            }
+                            else if (tournament.events[i].phases[j].phasegroups.nodes[0].identifierType == PhaseGroup.IdentiferType.NumberOnly)
+                            {
+                                tournament.events[i].phases[j].phasegroups.nodes = tournament.events[i].phases[j].phasegroups.nodes.OrderBy(q => q.Number).ToList();
+                            }
                         }
                     }
                 }

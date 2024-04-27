@@ -66,6 +66,7 @@
             this.label7 = new System.Windows.Forms.Label();
             this.tabControl = new System.Windows.Forms.TabControl();
             this.tabPageTournamentExplorer = new System.Windows.Forms.TabPage();
+            this.buttonCircuit = new System.Windows.Forms.Button();
             this.buttonGetData = new System.Windows.Forms.Button();
             this.treeView1 = new System.Windows.Forms.TreeView();
             this.buttonAkaList = new System.Windows.Forms.Button();
@@ -98,7 +99,8 @@
             this.panel3 = new System.Windows.Forms.Panel();
             this.radioButton4DE4S = new System.Windows.Forms.RadioButton();
             this.radioButtonDEFinal = new System.Windows.Forms.RadioButton();
-            this.buttonCircuit = new System.Windows.Forms.Button();
+            this.numericUpDownEventPage = new System.Windows.Forms.NumericUpDown();
+            this.label8 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAdvanceWinners)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAdvanceLosers)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPrizePool)).BeginInit();
@@ -114,13 +116,14 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownWinnersOffset)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownWinnersStart)).BeginInit();
             this.panel3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownEventPage)).BeginInit();
             this.SuspendLayout();
             // 
             // richTextBoxEntrants
             // 
             this.richTextBoxEntrants.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.richTextBoxEntrants.Location = new System.Drawing.Point(8, 7);
-            this.richTextBoxEntrants.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.richTextBoxEntrants.Margin = new System.Windows.Forms.Padding(4);
             this.richTextBoxEntrants.Name = "richTextBoxEntrants";
             this.richTextBoxEntrants.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
             this.richTextBoxEntrants.Size = new System.Drawing.Size(891, 105);
@@ -130,7 +133,7 @@
             // textBoxTournamentUrl
             // 
             this.textBoxTournamentUrl.Location = new System.Drawing.Point(945, 38);
-            this.textBoxTournamentUrl.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.textBoxTournamentUrl.Margin = new System.Windows.Forms.Padding(4);
             this.textBoxTournamentUrl.Name = "textBoxTournamentUrl";
             this.textBoxTournamentUrl.Size = new System.Drawing.Size(304, 22);
             this.textBoxTournamentUrl.TabIndex = 1;
@@ -139,7 +142,7 @@
             // buttonGetTournament
             // 
             this.buttonGetTournament.Location = new System.Drawing.Point(1107, 73);
-            this.buttonGetTournament.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.buttonGetTournament.Margin = new System.Windows.Forms.Padding(4);
             this.buttonGetTournament.Name = "buttonGetTournament";
             this.buttonGetTournament.Size = new System.Drawing.Size(144, 28);
             this.buttonGetTournament.TabIndex = 2;
@@ -151,7 +154,7 @@
             // 
             this.radioButtonBracket.AutoSize = true;
             this.radioButtonBracket.Location = new System.Drawing.Point(23, 4);
-            this.radioButtonBracket.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.radioButtonBracket.Margin = new System.Windows.Forms.Padding(4);
             this.radioButtonBracket.Name = "radioButtonBracket";
             this.radioButtonBracket.Size = new System.Drawing.Size(112, 20);
             this.radioButtonBracket.TabIndex = 8;
@@ -162,7 +165,7 @@
             // 
             this.radioButtonRR.AutoSize = true;
             this.radioButtonRR.Location = new System.Drawing.Point(23, 32);
-            this.radioButtonRR.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.radioButtonRR.Margin = new System.Windows.Forms.Padding(4);
             this.radioButtonRR.Name = "radioButtonRR";
             this.radioButtonRR.Size = new System.Drawing.Size(107, 20);
             this.radioButtonRR.TabIndex = 9;
@@ -181,7 +184,7 @@
             // numericUpDownAdvanceWinners
             // 
             this.numericUpDownAdvanceWinners.Location = new System.Drawing.Point(23, 60);
-            this.numericUpDownAdvanceWinners.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.numericUpDownAdvanceWinners.Margin = new System.Windows.Forms.Padding(4);
             this.numericUpDownAdvanceWinners.Name = "numericUpDownAdvanceWinners";
             this.numericUpDownAdvanceWinners.Size = new System.Drawing.Size(43, 22);
             this.numericUpDownAdvanceWinners.TabIndex = 10;
@@ -195,7 +198,7 @@
             // 
             this.richTextBoxLpOutput.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.richTextBoxLpOutput.Location = new System.Drawing.Point(16, 540);
-            this.richTextBoxLpOutput.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.richTextBoxLpOutput.Margin = new System.Windows.Forms.Padding(4);
             this.richTextBoxLpOutput.Name = "richTextBoxLpOutput";
             this.richTextBoxLpOutput.Size = new System.Drawing.Size(917, 146);
             this.richTextBoxLpOutput.TabIndex = 0;
@@ -204,7 +207,7 @@
             // buttonFill
             // 
             this.buttonFill.Location = new System.Drawing.Point(651, 137);
-            this.buttonFill.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.buttonFill.Margin = new System.Windows.Forms.Padding(4);
             this.buttonFill.Name = "buttonFill";
             this.buttonFill.Size = new System.Drawing.Size(252, 43);
             this.buttonFill.TabIndex = 2;
@@ -215,7 +218,7 @@
             // richTextBoxLog
             // 
             this.richTextBoxLog.Location = new System.Drawing.Point(945, 501);
-            this.richTextBoxLog.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.richTextBoxLog.Margin = new System.Windows.Forms.Padding(4);
             this.richTextBoxLog.Name = "richTextBoxLog";
             this.richTextBoxLog.Size = new System.Drawing.Size(299, 149);
             this.richTextBoxLog.TabIndex = 4;
@@ -235,7 +238,7 @@
             // 
             this.checkBoxWinners.AutoSize = true;
             this.checkBoxWinners.Location = new System.Drawing.Point(16, 341);
-            this.checkBoxWinners.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.checkBoxWinners.Margin = new System.Windows.Forms.Padding(4);
             this.checkBoxWinners.Name = "checkBoxWinners";
             this.checkBoxWinners.Size = new System.Drawing.Size(119, 20);
             this.checkBoxWinners.TabIndex = 7;
@@ -246,7 +249,7 @@
             // 
             this.checkBoxLosers.AutoSize = true;
             this.checkBoxLosers.Location = new System.Drawing.Point(327, 341);
-            this.checkBoxLosers.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.checkBoxLosers.Margin = new System.Windows.Forms.Padding(4);
             this.checkBoxLosers.Name = "checkBoxLosers";
             this.checkBoxLosers.Size = new System.Drawing.Size(111, 20);
             this.checkBoxLosers.TabIndex = 7;
@@ -259,7 +262,7 @@
             this.checkBoxFillByes.Checked = true;
             this.checkBoxFillByes.CheckState = System.Windows.Forms.CheckState.Checked;
             this.checkBoxFillByes.Location = new System.Drawing.Point(945, 240);
-            this.checkBoxFillByes.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.checkBoxFillByes.Margin = new System.Windows.Forms.Padding(4);
             this.checkBoxFillByes.Name = "checkBoxFillByes";
             this.checkBoxFillByes.Size = new System.Drawing.Size(79, 20);
             this.checkBoxFillByes.TabIndex = 7;
@@ -269,7 +272,7 @@
             // progressBar
             // 
             this.progressBar.Location = new System.Drawing.Point(945, 658);
-            this.progressBar.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.progressBar.Margin = new System.Windows.Forms.Padding(4);
             this.progressBar.Name = "progressBar";
             this.progressBar.Size = new System.Drawing.Size(300, 28);
             this.progressBar.TabIndex = 15;
@@ -278,7 +281,7 @@
             // 
             this.checkBoxGuessFinal.AutoSize = true;
             this.checkBoxGuessFinal.Location = new System.Drawing.Point(636, 341);
-            this.checkBoxGuessFinal.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.checkBoxGuessFinal.Margin = new System.Windows.Forms.Padding(4);
             this.checkBoxGuessFinal.Name = "checkBoxGuessFinal";
             this.checkBoxGuessFinal.Size = new System.Drawing.Size(107, 20);
             this.checkBoxGuessFinal.TabIndex = 14;
@@ -288,7 +291,7 @@
             // numericUpDownAdvanceLosers
             // 
             this.numericUpDownAdvanceLosers.Location = new System.Drawing.Point(23, 101);
-            this.numericUpDownAdvanceLosers.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.numericUpDownAdvanceLosers.Margin = new System.Windows.Forms.Padding(4);
             this.numericUpDownAdvanceLosers.Name = "numericUpDownAdvanceLosers";
             this.numericUpDownAdvanceLosers.Size = new System.Drawing.Size(43, 22);
             this.numericUpDownAdvanceLosers.TabIndex = 10;
@@ -310,7 +313,7 @@
             // buttonPrizePool
             // 
             this.buttonPrizePool.Location = new System.Drawing.Point(651, 242);
-            this.buttonPrizePool.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.buttonPrizePool.Margin = new System.Windows.Forms.Padding(4);
             this.buttonPrizePool.Name = "buttonPrizePool";
             this.buttonPrizePool.Size = new System.Drawing.Size(124, 28);
             this.buttonPrizePool.TabIndex = 17;
@@ -321,7 +324,7 @@
             // numericUpDownPrizePool
             // 
             this.numericUpDownPrizePool.Location = new System.Drawing.Point(860, 244);
-            this.numericUpDownPrizePool.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.numericUpDownPrizePool.Margin = new System.Windows.Forms.Padding(4);
             this.numericUpDownPrizePool.Name = "numericUpDownPrizePool";
             this.numericUpDownPrizePool.Size = new System.Drawing.Size(43, 22);
             this.numericUpDownPrizePool.TabIndex = 18;
@@ -334,7 +337,7 @@
             // buttonAKA
             // 
             this.buttonAKA.Location = new System.Drawing.Point(945, 73);
-            this.buttonAKA.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.buttonAKA.Margin = new System.Windows.Forms.Padding(4);
             this.buttonAKA.Name = "buttonAKA";
             this.buttonAKA.Size = new System.Drawing.Size(100, 28);
             this.buttonAKA.TabIndex = 2;
@@ -347,7 +350,7 @@
             this.radioButtonSmash.AutoSize = true;
             this.radioButtonSmash.Checked = true;
             this.radioButtonSmash.Location = new System.Drawing.Point(4, 4);
-            this.radioButtonSmash.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.radioButtonSmash.Margin = new System.Windows.Forms.Padding(4);
             this.radioButtonSmash.Name = "radioButtonSmash";
             this.radioButtonSmash.Size = new System.Drawing.Size(70, 20);
             this.radioButtonSmash.TabIndex = 21;
@@ -360,7 +363,7 @@
             // 
             this.radioButtonFighters.AutoSize = true;
             this.radioButtonFighters.Location = new System.Drawing.Point(4, 31);
-            this.radioButtonFighters.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.radioButtonFighters.Margin = new System.Windows.Forms.Padding(4);
             this.radioButtonFighters.Name = "radioButtonFighters";
             this.radioButtonFighters.Size = new System.Drawing.Size(76, 20);
             this.radioButtonFighters.TabIndex = 21;
@@ -384,7 +387,7 @@
             this.panel1.Controls.Add(this.radioButtonSmash);
             this.panel1.Controls.Add(this.radioButtonFighters);
             this.panel1.Location = new System.Drawing.Point(949, 124);
-            this.panel1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.panel1.Margin = new System.Windows.Forms.Padding(4);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(92, 82);
             this.panel1.TabIndex = 23;
@@ -393,7 +396,7 @@
             // 
             this.radioButtonRocketLeague.AutoSize = true;
             this.radioButtonRocketLeague.Location = new System.Drawing.Point(4, 58);
-            this.radioButtonRocketLeague.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.radioButtonRocketLeague.Margin = new System.Windows.Forms.Padding(4);
             this.radioButtonRocketLeague.Name = "radioButtonRocketLeague";
             this.radioButtonRocketLeague.Size = new System.Drawing.Size(45, 20);
             this.radioButtonRocketLeague.TabIndex = 22;
@@ -410,7 +413,7 @@
             this.panel2.Controls.Add(this.label6);
             this.panel2.Controls.Add(this.label5);
             this.panel2.Location = new System.Drawing.Point(1107, 236);
-            this.panel2.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.panel2.Margin = new System.Windows.Forms.Padding(4);
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(148, 142);
             this.panel2.TabIndex = 24;
@@ -419,7 +422,7 @@
             // 
             this.checkBoxMatchDetails.AutoSize = true;
             this.checkBoxMatchDetails.Location = new System.Drawing.Point(945, 268);
-            this.checkBoxMatchDetails.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.checkBoxMatchDetails.Margin = new System.Windows.Forms.Padding(4);
             this.checkBoxMatchDetails.Name = "checkBoxMatchDetails";
             this.checkBoxMatchDetails.Size = new System.Drawing.Size(110, 20);
             this.checkBoxMatchDetails.TabIndex = 25;
@@ -430,7 +433,7 @@
             // 
             this.checkBoxUnfinished.AutoSize = true;
             this.checkBoxUnfinished.Location = new System.Drawing.Point(945, 297);
-            this.checkBoxUnfinished.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.checkBoxUnfinished.Margin = new System.Windows.Forms.Padding(4);
             this.checkBoxUnfinished.Name = "checkBoxUnfinished";
             this.checkBoxUnfinished.Size = new System.Drawing.Size(135, 20);
             this.checkBoxUnfinished.TabIndex = 26;
@@ -440,7 +443,7 @@
             // buttonGroupTable
             // 
             this.buttonGroupTable.Location = new System.Drawing.Point(651, 86);
-            this.buttonGroupTable.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.buttonGroupTable.Margin = new System.Windows.Forms.Padding(4);
             this.buttonGroupTable.Name = "buttonGroupTable";
             this.buttonGroupTable.Size = new System.Drawing.Size(252, 43);
             this.buttonGroupTable.TabIndex = 27;
@@ -451,7 +454,7 @@
             // buttonAuthentication
             // 
             this.buttonAuthentication.Location = new System.Drawing.Point(1107, 175);
-            this.buttonAuthentication.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.buttonAuthentication.Margin = new System.Windows.Forms.Padding(4);
             this.buttonAuthentication.Name = "buttonAuthentication";
             this.buttonAuthentication.Size = new System.Drawing.Size(144, 28);
             this.buttonAuthentication.TabIndex = 29;
@@ -462,7 +465,7 @@
             // textBoxHeaderFinals
             // 
             this.textBoxHeaderFinals.Location = new System.Drawing.Point(636, 369);
-            this.textBoxHeaderFinals.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.textBoxHeaderFinals.Margin = new System.Windows.Forms.Padding(4);
             this.textBoxHeaderFinals.Name = "textBoxHeaderFinals";
             this.textBoxHeaderFinals.Size = new System.Drawing.Size(297, 22);
             this.textBoxHeaderFinals.TabIndex = 30;
@@ -471,7 +474,7 @@
             // textBoxHeaderLosers
             // 
             this.textBoxHeaderLosers.Location = new System.Drawing.Point(325, 369);
-            this.textBoxHeaderLosers.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.textBoxHeaderLosers.Margin = new System.Windows.Forms.Padding(4);
             this.textBoxHeaderLosers.Name = "textBoxHeaderLosers";
             this.textBoxHeaderLosers.Size = new System.Drawing.Size(300, 22);
             this.textBoxHeaderLosers.TabIndex = 30;
@@ -480,7 +483,7 @@
             // textBoxHeaderWinners
             // 
             this.textBoxHeaderWinners.Location = new System.Drawing.Point(16, 369);
-            this.textBoxHeaderWinners.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.textBoxHeaderWinners.Margin = new System.Windows.Forms.Padding(4);
             this.textBoxHeaderWinners.Name = "textBoxHeaderWinners";
             this.textBoxHeaderWinners.Size = new System.Drawing.Size(300, 22);
             this.textBoxHeaderWinners.TabIndex = 30;
@@ -501,7 +504,7 @@
             this.tabControl.Controls.Add(this.tabPageTournamentExplorer);
             this.tabControl.Controls.Add(this.tabPageRetrievedData);
             this.tabControl.Location = new System.Drawing.Point(16, 15);
-            this.tabControl.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tabControl.Margin = new System.Windows.Forms.Padding(4);
             this.tabControl.Name = "tabControl";
             this.tabControl.SelectedIndex = 0;
             this.tabControl.Size = new System.Drawing.Size(921, 319);
@@ -518,18 +521,29 @@
             this.tabPageTournamentExplorer.Controls.Add(this.treeView1);
             this.tabPageTournamentExplorer.Controls.Add(this.buttonAkaList);
             this.tabPageTournamentExplorer.Location = new System.Drawing.Point(4, 25);
-            this.tabPageTournamentExplorer.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tabPageTournamentExplorer.Margin = new System.Windows.Forms.Padding(4);
             this.tabPageTournamentExplorer.Name = "tabPageTournamentExplorer";
-            this.tabPageTournamentExplorer.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tabPageTournamentExplorer.Padding = new System.Windows.Forms.Padding(4);
             this.tabPageTournamentExplorer.Size = new System.Drawing.Size(913, 290);
             this.tabPageTournamentExplorer.TabIndex = 0;
             this.tabPageTournamentExplorer.Text = "Tournament Explorer";
             this.tabPageTournamentExplorer.UseVisualStyleBackColor = true;
             // 
+            // buttonCircuit
+            // 
+            this.buttonCircuit.Location = new System.Drawing.Point(783, 242);
+            this.buttonCircuit.Margin = new System.Windows.Forms.Padding(4);
+            this.buttonCircuit.Name = "buttonCircuit";
+            this.buttonCircuit.Size = new System.Drawing.Size(69, 28);
+            this.buttonCircuit.TabIndex = 30;
+            this.buttonCircuit.Text = "Circuit";
+            this.buttonCircuit.UseVisualStyleBackColor = true;
+            this.buttonCircuit.Click += new System.EventHandler(this.buttonCircuit_Click);
+            // 
             // buttonGetData
             // 
             this.buttonGetData.Location = new System.Drawing.Point(651, 7);
-            this.buttonGetData.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.buttonGetData.Margin = new System.Windows.Forms.Padding(4);
             this.buttonGetData.Name = "buttonGetData";
             this.buttonGetData.Size = new System.Drawing.Size(252, 71);
             this.buttonGetData.TabIndex = 29;
@@ -541,7 +555,7 @@
             // 
             this.treeView1.CheckBoxes = true;
             this.treeView1.Location = new System.Drawing.Point(8, 7);
-            this.treeView1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.treeView1.Margin = new System.Windows.Forms.Padding(4);
             this.treeView1.Name = "treeView1";
             this.treeView1.Size = new System.Drawing.Size(633, 271);
             this.treeView1.TabIndex = 28;
@@ -550,7 +564,7 @@
             // buttonAkaList
             // 
             this.buttonAkaList.Location = new System.Drawing.Point(651, 207);
-            this.buttonAkaList.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.buttonAkaList.Margin = new System.Windows.Forms.Padding(4);
             this.buttonAkaList.Name = "buttonAkaList";
             this.buttonAkaList.Size = new System.Drawing.Size(252, 28);
             this.buttonAkaList.TabIndex = 2;
@@ -582,9 +596,9 @@
             this.tabPageRetrievedData.Controls.Add(this.numericUpDownWinnersStart);
             this.tabPageRetrievedData.Controls.Add(this.checkBoxLockWinners);
             this.tabPageRetrievedData.Location = new System.Drawing.Point(4, 25);
-            this.tabPageRetrievedData.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tabPageRetrievedData.Margin = new System.Windows.Forms.Padding(4);
             this.tabPageRetrievedData.Name = "tabPageRetrievedData";
-            this.tabPageRetrievedData.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tabPageRetrievedData.Padding = new System.Windows.Forms.Padding(4);
             this.tabPageRetrievedData.Size = new System.Drawing.Size(913, 290);
             this.tabPageRetrievedData.TabIndex = 1;
             this.tabPageRetrievedData.Text = "Data";
@@ -594,7 +608,7 @@
             // 
             this.richTextBoxLosers.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.richTextBoxLosers.Location = new System.Drawing.Point(8, 177);
-            this.richTextBoxLosers.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.richTextBoxLosers.Margin = new System.Windows.Forms.Padding(4);
             this.richTextBoxLosers.Name = "richTextBoxLosers";
             this.richTextBoxLosers.Size = new System.Drawing.Size(441, 101);
             this.richTextBoxLosers.TabIndex = 0;
@@ -604,7 +618,7 @@
             // 
             this.richTextBoxWinners.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.richTextBoxWinners.Location = new System.Drawing.Point(457, 177);
-            this.richTextBoxWinners.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.richTextBoxWinners.Margin = new System.Windows.Forms.Padding(4);
             this.richTextBoxWinners.Name = "richTextBoxWinners";
             this.richTextBoxWinners.Size = new System.Drawing.Size(441, 101);
             this.richTextBoxWinners.TabIndex = 0;
@@ -613,7 +627,7 @@
             // buttonLoserShift
             // 
             this.buttonLoserShift.Location = new System.Drawing.Point(763, 142);
-            this.buttonLoserShift.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.buttonLoserShift.Margin = new System.Windows.Forms.Padding(4);
             this.buttonLoserShift.Name = "buttonLoserShift";
             this.buttonLoserShift.Size = new System.Drawing.Size(100, 28);
             this.buttonLoserShift.TabIndex = 20;
@@ -634,7 +648,7 @@
             // numericUpDownLosersEnd
             // 
             this.numericUpDownLosersEnd.Location = new System.Drawing.Point(571, 149);
-            this.numericUpDownLosersEnd.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.numericUpDownLosersEnd.Margin = new System.Windows.Forms.Padding(4);
             this.numericUpDownLosersEnd.Name = "numericUpDownLosersEnd";
             this.numericUpDownLosersEnd.Size = new System.Drawing.Size(51, 22);
             this.numericUpDownLosersEnd.TabIndex = 9;
@@ -662,7 +676,7 @@
             // numericUpDownLosersOffset
             // 
             this.numericUpDownLosersOffset.Location = new System.Drawing.Point(629, 149);
-            this.numericUpDownLosersOffset.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.numericUpDownLosersOffset.Margin = new System.Windows.Forms.Padding(4);
             this.numericUpDownLosersOffset.Maximum = new decimal(new int[] {
             20,
             0,
@@ -690,7 +704,7 @@
             // numericUpDownLosersStart
             // 
             this.numericUpDownLosersStart.Location = new System.Drawing.Point(512, 149);
-            this.numericUpDownLosersStart.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.numericUpDownLosersStart.Margin = new System.Windows.Forms.Padding(4);
             this.numericUpDownLosersStart.Name = "numericUpDownLosersStart";
             this.numericUpDownLosersStart.Size = new System.Drawing.Size(51, 22);
             this.numericUpDownLosersStart.TabIndex = 7;
@@ -699,7 +713,7 @@
             // 
             this.checkBoxLockLosers.AutoSize = true;
             this.checkBoxLockLosers.Location = new System.Drawing.Point(688, 150);
-            this.checkBoxLockLosers.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.checkBoxLockLosers.Margin = new System.Windows.Forms.Padding(4);
             this.checkBoxLockLosers.Name = "checkBoxLockLosers";
             this.checkBoxLockLosers.Size = new System.Drawing.Size(58, 20);
             this.checkBoxLockLosers.TabIndex = 14;
@@ -710,7 +724,7 @@
             // buttonWinnerShift
             // 
             this.buttonWinnerShift.Location = new System.Drawing.Point(328, 142);
-            this.buttonWinnerShift.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.buttonWinnerShift.Margin = new System.Windows.Forms.Padding(4);
             this.buttonWinnerShift.Name = "buttonWinnerShift";
             this.buttonWinnerShift.Size = new System.Drawing.Size(100, 28);
             this.buttonWinnerShift.TabIndex = 19;
@@ -731,7 +745,7 @@
             // numericUpDownWinnersEnd
             // 
             this.numericUpDownWinnersEnd.Location = new System.Drawing.Point(136, 149);
-            this.numericUpDownWinnersEnd.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.numericUpDownWinnersEnd.Margin = new System.Windows.Forms.Padding(4);
             this.numericUpDownWinnersEnd.Name = "numericUpDownWinnersEnd";
             this.numericUpDownWinnersEnd.Size = new System.Drawing.Size(51, 22);
             this.numericUpDownWinnersEnd.TabIndex = 3;
@@ -759,7 +773,7 @@
             // numericUpDownWinnersOffset
             // 
             this.numericUpDownWinnersOffset.Location = new System.Drawing.Point(195, 149);
-            this.numericUpDownWinnersOffset.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.numericUpDownWinnersOffset.Margin = new System.Windows.Forms.Padding(4);
             this.numericUpDownWinnersOffset.Maximum = new decimal(new int[] {
             20,
             0,
@@ -787,7 +801,7 @@
             // numericUpDownWinnersStart
             // 
             this.numericUpDownWinnersStart.Location = new System.Drawing.Point(77, 149);
-            this.numericUpDownWinnersStart.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.numericUpDownWinnersStart.Margin = new System.Windows.Forms.Padding(4);
             this.numericUpDownWinnersStart.Name = "numericUpDownWinnersStart";
             this.numericUpDownWinnersStart.Size = new System.Drawing.Size(51, 22);
             this.numericUpDownWinnersStart.TabIndex = 3;
@@ -796,7 +810,7 @@
             // 
             this.checkBoxLockWinners.AutoSize = true;
             this.checkBoxLockWinners.Location = new System.Drawing.Point(253, 150);
-            this.checkBoxLockWinners.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.checkBoxLockWinners.Margin = new System.Windows.Forms.Padding(4);
             this.checkBoxLockWinners.Name = "checkBoxLockWinners";
             this.checkBoxLockWinners.Size = new System.Drawing.Size(58, 20);
             this.checkBoxLockWinners.TabIndex = 14;
@@ -807,7 +821,7 @@
             // buttonGetEvent
             // 
             this.buttonGetEvent.Location = new System.Drawing.Point(1107, 108);
-            this.buttonGetEvent.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.buttonGetEvent.Margin = new System.Windows.Forms.Padding(4);
             this.buttonGetEvent.Name = "buttonGetEvent";
             this.buttonGetEvent.Size = new System.Drawing.Size(144, 28);
             this.buttonGetEvent.TabIndex = 33;
@@ -821,7 +835,7 @@
             this.checkBoxSorting.Checked = true;
             this.checkBoxSorting.CheckState = System.Windows.Forms.CheckState.Checked;
             this.checkBoxSorting.Location = new System.Drawing.Point(945, 325);
-            this.checkBoxSorting.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.checkBoxSorting.Margin = new System.Windows.Forms.Padding(4);
             this.checkBoxSorting.Name = "checkBoxSorting";
             this.checkBoxSorting.Size = new System.Drawing.Size(81, 20);
             this.checkBoxSorting.TabIndex = 34;
@@ -832,7 +846,7 @@
             // 
             this.richTextBoxExLpWinnersBracket.Cue = null;
             this.richTextBoxExLpWinnersBracket.Location = new System.Drawing.Point(17, 401);
-            this.richTextBoxExLpWinnersBracket.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.richTextBoxExLpWinnersBracket.Margin = new System.Windows.Forms.Padding(4);
             this.richTextBoxExLpWinnersBracket.Name = "richTextBoxExLpWinnersBracket";
             this.richTextBoxExLpWinnersBracket.Size = new System.Drawing.Size(299, 130);
             this.richTextBoxExLpWinnersBracket.TabIndex = 13;
@@ -842,7 +856,7 @@
             // 
             this.richTextBoxExLpFinalBracket.Cue = null;
             this.richTextBoxExLpFinalBracket.Location = new System.Drawing.Point(636, 401);
-            this.richTextBoxExLpFinalBracket.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.richTextBoxExLpFinalBracket.Margin = new System.Windows.Forms.Padding(4);
             this.richTextBoxExLpFinalBracket.Name = "richTextBoxExLpFinalBracket";
             this.richTextBoxExLpFinalBracket.Size = new System.Drawing.Size(297, 131);
             this.richTextBoxExLpFinalBracket.TabIndex = 13;
@@ -852,7 +866,7 @@
             // 
             this.richTextBoxExLpLosersBracket.Cue = null;
             this.richTextBoxExLpLosersBracket.Location = new System.Drawing.Point(327, 401);
-            this.richTextBoxExLpLosersBracket.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.richTextBoxExLpLosersBracket.Margin = new System.Windows.Forms.Padding(4);
             this.richTextBoxExLpLosersBracket.Name = "richTextBoxExLpLosersBracket";
             this.richTextBoxExLpLosersBracket.Size = new System.Drawing.Size(299, 131);
             this.richTextBoxExLpLosersBracket.TabIndex = 13;
@@ -863,7 +877,7 @@
             this.panel3.Controls.Add(this.radioButton4DE4S);
             this.panel3.Controls.Add(this.radioButtonDEFinal);
             this.panel3.Location = new System.Drawing.Point(755, 341);
-            this.panel3.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.panel3.Margin = new System.Windows.Forms.Padding(4);
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(180, 22);
             this.panel3.TabIndex = 35;
@@ -873,7 +887,7 @@
             this.radioButton4DE4S.AccessibleRole = System.Windows.Forms.AccessibleRole.None;
             this.radioButton4DE4S.AutoSize = true;
             this.radioButton4DE4S.Location = new System.Drawing.Point(91, 0);
-            this.radioButton4DE4S.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.radioButton4DE4S.Margin = new System.Windows.Forms.Padding(4);
             this.radioButton4DE4S.Name = "radioButton4DE4S";
             this.radioButton4DE4S.Size = new System.Drawing.Size(70, 20);
             this.radioButton4DE4S.TabIndex = 0;
@@ -887,7 +901,7 @@
             this.radioButtonDEFinal.AutoSize = true;
             this.radioButtonDEFinal.Checked = true;
             this.radioButtonDEFinal.Location = new System.Drawing.Point(0, 0);
-            this.radioButtonDEFinal.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.radioButtonDEFinal.Margin = new System.Windows.Forms.Padding(4);
             this.radioButtonDEFinal.Name = "radioButtonDEFinal";
             this.radioButtonDEFinal.Size = new System.Drawing.Size(76, 20);
             this.radioButtonDEFinal.TabIndex = 0;
@@ -896,22 +910,35 @@
             this.radioButtonDEFinal.UseVisualStyleBackColor = true;
             this.radioButtonDEFinal.CheckedChanged += new System.EventHandler(this.radioButtonFinalBracket_CheckedChanged);
             // 
-            // buttonCircuit
+            // numericUpDownEventPage
             // 
-            this.buttonCircuit.Location = new System.Drawing.Point(783, 242);
-            this.buttonCircuit.Margin = new System.Windows.Forms.Padding(4);
-            this.buttonCircuit.Name = "buttonCircuit";
-            this.buttonCircuit.Size = new System.Drawing.Size(69, 28);
-            this.buttonCircuit.TabIndex = 30;
-            this.buttonCircuit.Text = "Circuit";
-            this.buttonCircuit.UseVisualStyleBackColor = true;
-            this.buttonCircuit.Click += new System.EventHandler(this.buttonCircuit_Click);
+            this.numericUpDownEventPage.Location = new System.Drawing.Point(1208, 145);
+            this.numericUpDownEventPage.Margin = new System.Windows.Forms.Padding(4);
+            this.numericUpDownEventPage.Name = "numericUpDownEventPage";
+            this.numericUpDownEventPage.Size = new System.Drawing.Size(43, 22);
+            this.numericUpDownEventPage.TabIndex = 36;
+            this.numericUpDownEventPage.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            // 
+            // label8
+            // 
+            this.label8.Location = new System.Drawing.Point(1104, 147);
+            this.label8.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(99, 16);
+            this.label8.TabIndex = 37;
+            this.label8.Text = "Event Page";
             // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1264, 697);
+            this.Controls.Add(this.label8);
+            this.Controls.Add(this.numericUpDownEventPage);
             this.Controls.Add(this.panel3);
             this.Controls.Add(this.checkBoxSorting);
             this.Controls.Add(this.buttonGetEvent);
@@ -941,7 +968,7 @@
             this.Controls.Add(this.richTextBoxLpOutput);
             this.Controls.Add(this.tabControl);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Margin = new System.Windows.Forms.Padding(5, 5, 5, 5);
+            this.Margin = new System.Windows.Forms.Padding(5);
             this.Name = "FormMain";
             this.Text = "Smash.gg to Liquipedia";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormMain_FormClosing);
@@ -964,6 +991,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownWinnersStart)).EndInit();
             this.panel3.ResumeLayout(false);
             this.panel3.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownEventPage)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1041,6 +1069,8 @@
         private System.Windows.Forms.RadioButton radioButton4DE4S;
         private System.Windows.Forms.RadioButton radioButtonDEFinal;
         private System.Windows.Forms.Button buttonCircuit;
+        private System.Windows.Forms.NumericUpDown numericUpDownEventPage;
+        private System.Windows.Forms.Label label8;
     }
 }
 
